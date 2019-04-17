@@ -25,10 +25,14 @@ int main() {
     Chain kdlChain = Chain();
 
 	// Construct segments: links of the arm
-	kdlChain.addSegment(Segment(Joint(Joint::RotY),Frame(Vector(0.0, 4.75, 0.0))));
-	kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(Vector(0.0, 4.47, 3.05))));
-	kdlChain.addSegment(Segment(Joint(Joint::None),Frame(Vector(0.0, 1.43, -10.57))));
-	kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(Vector(0.0, 7.70, 16.2))));
+	// kdlChain.addSegment(Segment(Joint(Joint::RotY),Frame(Vector(0.0, 4.75, 0.0))));
+	kdlChain.addSegment(Segment(Joint(Joint::RotY),Frame(Vector(0.0, 4.20, 0.0))));
+	// kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(Vector(0.0, 4.47, 3.05))));
+	kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(Vector(0.0, 3.30, 5.0))));
+	// kdlChain.addSegment(Segment(Joint(Joint::None),Frame(Vector(0.0, 1.43, -10.57))));
+	kdlChain.addSegment(Segment(Joint(Joint::None),Frame(Vector(0.0, 2.0, -10.57))));
+	// kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(Vector(0.0, 7.70, 16.2))));
+	kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(Vector(0.0, 3.50, 18.4))));
 
 	// Joint Angles
 	unsigned int nj = kdlChain.getNrOfJoints();
@@ -41,7 +45,7 @@ int main() {
 	JntArray jointAngles = JntArray(3);
 	jointAngles(0) = 0;			// Joint 1
 	jointAngles(1) = 0;			// Joint 2
-	jointAngles(2) = -1.135;			// Joint 3
+	jointAngles(2) = 0;//-1.135;			// Joint 3
 	
 	// Perform Forward Kinematics
 	ChainFkSolverPos_recursive FKSolver = ChainFkSolverPos_recursive(kdlChain);
@@ -54,8 +58,8 @@ int main() {
 	// Vector v = j.JointAxis();
 	// cout << v << endl;
 
-	Frame jtFrame = kdlChain.getSegment(3).getFrameToTip();
-	print_end_effector(jtFrame);
+	// Frame jtFrame = kdlChain.getSegment(3).getFrameToTip();
+	// print_end_effector(jtFrame);
 
 	if (fk_status >= 0) {
 		print_end_effector(eeFrame);
