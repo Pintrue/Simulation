@@ -34,7 +34,8 @@ void KinematicsModel::init(double origin[3]) {
 
 
 bool KinematicsModel::jntsToCart(const JntArray& jointAngles, Frame& eeFrame) {
-    ChainFkSolverPos_recursive fKSolver = ChainFkSolverPos_recursive(_kdlChain);
+    ChainFkSolverPos_recursive fKSolver =
+        ChainFkSolverPos_recursive(_kdlChain);
 
     if (fKSolver.JntToCart(jointAngles, eeFrame) >= 0) {
         return true;
@@ -42,33 +43,3 @@ bool KinematicsModel::jntsToCart(const JntArray& jointAngles, Frame& eeFrame) {
         return false;
     }
 }
-
-// void print_frame(const Frame &eeFrame) {// Print the frame
-// 	for (int i = 0; i < 4; i++){
-// 		for (int j = 0; j < 4; j++) {
-// 			double a = eeFrame(i, j);
-// 			if (a < 0.0001 && a > -0.001) {
-// 				a = 0.0;
-// 			}
-// 			cout << setprecision(4) << a << "\t\t";
-// 		}
-// 		cout << endl;
-// 	}
-// }
-
-// int main() {
-//     KinematicsModel km;
-
-//     double pos[3] = {0.0, 0.0, 0.0};
-//     km.init(pos);
-
-//     JntArray jointAngles = JntArray(3);
-// 	jointAngles(0) = M_PI / 2;			// Joint 1
-// 	jointAngles(1) = 0;			// Joint 2
-// 	jointAngles(2) = -(80.0/180.0*M_PI);			// Joint 3
-
-//     Frame eeFrame;
-//     km.jntsToCart(jointAngles, eeFrame);
-//     print_frame(eeFrame);
-// }
-

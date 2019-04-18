@@ -7,7 +7,7 @@ project(Simulation)
 set (SRC_DIR "src")
 
 # header files location
-include_directories( ${SRC_DIR}/include )
+# include_directories( ${SRC_DIR}/include )
 
 # kdl usage
 FIND_PACKAGE(orocos_kdl)
