@@ -84,6 +84,7 @@ void display(void) {
 	glutWireCube(1.0);
 	glPopMatrix();
 
+	glColor3f (0.0, 1.0, 0.0);
 	glTranslatef(0.0, 0, 0.513);
 	// glTranslatef(1.0, 0.0, 0.0);
 	glRotatef((GLfloat) elbow2, 1.0, 0.0, 0.0);
