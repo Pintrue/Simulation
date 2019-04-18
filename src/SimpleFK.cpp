@@ -22,9 +22,10 @@ void print_end_effector(const Frame &eeFrame) {// Print the frame
 }
 
 int main() {
-    Chain kdlChain = Chain();
+    Chain kdlChain; //= Chain();
 
 	// Construct segments: links of the arm
+	kdlChain.addSegment( Segment( Joint(Joint::None),Frame(Vector(0.0, 0.0, 0.0)) ));
 	// kdlChain.addSegment(Segment(Joint(Joint::RotY),Frame(Vector(0.0, 4.75, 0.0))));
 	kdlChain.addSegment(Segment(Joint(Joint::RotY),Frame(Vector(0.0, 4.20, 0.0))));
 	// kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(Vector(0.0, 4.47, 3.05))));
@@ -42,30 +43,50 @@ int main() {
 		return -1;
 	}
 
-	JntArray jointAngles = JntArray(3);
-	jointAngles(0) = 0;			// Joint 1
+	JntArray jointAngles = JntArray(nj);
+	jointAngles(0) = M_PI / 2;			// Joint 1
 	jointAngles(1) = 0;			// Joint 2
-	jointAngles(2) = 0;//-1.135;			// Joint 3
+	jointAngles(2) = -(80.0/180.0*M_PI);			// Joint 3
 	
 	// Perform Forward Kinematics
 	ChainFkSolverPos_recursive FKSolver = ChainFkSolverPos_recursive(kdlChain);
+
 	Frame eeFrame;
 	int fk_status;
-	fk_status = FKSolver.JntToCart(jointAngles, eeFrame);
+	// fk_status = FKSolver.JntToCart(jointAngles, eeFrame);
 
-	// Segment seg = kdlChain.getSegment(0);
-	// Joint j = seg.getJoint();
-	// Vector v = j.JointAxis();
-	// cout << v << endl;
+	// print_end_effector(eeFrame);
 
-	// Frame jtFrame = kdlChain.getSegment(3).getFrameToTip();
-	// print_end_effector(jtFrame);
+	// JntArray jointAngles1 = JntArray(nj);
+	// jointAngles1(0) = M_PI / 2;			// Joint 1
+	// jointAngles1(1) = 0;			// Joint 2
+	// jointAngles1(2) = -(80.0/180.0*M_PI);
 
-	if (fk_status >= 0) {
-		print_end_effector(eeFrame);
-	} else {
-		printf("%s \n","Error: could not calculate forward kinematics");
-	}
+	// fk_status = FKSolver.JntToCart(jointAngles1, eeFrame);
+
+	/***
+	 * Below is an example on how to get the
+	 * cartesian coordinates of EACH joint.
+	***/
+
+	eeFrame = Frame::Identity();
+	eeFrame = eeFrame * kdlChain.getSegment(1).pose(jointAngles(0));
+	print_end_effector(eeFrame);
+	cout << endl;
+	eeFrame = eeFrame * kdlChain.getSegment(2).pose(jointAngles(1));
+	print_end_effector(eeFrame);
+	cout << endl;
+	eeFrame = eeFrame * kdlChain.getSegment(3).pose(0);
+	print_end_effector(eeFrame);
+	cout << endl;
+	eeFrame = eeFrame * kdlChain.getSegment(4).pose(jointAngles(2));
+	print_end_effector(eeFrame);
+
+	// if (fk_status >= 0) {
+	// 	print_end_effector(eeFrame);
+	// } else {
+	// 	printf("%s \n","Error: could not calculate forward kinematics");
+	// }
 
 	return 0;
 }

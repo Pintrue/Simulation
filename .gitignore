@@ -43,3 +43,4 @@ build/
 cmake-build-debug/
 cmake_install.cmake
 simulation
+*/robot

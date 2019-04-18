@@ -18,5 +18,5 @@ set(CMAKE_CXX_STANDARD 11)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
-add_executable (simulation ${SRC_DIR}/SimpleFK.cpp ${SRC_DIR}/Utils.cpp)
+add_executable (simulation ${SRC_DIR}/model/KinematicsModel.cpp ${SRC_DIR}/Utils.cpp)
 target_link_libraries (simulation ${orocos_kdl_LIBRARIES})
