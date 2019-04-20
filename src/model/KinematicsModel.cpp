@@ -9,37 +9,37 @@ using namespace KDL;
 KinematicsModel::KinematicsModel() {}
 
 void KinematicsModel::init(double origin[3]) {
-    // Construct segments: links of the arm
+	// Construct segments: links of the arm
 
-    // Origin
-    _kdlChain.addSegment(Segment(Joint(Joint::None), Frame(
-        Vector(origin[0], origin[1], origin[2]))));
-    // Base joint
-    _kdlChain.addSegment(Segment(Joint(Joint::RotY), Frame(
-        Vector(0.0, 4.20, 0.0))));
-    // Shoulder joint
+	// Origin
+	_kdlChain.addSegment(Segment(Joint(Joint::None), Frame(
+		Vector(origin[0], origin[1], origin[2]))));
+	// Base joint
+	_kdlChain.addSegment(Segment(Joint(Joint::RotY), Frame(
+		Vector(0.0, 4.20, 0.0))));
+	// Shoulder joint
 	_kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(
-        Vector(0.0, 3.30, 5.0))));
-    // Elbow joint
+		Vector(0.0, 3.30, 5.0))));
+	// Elbow joint
 	_kdlChain.addSegment(Segment(Joint(Joint::None),Frame(
-        Vector(0.0, 2.0, -10.57))));
-    // End-effector
+		Vector(0.0, 2.0, -10.57))));
+	// End-effector
 	_kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(
-        Vector(0.0, 3.50, 18.4))));
+		Vector(0.0, 3.50, 18.4))));
 
-    // Initialize 
-    unsigned int numJoints = _kdlChain.getNrOfJoints();
-    _jointAngles = JntArray(numJoints);
+	// Initialize 
+	unsigned int numJoints = _kdlChain.getNrOfJoints();
+	_jointAngles = JntArray(numJoints);
 }
 
 
 bool KinematicsModel::jntsToCart(const JntArray& jointAngles, Frame& eeFrame) {
-    ChainFkSolverPos_recursive fKSolver =
-        ChainFkSolverPos_recursive(_kdlChain);
+	ChainFkSolverPos_recursive fKSolver =
+		ChainFkSolverPos_recursive(_kdlChain);
 
-    if (fKSolver.JntToCart(jointAngles, eeFrame) >= 0) {
-        return true;
-    } else {
-        return false;
-    }
+	if (fKSolver.JntToCart(jointAngles, eeFrame) >= 0) {
+		return true;
+	} else {
+		return false;
+	}
 }
