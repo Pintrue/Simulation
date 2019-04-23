@@ -17,6 +17,7 @@ void AngularKinematics::init(AngularKinematics::TemporalData start,
 	_cache.c3 = (-2.0*dA+(sV+fV)*t)/(t*t*t);
 }
 
+
 void AngularKinematics::angleAtTime(double t, double* angle) {
 	// theta = theta_i + omega_i*t + 1/2*alpha*t^2
 	*angle = _cache.c0 + t * (_cache.c1 + t * (_cache.c2 + (t * _cache.c3)));
