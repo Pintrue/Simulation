@@ -6,8 +6,14 @@
 using namespace std;
 using namespace KDL;
 
+
 KinematicsModel::KinematicsModel() {}
 
+
+/*
+*	Description of the measurements of the
+*	arm to feed to the KDL library.
+*/
 void KinematicsModel::init(double origin[3]) {
 	// Construct segments: links of the arm
 
@@ -33,6 +39,12 @@ void KinematicsModel::init(double origin[3]) {
 }
 
 
+/*
+*	Given the joint angles the arm needs to move to,
+*	calculate the final position of the end-effector
+*	(also known as the tip of delivery part) in Car-
+*	tesian coordinate form.
+*/
 bool KinematicsModel::jntsToCart(const JntArray& jointAngles, Frame& eeFrame) {
 	ChainFkSolverPos_recursive fKSolver =
 		ChainFkSolverPos_recursive(_kdlChain);

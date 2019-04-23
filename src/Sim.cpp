@@ -1,42 +1,100 @@
 #include "Sim.hpp"
 #include "utils/Utils.hpp"
+#include <algorithm>
+
+#define NUM_OF_JOINTS 3
 
 using namespace std;
 using namespace KDL;
 
+
+/*
+*   Initialize the simulation with the unit timestep
+*   for the trajectory.
+*/
+Sim::Sim(double ori[NUM_OF_JOINTS]) {
+	// copy(ori, ori + NUM_OF_JOINTS, _origin);
+
+	// initialize kinematics and trajectory models
+	_km.init(ori);
+	_tjt.init(NUM_OF_JOINTS);	
+	
+	// set current joint angles to zero
+	JntArray fromJA = JntArray(NUM_OF_JOINTS);
+	_km._jointAngles = fromJA;
+	SetToZero(_km._jointAngles);
+}
+
+
+JntArray Sim::getJointAngles() {
+	return _km._jointAngles;
+}
+
+
+Frame Sim::getEEPose() {
+	return _km._cartPose;
+}
+
+
+/*
+*   Move the each of the joints to the corresponding
+*   angles specified in jointAngles[NUM_OF_JOINTS], in RADIUS.
+*   Duration of the trajectory is specified by dura-
+*   tion.
+*/
+void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) {
+	JntArray toJA = JntArray(NUM_OF_JOINTS);
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		toJA(i) = jointAngles[i];
+	}
+
+	// plan the trajectory - calculate the coeficients
+	_tjt.prepare(_km._jointAngles, toJA, duration);
+	JntArray interJA = JntArray(NUM_OF_JOINTS);
+
+	cout << "t = " << _tjt.timeNow() << endl << endl;
+
+	// keep looping if still in progress
+	while (_tjt.nextTimeStep(_tjt.timeNow() + 1.0, interJA)) {
+		cout << "t = " << _tjt.timeNow() << endl;
+		cout << "Ongoing!" << endl << endl;
+	}
+	cout << "t = " << _tjt.timeNow() << endl;
+	cout << "Finished." << endl << endl;
+
+	_km._jointAngles = toJA;
+}
+
+
 int main() {
-    Sim sim;
+	// origin where the robot is based
+	double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
+	
+	Sim sim(pos);
 
-    // origin where the robot is based
-    double pos[3] = {0.0, 0.0, 0.0};
-
-    // initialize kinematics and trajectory models
-    sim._km.init(pos);
-    sim._tjt.init(3);
-
-    JntArray fromJA = JntArray(3);
-    SetToZero(fromJA);
-
-    // JntArray toJA = JntArray(3);
+	// JntArray toJA = JntArray(NUM_OF_JOINTS);
 	// toJA(0) = M_PI / 2;			// Joint 1
 	// toJA(1) = 0;			        // Joint 2
 	// toJA(2) = -(80.0/180.0*M_PI);// Joint 3
-    JntArray toJA = JntArray(3);
+
+	// verification
+	JntArray toJA = JntArray(NUM_OF_JOINTS);
 	toJA(0) = M_PI;			// Joint 1
-	toJA(1) = 0;			        // Joint 2
-	toJA(2) = 0;// Joint 3
+	toJA(1) = 0;			// Joint 2
+	toJA(2) = 0;			// Joint 3
 
-    JntArray interJA = JntArray(3);
+	double toA[3] = {M_PI, 0.0, 0.0};
+	sim.moveByJointAngles(toA, 10.0);
 
-    sim._tjt.prepare(fromJA, toJA, 10);
-    
-    for (int i = 1; i <= 10; ++i) {
-        if (sim._tjt.nextTimeStep(sim._tjt.timeNow() + 1, interJA))
-            cout << "Ongoing!" << endl;
-    }
+	Frame eeFrame;
+	sim._km.jntsToCart(toJA, eeFrame);
+	
+	// Provide this as API
+	sim._km._cartPose = eeFrame;
+	// print_frame(eeFrame);
+	print_frame(sim._km._cartPose);
 
-    Frame eeFrame;
-    sim._km.jntsToCart(toJA, eeFrame);
-    print_frame(eeFrame);
-    cout << "Done" << endl;
+	cout << "Done" << endl;
+
+
 }

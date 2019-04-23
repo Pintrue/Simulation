@@ -5,9 +5,11 @@
 using namespace std;
 using namespace KDL;
 
+
 Trajectory::Trajectory() : _numJoints(0) {
 	_joints.clear();
 }
+
 
 void Trajectory::init(int numJoints) {
 	_numJoints = numJoints;
@@ -15,6 +17,7 @@ void Trajectory::init(int numJoints) {
 		_joints.push_back(new AngularKinematics());
 	}
 }
+
 
 void Trajectory::prepare(JntArray& start, JntArray& end, double t) {
 	_tNow = 0;	// local time in the trajectory process
@@ -31,21 +34,24 @@ void Trajectory::prepare(JntArray& start, JntArray& end, double t) {
 	}
 }
 
+
 bool Trajectory::nextTimeStep(double tNow, JntArray& next) {
-	_tNow = tNow;
+	if (tNow > _tEnd) {
+		_tNow = _tEnd;
+	} else {
+		_tNow = tNow;
+	}
 	double angle;
 
 	for (int i = 0; i < _joints.size(); ++i) {
-		_joints[i]->angleAtTime(tNow, &angle);
+		_joints[i]->angleAtTime(_tNow, &angle);
 		next(i) = angle;
 		cout << i << " th joint's angle is " << angle << endl;
 	}
 
-	if (_tNow >= _tEnd)
-		return false;	// Trajectory has finished
-	else
-		return true;	// still in progress
+	return _tNow < _tEnd; // If trajectory is still in progress
 }
+
 
 void Trajectory::finish() {
 	// clear content in container
@@ -57,6 +63,7 @@ void Trajectory::finish() {
 	// release memory
 	vector<AngularKinematics*>().swap(_joints);
 }
+
 
 double Trajectory::timeNow() {
 	return _tNow;

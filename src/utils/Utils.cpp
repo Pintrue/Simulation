@@ -6,6 +6,7 @@
 
 using namespace std;
 
+
 void print_frame(const KDL::Frame &eeFrame) {// Print the frame
 	for (int i = 0; i < 4; i++){
 		for (int j = 0; j < 4; j++) {
