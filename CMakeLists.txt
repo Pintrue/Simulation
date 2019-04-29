@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.0)
 project(Simulation)
 
 set (SRC_DIR "src")
+set (C "src/C")
 
 # header files location
 # include_directories( ${SRC_DIR}/include )
@@ -16,11 +17,19 @@ include_directories (${orocos_kdl_INCLUDE_DIRS})
 # enable C++11 standard
 set (CMAKE_CXX_STANDARD 11)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O3")
+add_compile_definitions(C_AS_LIB=1)
 
 add_executable (simulation  ${SRC_DIR}/Sim.cpp
                 ${SRC_DIR}/model/KinematicsModel.cpp
                 ${SRC_DIR}/model/Trajectory.cpp
                 ${SRC_DIR}/model/AngularKinematics.cpp
-                ${SRC_DIR}/utils/Utils.cpp)
+                ${SRC_DIR}/utils/Utils.cpp
+                ${C}/main.c
+                ${C}/matrix_op.c
+                ${C}/tests.c
+                ${C}/utils.c
+                ${C}/rl.c
+                ${C}/layers.c
+                ${C}/model.c)
 target_link_libraries (simulation ${orocos_kdl_LIBRARIES})

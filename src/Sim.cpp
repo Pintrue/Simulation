@@ -1,7 +1,7 @@
 #include "Sim.hpp"
 #include "utils/Utils.hpp"
 #include <algorithm>
-
+#include "C/main.h"
 #define NUM_OF_JOINTS 3
 
 using namespace std;
@@ -65,6 +65,7 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 	_km._jointAngles = toJA;
 }
 
+//extern "C" void _main();
 
 int main() {
 	// origin where the robot is based
@@ -96,5 +97,6 @@ int main() {
 
 	cout << "Done" << endl;
 
+	_main();
 
 }
