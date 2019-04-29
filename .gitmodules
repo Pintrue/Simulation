@@ -1,0 +1,3 @@
+[submodule "src/robot_reinforcement_learning"]
+	path = src/robot_reinforcement_learning
+	url = https://github.com/Jxic/robot_reinforcement_learning.git

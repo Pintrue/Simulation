@@ -1,7 +1,7 @@
 #include "Sim.hpp"
 #include "utils/Utils.hpp"
 #include <algorithm>
-#include "C/main.h"
+#include "robot_reinforcement_learning/C/main.h"
 #define NUM_OF_JOINTS 3
 
 using namespace std;

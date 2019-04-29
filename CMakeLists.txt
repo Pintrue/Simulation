@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.0)
 project(Simulation)
 
 set (SRC_DIR "src")
-set (C "src/C")
+set (C "src/robot_reinforcement_learning/C")
 
 # header files location
 # include_directories( ${SRC_DIR}/include )
@@ -17,7 +17,7 @@ include_directories (${orocos_kdl_INCLUDE_DIRS})
 # enable C++11 standard
 set (CMAKE_CXX_STANDARD 11)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -O3")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 add_compile_definitions(C_AS_LIB=1)
 
 add_executable (simulation  ${SRC_DIR}/Sim.cpp
