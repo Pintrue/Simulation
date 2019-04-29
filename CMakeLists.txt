@@ -18,6 +18,7 @@ include_directories (${orocos_kdl_INCLUDE_DIRS})
 set (CMAKE_CXX_STANDARD 11)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -O3")
 add_compile_definitions(C_AS_LIB=1)
 
 add_executable (simulation  ${SRC_DIR}/Sim.cpp
