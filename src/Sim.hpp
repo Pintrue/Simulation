@@ -3,6 +3,8 @@
 
 #include "model/KinematicsModel.hpp"
 #include "model/Trajectory.hpp"
+#include "robot_reinforcement_learning/C/main.h"
+#include "robot_reinforcement_learning/C/matrix_op.h"
 
 class Sim {
     public:
@@ -20,5 +22,7 @@ class Sim {
         // double _origin[3];
         // double _timeStep;
 };
+
+extern "C" matrix_t* function_call_test();
 
 #endif

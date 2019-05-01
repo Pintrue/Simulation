@@ -1,7 +1,7 @@
 #include "Sim.hpp"
 #include "utils/Utils.hpp"
 #include <algorithm>
-#include "robot_reinforcement_learning/C/main.h"
+
 #define NUM_OF_JOINTS 3
 
 using namespace std;
@@ -65,7 +65,12 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 	_km._jointAngles = toJA;
 }
 
-//extern "C" void _main();
+matrix_t* function_call_test() {
+	matrix_t* new_mat = new_matrix(3, 3);
+	xavier_init(new_mat, 1);
+	print_matrix(new_mat, 1);
+	return new_mat;
+}
 
 int main() {
 	// origin where the robot is based
@@ -97,6 +102,9 @@ int main() {
 
 	cout << "Done" << endl;
 
+	// Function call from C
+	cout << endl << "Function call from C" << endl; 
+	function_call_test();
 	_main();
 
 }
