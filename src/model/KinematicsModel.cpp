@@ -50,6 +50,8 @@ bool KinematicsModel::jntsToCart(const JntArray& jointAngles, Frame& eeFrame) {
 		ChainFkSolverPos_recursive(_kdlChain);
 
 	if (fKSolver.JntToCart(jointAngles, eeFrame) >= 0) {
+		_cartPose = eeFrame;
+		_jointAngles = jointAngles;
 		return true;
 	} else {
 		return false;

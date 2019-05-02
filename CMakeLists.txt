@@ -21,7 +21,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -O3")
 add_compile_definitions(C_AS_LIB=1)
 
-add_executable (simulation  ${SRC_DIR}/Sim.cpp
+add_executable (simulation ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Sim.cpp
                 ${SRC_DIR}/model/KinematicsModel.cpp
                 ${SRC_DIR}/model/Trajectory.cpp
                 ${SRC_DIR}/model/AngularKinematics.cpp

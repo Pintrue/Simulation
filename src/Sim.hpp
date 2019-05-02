@@ -1,26 +1,32 @@
 #ifndef SIM_HPP
 #define SIM_HPP
 
+#define NUM_OF_JOINTS 3
+
 #include "model/KinematicsModel.hpp"
 #include "model/Trajectory.hpp"
 #include "robot_reinforcement_learning/C/main.h"
 #include "robot_reinforcement_learning/C/matrix_op.h"
+#include "C_api.hpp"
 
 class Sim {
-    public:
-        Sim(double ori[3]); // Constructor
+	public:
+		Sim();				// default constructor
+		Sim(double ori[3]); // constructor
 
-        KDL::JntArray getJointAngles();
-        KDL::Frame getEEPose();
-        void moveByJointAngles(double jointAngles[3], double duration);
+		KDL::JntArray getJointAngles();
+		KDL::Frame getEEPose();
+		void moveByJointAngles(double jointAngles[3], double duration);
 
-        KinematicsModel _km;// kinematics model
-        Trajectory _tjt;    // trajectory model
+		KinematicsModel _km;// kinematics model
+		Trajectory _tjt;    // trajectory model
 
-    private:
+		double target[CART_DIM];
 
-        // double _origin[3];
-        // double _timeStep;
+	private:
+
+		// double _origin[3];
+		// double _timeStep;
 };
 
 extern "C" matrix_t* function_call_test();
