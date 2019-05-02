@@ -2,8 +2,6 @@
 #include "utils/Utils.hpp"
 #include <algorithm>
 
-#define NUM_OF_JOINTS 3
-
 using namespace std;
 using namespace KDL;
 
@@ -12,12 +10,24 @@ using namespace KDL;
 *   Initialize the simulation with the unit timestep
 *   for the trajectory.
 */
+Sim::Sim() {
+	double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
+	_km.init(pos);
+	_tjt.init(NUM_OF_JOINTS);
+	
+	// set current joint angles to zero
+	JntArray fromJA = JntArray(NUM_OF_JOINTS);
+	_km._jointAngles = fromJA;
+	SetToZero(_km._jointAngles);
+}
+
+
 Sim::Sim(double ori[NUM_OF_JOINTS]) {
 	// copy(ori, ori + NUM_OF_JOINTS, _origin);
 
 	// initialize kinematics and trajectory models
 	_km.init(ori);
-	_tjt.init(NUM_OF_JOINTS);	
+	_tjt.init(NUM_OF_JOINTS);
 	
 	// set current joint angles to zero
 	JntArray fromJA = JntArray(NUM_OF_JOINTS);
@@ -62,7 +72,7 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 	cout << "t = " << _tjt.timeNow() << endl;
 	cout << "Finished." << endl << endl;
 
-	_km._jointAngles = toJA;
+	// _km._jointAngles = toJA; <- carried out by jntsToCart(...)
 }
 
 matrix_t* function_call_test() {
@@ -72,39 +82,39 @@ matrix_t* function_call_test() {
 	return new_mat;
 }
 
-int main() {
-	// origin where the robot is based
-	double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
+// int main() {
+// 	// origin where the robot is based
+// 	double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
 	
-	Sim sim(pos);
+// 	Sim sim(pos);
 
-	// JntArray toJA = JntArray(NUM_OF_JOINTS);
-	// toJA(0) = M_PI / 2;			// Joint 1
-	// toJA(1) = 0;			        // Joint 2
-	// toJA(2) = -(80.0/180.0*M_PI);// Joint 3
+// 	// JntArray toJA = JntArray(NUM_OF_JOINTS);
+// 	// toJA(0) = M_PI / 2;			// Joint 1
+// 	// toJA(1) = 0;			        // Joint 2
+// 	// toJA(2) = -(80.0/180.0*M_PI);// Joint 3
 
-	// verification
-	JntArray toJA = JntArray(NUM_OF_JOINTS);
-	toJA(0) = M_PI;			// Joint 1
-	toJA(1) = 0;			// Joint 2
-	toJA(2) = 0;			// Joint 3
+// 	// verification
+// 	JntArray toJA = JntArray(NUM_OF_JOINTS);
+// 	toJA(0) = 0;//M_PI;			// Joint 1
+// 	toJA(1) = 0;			// Joint 2
+// 	toJA(2) = -M_PI/2;			// Joint 3
 
-	double toA[3] = {M_PI, 0.0, 0.0};
-	sim.moveByJointAngles(toA, 10.0);
+// 	// double toA[3] = {M_PI, 0.0, 0.0};
+// 	// sim.moveByJointAngles(toA, 10.0);
 
-	Frame eeFrame;
-	sim._km.jntsToCart(toJA, eeFrame);
+// 	Frame eeFrame;
+// 	sim._km.jntsToCart(toJA, eeFrame);
 	
-	// Provide this as API
-	sim._km._cartPose = eeFrame;
-	// print_frame(eeFrame);
-	print_frame(sim._km._cartPose);
+// 	// Provide this as API
+// 	sim._km._cartPose = eeFrame;
+// 	// print_frame(eeFrame);
+// 	print_frame(sim._km._cartPose);
 
-	cout << "Done" << endl;
+// 	cout << "Done" << endl;
 
-	// Function call from C
-	cout << endl << "Function call from C" << endl; 
-	function_call_test();
-	_main();
+// 	// Function call from C
+// 	cout << endl << "Function call from C" << endl; 
+// 	function_call_test();
+// 	_main();
 
-}
+// }
