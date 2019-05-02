@@ -1,6 +1,7 @@
 #include "C_api.hpp"
 #include "utils/Utils.hpp"
 #include "robot_reinforcement_learning/C/utils.h"
+#include <math.h>
 
 #define JA0_L -M_PI/2
 #define JA0_U M_PI/2
@@ -8,6 +9,7 @@
 #define JA1_U 120.0/180.0*M_PI
 #define JA2_L -M_PI/2
 #define JA2_U 0.0
+#define TIP_REACHED_RANGE 1.0
 
 using namespace std;
 using namespace KDL;
@@ -84,6 +86,18 @@ matrix_t* resetState(int randAngle, int destPos) {
 }
 
 
+int ifInReach(double fullState[FULL_STATE_NUM_COLS]) {
+	double diff = 0;
+
+	for (int i = 3; i < 6; ++i) {
+		double delta = fullState[i + 3] - fullState[i];
+		diff += delta * delta;
+	}
+	// cout << sqrt(diff) << endl;
+	return sqrt(diff) <= TIP_REACHED_RANGE;
+}
+
+
 matrix_t* step(matrix_t* action) {
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
 	double* data = fullState->data;
@@ -110,6 +124,11 @@ matrix_t* step(matrix_t* action) {
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + 6] = sim.target[i];
+	}
+
+	// set the terminal flag to 1, if within reach
+	if (ifInReach(data)) {
+		data[9] = 1;
 	}
 
 	return fullState;
@@ -141,6 +160,8 @@ int main() {
 		}
 		cout << endl;
 		// cout << endl;
+		// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
+		// cout << ifInReach(test) << endl;
 		break;
 	}
 	return 0;
