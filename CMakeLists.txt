@@ -32,5 +32,7 @@ add_executable (simulation ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Sim.cpp
                 ${C}/utils.c
                 ${C}/rl.c
                 ${C}/layers.c
-                ${C}/model.c)
+                ${C}/model.c
+                ${C}/rl_ddpg.c
+                ${C}/rl_utils.c)
 target_link_libraries (simulation ${orocos_kdl_LIBRARIES})
