@@ -6,6 +6,14 @@ project(Simulation)
 
 set (SRC_DIR "src")
 set (C "src/robot_reinforcement_learning/C")
+set (GRA "src/GUI")
+set(QT_OPENGL_SRCS
+	${GRA}/logo.cpp
+	${GRA}/window.cpp
+	${GRA}/glwidget.cpp
+    ${GRA}/mainwindow.cpp
+    ${GRA}/main.cpp
+)
 
 # header files location
 # include_directories( ${SRC_DIR}/include )
@@ -14,6 +22,18 @@ set (C "src/robot_reinforcement_learning/C")
 FIND_PACKAGE(orocos_kdl)
 include_directories (${orocos_kdl_INCLUDE_DIRS})
 
+# Instruct CMake to run moc automatically when needed
+set(CMAKE_AUTOMOC ON)
+# Create code from a list of Qt designer ui files
+set(CMAKE_AUTOUIC ON)
+
+# QT5 usage
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+# FIND_PACKAGE(Qt5Widgets CONFIG REQUIRED)
+SET( QT_USE_QTGUI TRUE )
+SET( QT_USE_QTOPENGL TRUE )
+# INCLUDE(${QT_USE_FILE})
+
 # enable C++11 standard
 set (CMAKE_CXX_STANDARD 11)
 
@@ -21,7 +41,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -O3")
 add_compile_definitions(C_AS_LIB=1)
 
-add_executable (simulation ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Sim.cpp
+add_executable (simulation ${QT_OPENGL_SRCS} ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Sim.cpp
                 ${SRC_DIR}/model/KinematicsModel.cpp
                 ${SRC_DIR}/model/Trajectory.cpp
                 ${SRC_DIR}/model/AngularKinematics.cpp
@@ -35,4 +55,4 @@ add_executable (simulation ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Sim.cpp
                 ${C}/model.c
                 ${C}/rl_ddpg.c
                 ${C}/rl_utils.c)
-target_link_libraries (simulation ${orocos_kdl_LIBRARIES})
+target_link_libraries (simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets)

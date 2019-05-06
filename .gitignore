@@ -1,3 +1,5 @@
+.DS_Store
+
 # Prerequisites
 *.d
 
@@ -44,3 +46,4 @@ cmake-build-debug/
 cmake_install.cmake
 simulation
 */robot
+simulation_autogen/
