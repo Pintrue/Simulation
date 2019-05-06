@@ -10,6 +10,7 @@
 #define JA2_L -M_PI/2
 #define JA2_U 0.0
 #define TIP_REACHED_RANGE 1.0
+// #define RAD_TO_DEG(x) (180/M_PI)*x
 
 using namespace std;
 using namespace KDL;
@@ -19,24 +20,6 @@ Sim sim;
 
 int initEnv() {
 	sim = Sim();
-
-	// JntArray toJA = JntArray(NUM_OF_JOINTS);
-	// toJA(0) = M_PI;			// Joint 1
-	// toJA(1) = 0;			// Joint 2
-	// toJA(2) = 0;			// Joint 3
-
-	// // double toA[3] = {M_PI, 0.0, 0.0};
-	// // sim.moveByJointAngles(toA, 10.0);
-
-	// Frame eeFrame;
-	// sim._km.jntsToCart(toJA, eeFrame);
-	
-	// // Provide this as API
-	// sim._km._cartPose = eeFrame;
-	// // print_frame(eeFrame);
-	// print_frame(sim._km._cartPose);
-
-	// cout << "Donezo" << endl;
 	return 0;
 }
 
@@ -47,9 +30,12 @@ matrix_t* resetState(int randAngle, int destPos) {
 	
 	// setting the initial segment angles
 	if (randAngle == 1) {
-		data[0] = rand_uniform(-M_PI/2, M_PI/2);
-		data[1] = rand_uniform(0.0, 120.0/180.0*M_PI);
-		data[2] = rand_uniform(-M_PI/2, 0);
+		// data[0] = rand_uniform(-M_PI/2, M_PI/2);
+		// data[1] = rand_uniform(0.0, 120.0/180.0*M_PI);
+		// data[2] = rand_uniform(-M_PI/2, 0);
+		data[0] = 0;
+		data[1] = 0;
+		data[2] = -M_PI/2;
 	}
 
 	// setting the current position of the end-effector
@@ -60,12 +46,16 @@ matrix_t* resetState(int randAngle, int destPos) {
 
 	Frame eeFrame;
 	sim._km.jntsToCart(angle, eeFrame);
-	// print_frame(eeFrame);
-	// cout << endl;
-
+	
+	// // double a, b, g;
+	// // cout << "TESTING" << endl;
+	// // eeFrame.M.GetEulerZYX(a, b, g);
+	// cout << RAD_TO_DEG(g) << ", " << RAD_TO_DEG(b) << ", " << RAD_TO_DEG(g) << endl;
+	
 	for (int i = 0; i < CART_DIM; ++i) {
-		data[i + 3] = eeFrame(i, 3);
+		data[i + 3] = eeFrame.p(i);
 	}
+	// cout << "ENDED" << endl;
 	
 
 	// setting the target position for the end-effector
@@ -93,7 +83,7 @@ int ifInReach(double fullState[FULL_STATE_NUM_COLS]) {
 		double delta = fullState[i + 3] - fullState[i];
 		diff += delta * delta;
 	}
-	// cout << sqrt(diff) << endl;
+
 	return sqrt(diff) <= TIP_REACHED_RANGE;
 }
 
@@ -119,7 +109,7 @@ matrix_t* step(matrix_t* action) {
 	sim._km.jntsToCart(toJA, eeFrame);
 
 	for (int i = 0; i < CART_DIM; ++i) {
-		data[i + 3] = eeFrame(i, 3);
+		data[i + 3] = eeFrame.p(i);
 	}
 
 	for (int i = 0; i < CART_DIM; ++i) {
@@ -135,34 +125,34 @@ matrix_t* step(matrix_t* action) {
 }
 
 
-// int main() {
-// 	// initEnv();
-// 	while (1) {
-// 		matrix_t* full = resetState(1, 1);
-// 		double* data = full->data;
-// 		for (int i = 0; i < full->rows; ++i) {
-// 			for (int j = 0; j < full->cols; ++j) {
-// 				cout << *(data + i * full->cols + j) << " ";
-// 			}
-// 		}
-// 		cout << endl;
+int main() {
+	initEnv();
+	while (1) {
+		matrix_t* full = resetState(1, 1);
+		double* data = full->data;
+		for (int i = 0; i < full->rows; ++i) {
+			for (int j = 0; j < full->cols; ++j) {
+				cout << *(data + i * full->cols + j) << " ";
+			}
+		}
+		cout << endl;
 
-// 		matrix_t* delta = new_matrix(1, 3);
-// 		delta->data[0] = 0.1;
-// 		delta->data[1] = 0;
-// 		delta->data[2] = 0;
-// 		matrix_t* newFull = step(delta);
-// 		double* newData = newFull->data;
-// 		for (int i = 0; i < newFull->rows; ++i) {
-// 			for (int j = 0; j < newFull->cols; ++j) {
-// 				cout << *(newData + i * newFull->cols + j) << " ";
-// 			}
-// 		}
-// 		cout << endl;
-// 		// cout << endl;
-// 		// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
-// 		// cout << ifInReach(test) << endl;
-// 		break;
-// 	}
-// 	return 0;
-// }
+		matrix_t* delta = new_matrix(1, 3);
+		delta->data[0] = 0.1;
+		delta->data[1] = 0;
+		delta->data[2] = 0;
+		matrix_t* newFull = step(delta);
+		double* newData = newFull->data;
+		for (int i = 0; i < newFull->rows; ++i) {
+			for (int j = 0; j < newFull->cols; ++j) {
+				cout << *(newData + i * newFull->cols + j) << " ";
+			}
+		}
+		cout << endl;
+		// cout << endl;
+		// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
+		// cout << ifInReach(test) << endl;
+		break;
+	}
+	return 0;
+}
