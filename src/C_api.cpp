@@ -9,8 +9,8 @@
 #define JA1_U 120.0/180.0*M_PI
 #define JA2_L -M_PI/2
 #define JA2_U 0.0
-#define TIP_REACHED_RANGE 1.0
 // #define RAD_TO_DEG(x) (180/M_PI)*x
+#define TIP_REACHED_RANGE 5.0
 
 using namespace std;
 using namespace KDL;
