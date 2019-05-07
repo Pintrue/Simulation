@@ -48,20 +48,23 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QSurfaceFormat>
-#include <QCommandLineParser>
-#include <QCommandLineOption>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
+#include <QtGui/QSurfaceFormat>
+#include <QtCore/QCommandLineParser>
+#include <QtCore/QCommandLineOption>
 
 #include "glwidget.h"
 #include "mainwindow.h"
+#include "QtWindow.hpp"
+#include "QtMainWindow.hpp"
+#include "GLWidgets.hpp"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     QCoreApplication::setApplicationName("SIM - Robotic Arm");
-    // QCoreApplication::setOrganizationName("QtProject");
+    QCoreApplication::setOrganizationName("QtProject");
     QCoreApplication::setApplicationVersion(QT_VERSION_STR);
     QCommandLineParser parser;
     parser.setApplicationDescription(QCoreApplication::applicationName());
@@ -86,10 +89,10 @@ int main(int argc, char *argv[]) {
     }
     QSurfaceFormat::setDefaultFormat(fmt);
 
-    MainWindow mainWindow;
+    QtMainWindow mainWindow;
 
-    GLWidget::setTransparent(parser.isSet(transparentOption));
-    if (GLWidget::isTransparent()) {
+    GLWidgets::setTransparent(parser.isSet(transparentOption));
+    if (GLWidgets::isTransparent()) {
         mainWindow.setAttribute(Qt::WA_TranslucentBackground);
         mainWindow.setAttribute(Qt::WA_NoSystemBackground, false);
     }

@@ -14,6 +14,13 @@ set(QT_OPENGL_SRCS
     ${GRA}/mainwindow.cpp
     ${GRA}/main.cpp
 )
+set(QT_OPENGL_FILES
+	${GRA}/logo.cpp
+	${GRA}/QtWindow.cpp
+	${GRA}/GLWidgets.cpp
+    ${GRA}/QtMainWindow.cpp
+    ${GRA}/main.cpp
+)
 
 # header files location
 # include_directories( ${SRC_DIR}/include )
@@ -32,7 +39,7 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 # FIND_PACKAGE(Qt5Widgets CONFIG REQUIRED)
 SET( QT_USE_QTGUI TRUE )
 SET( QT_USE_QTOPENGL TRUE )
-# INCLUDE(${QT_USE_FILE})
+#INCLUDE(${QT5_USE_FILE})
 
 # enable C++11 standard
 set (CMAKE_CXX_STANDARD 11)
@@ -41,7 +48,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -O3")
 add_compile_definitions(C_AS_LIB=1)
 
-add_executable (simulation ${QT_OPENGL_SRCS} ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Sim.cpp
+add_executable (simulation ${QT_OPENGL_FILES} ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Sim.cpp
                 ${SRC_DIR}/model/KinematicsModel.cpp
                 ${SRC_DIR}/model/Trajectory.cpp
                 ${SRC_DIR}/model/AngularKinematics.cpp
