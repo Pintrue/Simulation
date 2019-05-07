@@ -51,9 +51,9 @@
 #ifndef LOGO_H
 #define LOGO_H
 
-#include <qopengl.h>
-#include <QVector>
-#include <QVector3D>
+#include <QtGui/qopengl.h>
+#include <QtCore/QVector>
+#include <QtGui/QVector3D>
 
 class Logo
 {

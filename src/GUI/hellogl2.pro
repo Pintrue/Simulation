@@ -1,11 +1,11 @@
-HEADERS       = glwidget.h \
-                window.h \
-                mainwindow.h \
+HEADERS       = GLWidgets.hpp \
+                QtWindow.hpp \
+                QtMainWindow.hpp \
                 logo.h
-SOURCES       = glwidget.cpp \
+SOURCES       = GLWidget.cpp \
                 main.cpp \
-                window.cpp \
-                mainwindow.cpp \
+                QtWindow.cpp \
+                QtMainWindow.cpp \
                 logo.cpp
 
 QT           += widgets

@@ -1,9 +1,9 @@
 #include "QtMainWindow.hpp"
 #include "QtWindow.hpp"
 
-#include <QMenu>
-#include <QMenuBar>
-#include <QMessageBox>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QMessageBox>
 
 
 QtMainWindow::QtMainWindow() {
