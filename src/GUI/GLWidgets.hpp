@@ -49,6 +49,8 @@ class GLWidgets : public QGLWidget {
     	int _mRotX, _mRotY, _mRotZ, _scale;
     	QPoint _lastEEPos;
 
+		QPoint _mLastPos;
+
 		/**
 		 * TODO: put OpenGL components here
 		 * 
