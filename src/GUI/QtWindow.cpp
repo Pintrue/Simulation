@@ -40,6 +40,8 @@ QtWindow::QtWindow(QtMainWindow* mainWin)
 	 * connect(_angleInputTxt, SIGNAL(textChanged(const QString &)),
 						_glWidgets, SLOT(updateAngleInput(const QString &)));
 	 **/
+	connect(_angleInputTxt, SIGNAL(textChanged(const QString &)),
+						_glWidgets, SLOT(updateAngleInput(const QString &)));
 
 
 	// execute movement button
@@ -59,6 +61,7 @@ QtWindow::QtWindow(QtMainWindow* mainWin)
 	 * 
 	 * connect(_glWidgets, SIGNAL(updateEEPos(const QString &)), txSolutionInfo, SLOT(setText(const QString &))); 
 	 **/
+	connect(_glWidgets, SIGNAL(updateEEPos(const QString &)), _eePosInfoTxt, SLOT(setText(const QString &))); 
 	
 
 	QVBoxLayout* mainLayout = new QVBoxLayout;

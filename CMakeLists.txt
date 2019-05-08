@@ -16,10 +16,12 @@ set(QT_OPENGL_SRCS
 )
 set(QT_OPENGL_FILES
 	${GRA}/logo.cpp
+	${GRA}/Drawable.cpp
+	${GRA}/GLGraphics.cpp
 	${GRA}/QtWindow.cpp
 	${GRA}/GLWidgets.cpp
     ${GRA}/QtMainWindow.cpp
-    ${GRA}/main.cpp
+    ${GRA}/GUIMain.cpp
 )
 
 # header files location
@@ -62,4 +64,4 @@ add_executable (simulation ${QT_OPENGL_FILES} ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Si
                 ${C}/model.c
                 ${C}/rl_ddpg.c
                 ${C}/rl_utils.c)
-target_link_libraries (simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets)
+target_link_libraries (simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL")
