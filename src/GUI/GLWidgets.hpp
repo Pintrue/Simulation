@@ -3,24 +3,16 @@
 
 #include <QtWidgets/QOpenGLWidget>
 #include <QtCore/QTimer>
-#include "../Sim.hpp"
-// delete these...
 #include <QtGui/QOpenGLFunctions>
-#include <QtGui/QOpenGLVertexArrayObject>
-#include <QtGui/QOpenGLBuffer>
-#include <QtGui/QMatrix4x4>
-#include <QtGui/QOpenGLShaderProgram>
-#include "logo.h"
+#include "../Sim.hpp"
+#include "GLGraphics.hpp"
+
 
 class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 	Q_OBJECT
 	public:
 	    GLWidgets(QWidget* parent = 0);
 	    ~GLWidgets();
-
-		// del these...
-		static bool isTransparent() { return m_transparent; }
-		static void setTransparent(bool t) { m_transparent = t; }
 
 	    QSize minimumSizeHint() const override;
 	    QSize sizeHint() const override;
@@ -67,23 +59,8 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 		 * 
 		 * Graphics _graphics;
 		 **/
+		GLGraphics _glg;
 		Sim _sim;
-
-		// del these...
-	    void setupVertexAttribs();
-		bool m_core;
-		Logo m_logo;
-    	QOpenGLVertexArrayObject m_vao;
-    	QOpenGLBuffer m_logoVbo;
-    	QOpenGLShaderProgram *m_program;
-    	int m_projMatrixLoc;
-    	int m_mvMatrixLoc;
-    	int m_normalMatrixLoc;
-    	int m_lightPosLoc;
-    	QMatrix4x4 m_proj;
-    	QMatrix4x4 m_camera;
-    	QMatrix4x4 m_world;
-    	static bool m_transparent;
 };
 
 #endif
