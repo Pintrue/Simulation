@@ -47,3 +47,5 @@ cmake_install.cmake
 simulation
 */robot
 simulation_autogen/
+.qmake*
+*.cbp

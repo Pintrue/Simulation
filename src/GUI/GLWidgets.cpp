@@ -3,7 +3,6 @@
 #include <QtCore/QCoreApplication>
 
 // del these...
-#include <QtGui/QOpenGLFunctions>
 #include <math.h>
 
 bool GLWidgets::m_transparent = false;
@@ -32,9 +31,9 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent), m_program(0) {
     // --transparent causes the clear color to be transparent. Therefore, on systems that
     // support it, the widget will become transparent apart from the logo.
     if (m_transparent) {
-		// QSurfaceFormat fmt = format();
-        // fmt.setAlphaBufferSize(8);
-        // setFormat(fmt);
+		QSurfaceFormat fmt = format();
+        fmt.setAlphaBufferSize(8);
+        setFormat(fmt);
     }
 }
 
