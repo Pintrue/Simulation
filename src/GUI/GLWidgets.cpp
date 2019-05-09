@@ -13,7 +13,7 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 
 	_timer = new QTimer(this);
 	_timer->setInterval(500);
-	connect(_timer, SIGNAL(timeout()), this, SLOT(execAction()));
+	connect(_timer, SIGNAL(timeout()), this, SLOT(actionTraj()));
 
 	_glg._model.init(_sim._km);
 
@@ -112,6 +112,12 @@ void GLWidgets::updateAngleInput(const QString& input) {
 
 void GLWidgets::execAction() {
 	// TODO: implementation
+
+}
+
+
+void GLWidgets::actionTraj() {
+	
 }
 
 
