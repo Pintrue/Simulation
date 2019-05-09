@@ -17,7 +17,7 @@ QtWindow::QtWindow(QtMainWindow* mainWin)
 
 	_xSlider->setValue(15 * 16);
     _ySlider->setValue(345 * 16);
-    _zSlider->setValue(0 * 16);
+    _zSlider->setValue(360 * 16);
 
 	connect(_xSlider, &QSlider::valueChanged, _glWidgets,
 			&GLWidgets::setXRotation);
@@ -36,9 +36,6 @@ QtWindow::QtWindow(QtMainWindow* mainWin)
 	_angleInputTxt = new QLineEdit("0.0, 0.0, 0.0");
 	/**
 	 * TODO: implement slot function
-	 * 
-	 * connect(_angleInputTxt, SIGNAL(textChanged(const QString &)),
-						_glWidgets, SLOT(updateAngleInput(const QString &)));
 	 **/
 	connect(_angleInputTxt, SIGNAL(textChanged(const QString &)),
 						_glWidgets, SLOT(updateAngleInput(const QString &)));
@@ -49,7 +46,7 @@ QtWindow::QtWindow(QtMainWindow* mainWin)
 	/**
 	 * TODO: implement slot function
 	 * 
-	 * connect(_execActionBtn, SIGNAL(clicked()), _glWidgets, SLOT(executeMovement()));
+	 * connect(_execActionBtn, SIGNAL(clicked()), _glWidgets, SLOT(execAction()));
 	 **/
 
 	// current end-effector position after update

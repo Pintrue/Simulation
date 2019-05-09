@@ -4,6 +4,8 @@
 #include <kdl/chain.hpp>
 #include <kdl/frames_io.hpp>
 
+#define NUM_OF_JOINTS 3
+
 
 class KinematicsModel {
     public:

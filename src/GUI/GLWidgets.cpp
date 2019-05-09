@@ -13,11 +13,9 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 
 	_timer = new QTimer(this);
 	_timer->setInterval(500);
-	connect(_timer, SIGNAL(timeout()), this, SLOT(executeMovement()));
+	connect(_timer, SIGNAL(timeout()), this, SLOT(execAction()));
 
-	/**
-	 * TODO: intialize the graphics components here
-	 **/
+	_glg._model.init(_sim._km);
 
 	// initialize the kinematics modules
 	double ori[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
@@ -38,6 +36,7 @@ GLWidgets::~GLWidgets() {
 	 * makeCurrent();
 	 * _sim._glg.finish();
 	 **/
+	_glg._model.finish();
 	_sim._tjt.finish();
 }
 
@@ -111,7 +110,7 @@ void GLWidgets::updateAngleInput(const QString& input) {
 }
 
 
-void GLWidgets::executeMovement() {
+void GLWidgets::execAction() {
 	// TODO: implementation
 }
 
@@ -141,7 +140,7 @@ void GLWidgets::paintGL() {
 	glLoadIdentity();
 
 	// set camera orientation
-	gluLookAt(_cam[0],_cam[1],_cam[2],0,0,0,0,1,0);
+	gluLookAt(_cam[0], _cam[1], _cam[2], 0, 0, 0, 0, 1, 0);
 
 	// camera rotation around x,y,z axes
 	glRotated(_mRotX / 16.0, 1.0, 0.0, 0.0);
@@ -152,7 +151,7 @@ void GLWidgets::paintGL() {
 	// glScalef(_zoom, _zoom, 1.0f);
 
 	// render all components in the env
-	// _gfx._model.update(_sim._km, _sim._km._jointAngles);
+
 	_glg.render();
 
 	glFinish();

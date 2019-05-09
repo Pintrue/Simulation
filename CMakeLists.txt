@@ -7,15 +7,8 @@ project(Simulation)
 set (SRC_DIR "src")
 set (C "src/robot_reinforcement_learning/C")
 set (GRA "src/GUI")
-set(QT_OPENGL_SRCS
-	${GRA}/logo.cpp
-	${GRA}/window.cpp
-	${GRA}/glwidget.cpp
-    ${GRA}/mainwindow.cpp
-    ${GRA}/main.cpp
-)
+
 set(QT_OPENGL_FILES
-	${GRA}/logo.cpp
 	${GRA}/Drawable.cpp
 	${GRA}/GLGraphics.cpp
 	${GRA}/QtWindow.cpp
