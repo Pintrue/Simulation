@@ -26,6 +26,7 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 
 		void updateAngleInput(const QString& input);
 		void execAction();
+		void actionTraj();
 
 	    void cleanup();
 
