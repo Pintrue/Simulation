@@ -7,7 +7,7 @@
 using namespace std;
 
 
-void print_frame(const KDL::Frame &eeFrame) {// Print the frame
+void printFrame(const KDL::Frame& eeFrame) {// Print the frame
 	for (int i = 0; i < 4; i++){
 		for (int j = 0; j < 4; j++) {
 			double a = eeFrame(i, j);
@@ -18,4 +18,23 @@ void print_frame(const KDL::Frame &eeFrame) {// Print the frame
 		}
 		cout << endl;
 	}
+}
+
+
+void convFrameToPose(const KDL::Frame& frame, double pose[POSE_DIM]) {
+	/**
+	 * Pose is consist of cartesian coordinate and
+	 * orientation in the form of Euler angle, e.g.
+	 * 
+	 * 	pose => (x, y, z, alpha, beta, gamma)
+	 * 
+	**/
+
+	for (int i = 0; i < 3; ++i) {
+		pose[i] = frame.p(i);
+	}
+
+	double alp, bet, gam;	// Euler angles Z, Y, X
+	frame.M.GetEulerZYX(alp, bet, gam);
+	pose[3] = gam; pose[4] = bet; pose[5] = alp;
 }

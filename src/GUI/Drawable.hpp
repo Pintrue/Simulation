@@ -14,7 +14,6 @@ class Drawable {
 		virtual void draw() = 0; // pure virtual func.
 		void setPose(double pose[POSE_DIM]);
 
-	protected:
 		double _pose[POSE_DIM];
 };
 
@@ -29,9 +28,9 @@ class Floor : public Drawable {
 };
 
 
-class Joint : public Drawable {
+class Jnt : public Drawable {
 	public:
-		Joint();
+		Jnt();
 		
 		void draw() override;
 
@@ -40,7 +39,7 @@ class Joint : public Drawable {
 };
 
 
-class BaseJoint : public Joint {
+class BaseJoint : public Jnt {
 	public:
 		BaseJoint(double height, double radius);
 
@@ -48,7 +47,7 @@ class BaseJoint : public Joint {
 };
 
 
-class ArmJoint : public Drawable {
+class ArmJoint : public Jnt {
 	public:
 		ArmJoint(double height, double radius);
 
@@ -56,7 +55,7 @@ class ArmJoint : public Drawable {
 };
 
 
-class ForearmJoint : public Drawable {
+class ForearmJoint : public Jnt {
 	public:
 		ForearmJoint(double height, double radius);
 
@@ -64,7 +63,7 @@ class ForearmJoint : public Drawable {
 };
 
 
-class EndEffector : public Drawable {
+class EndEffector : public Jnt {
 	public:
 		EndEffector(double radius);
 
@@ -78,8 +77,13 @@ class Model : public Drawable {
 
 		void init(const KinematicsModel& km);
 		void finish();
-		void update(const KinematicsModel& km, );
+		void update(const KinematicsModel& km, const KDL::JntArray& jnts);
 		void draw() override;
+
+	protected:
+
+	    typedef std::vector<Drawable*> JointList;
+	    JointList _joints;
 };
 
 #endif

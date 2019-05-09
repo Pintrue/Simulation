@@ -5,6 +5,7 @@
 #include <QtCore/QTimer>
 #include <QtGui/QOpenGLFunctions>
 #include "../Sim.hpp"
+#include "../model/KinematicsModel.hpp"
 #include "GLGraphics.hpp"
 
 
@@ -24,7 +25,7 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 		// void setScale(int scale);
 
 		void updateAngleInput(const QString& input);
-		void executeMovement();
+		void execAction();
 
 	    void cleanup();
 

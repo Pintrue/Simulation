@@ -7,7 +7,8 @@ class GLGraphics {
 	public:
 		void render();
 
-		Floor _floor;	
+		Floor _floor;
+		Model _model;
 };
 
 #endif

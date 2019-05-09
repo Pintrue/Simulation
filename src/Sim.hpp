@@ -1,7 +1,6 @@
 #ifndef SIM_HPP
 #define SIM_HPP
 
-#define NUM_OF_JOINTS 3
 
 #include "model/KinematicsModel.hpp"
 #include "model/Trajectory.hpp"
