@@ -5,6 +5,8 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
+#include <kdl/jntarray.hpp>
+
 
 GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 	// initial camera angles
