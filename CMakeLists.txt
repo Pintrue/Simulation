@@ -47,6 +47,7 @@ add_executable (simulation ${QT_OPENGL_FILES} ${SRC_DIR}/C_api.cpp ${SRC_DIR}/Si
                 ${SRC_DIR}/model/KinematicsModel.cpp
                 ${SRC_DIR}/model/Trajectory.cpp
                 ${SRC_DIR}/model/AngularKinematics.cpp
+				${SRC_DIR}/model/Constraints.cpp
                 ${SRC_DIR}/utils/Utils.cpp
                 ${C}/main.c
                 ${C}/matrix_op.c

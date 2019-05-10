@@ -37,7 +37,7 @@ void Drawable::setPose(double pose[POSE_DIM]) {
 
 /**
  * 
- * Note floor is defined in X-Z plane, according to right-hand system
+ * Note floor is defined in X-Z plane, according to left-hand system
  * 
  **/
 Floor::Floor() : Drawable(), startX(FLR_MIN_X), endX(FLR_MAX_X),
@@ -223,6 +223,11 @@ void Model::init(const KinematicsModel& km) {
 		double pose[POSE_DIM];
 		convFrameToPose(frame, pose);
 
+		// cout << "Joint " << i << " has pose ";
+		// for (int i = 0; i < 3; ++i) {
+		// 	cout << pose[i] << " ";
+		// }
+		// cout << endl;
 		_joints[i]->setPose(pose);
 	}
 }
@@ -242,7 +247,7 @@ void Model::finish() {
 void Model::update(const KinematicsModel& km, const KDL::JntArray& jnts) {
 	Frame frame;
 	double q[5];
-
+	cout << "HERE" << endl;
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		q[i + 1] = jnts(i);
 	}

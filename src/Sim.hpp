@@ -20,7 +20,7 @@ class Sim {
 		KinematicsModel _km;// kinematics model
 		Trajectory _tjt;    // trajectory model
 
-		double target[CART_DIM];
+		double _target[CART_DIM];
 
 	private:
 

@@ -84,33 +84,33 @@ matrix_t* function_call_test() {
 
 // int main() {
 // 	// // origin where the robot is based
-// 	// double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
+// 	double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
 	
-// 	// Sim sim(pos);
+// 	Sim sim(pos);
 
-// 	// // JntArray toJA = JntArray(NUM_OF_JOINTS);
-// 	// // toJA(0) = M_PI / 2;			// Joint 1
-// 	// // toJA(1) = 0;			        // Joint 2
-// 	// // toJA(2) = -(80.0/180.0*M_PI);// Joint 3
-
-// 	// // verification
 // 	// JntArray toJA = JntArray(NUM_OF_JOINTS);
-// 	// toJA(0) = 0;//M_PI;			// Joint 1
-// 	// toJA(1) = 0;			// Joint 2
-// 	// toJA(2) = -M_PI/2;			// Joint 3
+// 	// toJA(0) = M_PI / 2;			// Joint 1
+// 	// toJA(1) = 0;			        // Joint 2
+// 	// toJA(2) = -(80.0/180.0*M_PI);// Joint 3
 
-// 	// // double toA[3] = {M_PI, 0.0, 0.0};
-// 	// // sim.moveByJointAngles(toA, 10.0);
+// 	// verification
+// 	JntArray toJA = JntArray(NUM_OF_JOINTS);
+// 	toJA(0) = M_PI / 2;			// Joint 1
+// 	toJA(1) = 0;			// Joint 2
+// 	toJA(2) = 0;			// Joint 3
 
-// 	// Frame eeFrame;
-// 	// sim._km.jntsToCart(toJA, eeFrame);
+// 	// double toA[3] = {M_PI, 0.0, 0.0};
+// 	// sim.moveByJointAngles(toA, 10.0);
+
+// 	Frame eeFrame;
+// 	sim._km.jntsToCart(toJA, eeFrame);
 	
-// 	// // Provide this as API
-// 	// sim._km._cartPose = eeFrame;
-// 	// // printFrame(eeFrame);
-// 	// printFrame(sim._km._cartPose);
+// 	// Provide this as API
+// 	sim._km._cartPose = eeFrame;
+// 	// printFrame(eeFrame);
+// 	printFrame(sim._km._cartPose);
 
-// 	// cout << "Done" << endl;
+// 	cout << "Done" << endl;
 
 // 	// // Function call from C
 // 	// cout << endl << "Function call from C" << endl; 

@@ -3,6 +3,7 @@
 
 #define CART_DIM 3
 #define FULL_STATE_NUM_COLS 10
+#define ACTION_DIM 3
 
 #include "robot_reinforcement_learning/C/matrix_op.h"
 #include "Sim.hpp"
