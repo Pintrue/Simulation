@@ -15,6 +15,7 @@ set(QT_OPENGL_FILES
 	${GRA}/GLWidgets.cpp
     ${GRA}/QtMainWindow.cpp
     ${GRA}/GUIMain.cpp
+	${GRA}/UIUtils.cpp
 )
 
 # header files location

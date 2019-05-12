@@ -2,6 +2,7 @@
 #include <kdl/chain.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
 #include "KinematicsModel.hpp"
+#include "../utils/Utils.hpp"
 
 using namespace std;
 using namespace KDL;
@@ -48,7 +49,13 @@ void KinematicsModel::init(double origin[3]) {
 bool KinematicsModel::jntsToCart(const JntArray& jointAngles, Frame& eeFrame) {
 	ChainFkSolverPos_recursive fKSolver =
 		ChainFkSolverPos_recursive(_kdlChain);
-
+	
+	// for (int i = 0; i < 3; ++i)
+	// 	cout << jointAngles(i) << " ";
+	// cout << endl;
+	// cout << "HERE" << endl;
+	// fKSolver.JntToCart(jointAngles, eeFrame);
+	// printFrame(eeFrame);
 	if (fKSolver.JntToCart(jointAngles, eeFrame) >= 0) {
 		_cartPose = eeFrame;
 		_jointAngles = jointAngles;

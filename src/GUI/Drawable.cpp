@@ -112,7 +112,6 @@ BaseJoint::BaseJoint(double height, double radius) : Jnt() {
 
 void BaseJoint::draw() {
 	glPushMatrix();
-		// cout << "Base joint " << _pose[0] << " " << _pose[1] << " " << _pose[2] << endl;
 		glTranslatef(_pose[0], _pose[1] - _height, _pose[2]);
 		glRotated(_pose[5], 0, 0, 1);
 		glRotated(_pose[4], 0, 1, 0);
@@ -136,17 +135,13 @@ ArmJoint::ArmJoint(double height, double radius) : Jnt() {
 
 void ArmJoint::draw() {
 	glPushMatrix();
-		// cout << "Arm joint " << _pose[0] << " " << _pose[1] << " " << _pose[2] << endl;
+
 		glTranslatef(_pose[0], _pose[1], _pose[2]);
 		glRotated(_pose[5], 0, 0, 1);
 		glRotated(_pose[4], 0, 1, 0);
 		glRotated(_pose[3], 1, 0, 0);
 		glColor3d(0.0, 1.0, 0.0);
 
-		// GLUquadricObj* quadratic;
-		// quadratic = gluNewQuadric();
-		// glRotated(90.0, 0.0, 1.0, 0.0);
-		// gluCylinder(quadratic, _radius, _radius, _height, 10, 25);
 		gluSphere(gluNewQuadric(), _radius, 10, 25);
 
 	glPopMatrix();
@@ -161,7 +156,6 @@ ForearmJoint::ForearmJoint(double height, double radius) {
 
 void ForearmJoint::draw() {
 	glPushMatrix();
-
 		// cout << "Forearm joint " << _pose[0] << " " << _pose[1] << " " << _pose[2] << endl;
 		glTranslatef(_pose[0], _pose[1], _pose[2]);
 		glRotated(_pose[5], 0, 0, 1);
@@ -169,10 +163,6 @@ void ForearmJoint::draw() {
 		glRotated(_pose[3], 1, 0, 0);
 		glColor3d(0.0, 1.0, 0.0);
 
-		// GLUquadricObj* quadratic;
-		// quadratic = gluNewQuadric();
-		// glRotated(90.0, 0.0, 1.0, 0.0);
-		// gluCylinder(quadratic, _radius, _radius, _height, 10, 25);
 		gluSphere(gluNewQuadric(), _radius, 10, 25);
 
 	glPopMatrix();
@@ -186,16 +176,13 @@ EndEffector::EndEffector(double radius) {
 
 void EndEffector::draw() {
 	glPushMatrix();
+
 		glTranslatef(_pose[0], _pose[1], _pose[2]);
 		glRotated(_pose[5], 0, 0, 1);
 		glRotated(_pose[4], 0, 1, 0);
 		glRotated(_pose[3], 1, 0, 0);
 		glColor3d(1.0, 0.0, 0.0);
 
-		// GLUquadricObj* quadratic;
-		// quadratic = gluNewQuadric();
-		// glRotated(90.0, 0.0, 1.0, 0.0);
-		// gluCylinder(quadratic, _radius, _radius, _height, 10, 25);
 		gluSphere(gluNewQuadric(), _radius, 10, 25);
 
 	glPopMatrix();
@@ -217,17 +204,13 @@ void Model::init(const KinematicsModel& km) {
 	_joints.push_back(new EndEffector(2.1));
 
 	unsigned int numSegmnts = km._kdlChain.getNrOfSegments();
+
 	for (unsigned int i = 0; i < numSegmnts; ++i) {
 		frame = frame * km._kdlChain.getSegment(i).pose(0.0);
 
 		double pose[POSE_DIM];
 		convFrameToPose(frame, pose);
 
-		// cout << "Joint " << i << " has pose ";
-		// for (int i = 0; i < 3; ++i) {
-		// 	cout << pose[i] << " ";
-		// }
-		// cout << endl;
 		_joints[i]->setPose(pose);
 	}
 }
@@ -246,18 +229,27 @@ void Model::finish() {
 
 void Model::update(const KinematicsModel& km, const KDL::JntArray& jnts) {
 	Frame frame;
-	double q[5];
-	cout << "HERE" << endl;
-	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		q[i + 1] = jnts(i);
-	}
-	q[0] = 0.0; q[4] = 0.0;
-
 	unsigned int numSegmnts = km._kdlChain.getNrOfSegments();
-	for (unsigned int i = 0; i < numSegmnts; ++i) {
-		frame = frame * km._kdlChain.getSegment(i).pose(q[i]);
 
-		double pose[POSE_DIM];
+	int iter = 0;
+	if (km._kdlChain.getSegment(0).getJoint().getType() != Joint::None) {
+		frame = km._kdlChain.getSegment(0).pose(jnts(iter));
+		++iter;
+	} else {
+		frame = km._kdlChain.getSegment(0).pose(0.0);
+	}
+
+	double pose[POSE_DIM];
+	convFrameToPose(frame, pose);
+	_joints[0]->setPose(pose);
+
+	for (unsigned int i = 1; i < numSegmnts; ++i) {
+		if (km._kdlChain.getSegment(i).getJoint().getType() != Joint::None) {
+			frame = frame * km._kdlChain.getSegment(i).pose(jnts(iter));
+			++iter;
+		} else {
+			frame = frame * km._kdlChain.getSegment(i).pose(0.0);
+		}
 		convFrameToPose(frame, pose);
 
 		_joints[i]->setPose(pose);

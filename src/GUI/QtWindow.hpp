@@ -7,6 +7,7 @@
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QRadioButton>
 
 
 class QtWindow : public QWidget {
@@ -18,8 +19,8 @@ class QtWindow : public QWidget {
 	protected:
 		void keyPressEvent(QKeyEvent* event) override;
 	
-	private slots:
-		void execAction();
+	// private slots:
+	// 	void execAction();
 
 	private:
 		QSlider* createSlider();
@@ -31,6 +32,7 @@ class QtWindow : public QWidget {
 		QSlider* _zSlider;
 
 		QLineEdit* _angleInputTxt;
+		QRadioButton* _enableTrajBtn;
 		QPushButton* _execActionBtn;
 		QLineEdit* _eePosInfoTxt;
 

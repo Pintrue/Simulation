@@ -99,9 +99,6 @@ matrix_t* function_call_test() {
 // 	toJA(1) = 0;			// Joint 2
 // 	toJA(2) = 0;			// Joint 3
 
-// 	// double toA[3] = {M_PI, 0.0, 0.0};
-// 	// sim.moveByJointAngles(toA, 10.0);
-
 // 	Frame eeFrame;
 // 	sim._km.jntsToCart(toJA, eeFrame);
 	

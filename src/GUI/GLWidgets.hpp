@@ -25,8 +25,10 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 		// void setScale(int scale);
 
 		void updateAngleInput(const QString& input);
+		void enableTraj(bool on);
 		void execAction();
-		void actionTraj();
+		void plainAction();
+		void trajAction();
 
 	    void cleanup();
 
@@ -48,6 +50,8 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 
 	private:
 		QString _angleInput;
+		double _jointAngles[NUM_OF_JOINTS];
+		bool _trajOn;
 		QTimer* _timer;
 
 		float _cam[3];
