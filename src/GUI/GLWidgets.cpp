@@ -1,11 +1,15 @@
 #include "GLWidgets.hpp"
 #include <QtGui/QMouseEvent>
 #include <QtCore/QCoreApplication>
+#include <QtWidgets/QMessageBox>
 #include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+#include "../model/Constraints.hpp"
+#include "UIUtils.hpp"
+#include "../utils/Utils.hpp"
 
-#include <kdl/jntarray.hpp>
+using namespace std;
 
 
 GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
@@ -15,14 +19,17 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 
 	_timer = new QTimer(this);
 	_timer->setInterval(500);
-	connect(_timer, SIGNAL(timeout()), this, SLOT(actionTraj()));
+	connect(_timer, SIGNAL(timeout()), this, SLOT(trajAction()));
 
-	_glg._model.init(_sim._km);
 
 	// initialize the kinematics modules
 	double ori[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
-	_sim._km.init(ori);
-	_sim._tjt.init(NUM_OF_JOINTS);
+	_sim = Sim(ori);
+
+	// initialize the graphical modules
+	_glg._model.init(_sim._km);
+
+	_angleInput = "0.0, 0.0, 0.0";
 }
 
 
@@ -105,20 +112,67 @@ void GLWidgets::setZRotation(int angle) {
 
 
 void GLWidgets::updateAngleInput(const QString& input) {
-	_angleInput = input;
 
+	_angleInput = input;
+	
 	// emit updateEEPos(input);
 	// update();
 }
 
 
-void GLWidgets::execAction() {
-	// TODO: implementation
-
+void GLWidgets::enableTraj(bool on) {
+	_trajOn = on;
 }
 
 
-void GLWidgets::actionTraj() {
+void GLWidgets::execAction() {
+	double ja[NUM_OF_JOINTS];
+	if (isValidJAFormat(_angleInput, ja)) {
+		copy(begin(ja), end(ja), begin(_jointAngles));
+		// for (int i = 0; i < 3; ++i)
+		// 	cout << _jointAngles[i] << " ";
+		// cout << endl;
+		if (_trajOn) {
+		// TODO: with trajectory
+			return;
+		} else {
+			plainAction();
+			return;
+		}
+	} else {
+		QMessageBox::information(0, tr("Stop"), tr("Invalid input format - try again."));
+	}
+}
+
+
+void GLWidgets::plainAction() {
+	KDL::JntArray jnts = KDL::JntArray(NUM_OF_JOINTS);
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		jnts(i) = _jointAngles[i];
+	}
+
+	// for (int i = 0; i < 3; ++i)
+	// 	cout << jnts(i) << " ";
+	// cout << endl;
+	
+	KDL::Frame eeFrame;
+	if (_sim._km.jntsToCart(jnts, eeFrame)) {
+		double pose[POSE_DIM];
+		convFrameToPose(eeFrame, pose);
+		QString eePos = QString("[%1, %2, %3]")
+             .arg(QString::number(pose[0], 'f', 2),
+			 		QString::number(pose[1], 'f', 2),
+					QString::number(pose[2], 'f', 2));
+		emit updateEEPos(eePos);
+	} else {
+		QMessageBox::information(0, tr("Stop"), tr("No solution - try again."));
+	}
+
+	update();
+}
+
+
+void GLWidgets::trajAction() {
 	
 }
 
@@ -159,7 +213,7 @@ void GLWidgets::paintGL() {
 	// glScalef(_zoom, _zoom, 1.0f);
 
 	// render all components in the env
-
+	_glg._model.update(_sim._km, _sim._km._jointAngles);
 	_glg.render();
 
 	glFinish();

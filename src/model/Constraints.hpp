@@ -15,7 +15,10 @@
 #define GROUND_OUT_RADIUS 24.0
 
 
-void regulateJntAngles(const KDL::JntArray& jntAngles,
+bool areInValidRanges(double jntAngles[NUM_OF_JOINTS],
+						double result[NUM_OF_JOINTS]);
+
+bool regulateJntAngles(const KDL::JntArray& jntAngles,
 						const double delta[ACTION_DIM],
 						double result[NUM_OF_JOINTS]);
 

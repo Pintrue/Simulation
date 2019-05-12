@@ -34,30 +34,23 @@ QtWindow::QtWindow(QtMainWindow* mainWin)
 
 	// user input of angles to be executed
 	_angleInputTxt = new QLineEdit("0.0, 0.0, 0.0");
-	/**
-	 * TODO: implement slot function
-	 **/
 	connect(_angleInputTxt, SIGNAL(textChanged(const QString &)),
-						_glWidgets, SLOT(updateAngleInput(const QString &)));
+			_glWidgets, SLOT(updateAngleInput(const QString &)));
 
+
+	//enable trajectory rendering
+	_enableTrajBtn = new QRadioButton(tr("Trajectory"));
+	connect(_enableTrajBtn, SIGNAL(toggled(bool)),
+			_glWidgets, SLOT(enableTraj(bool)));
 
 	// execute movement button
 	_execActionBtn = new QPushButton(tr("Execute"));
-	/**
-	 * TODO: implement slot function
-	 * 
-	 * connect(_execActionBtn, SIGNAL(clicked()), _glWidgets, SLOT(execAction()));
-	 **/
+	connect(_execActionBtn, SIGNAL(clicked()), _glWidgets, SLOT(execAction()));
 
 	// current end-effector position after update
 	_eePosInfoTxt = new QLineEdit("N/P");
     _eePosInfoTxt->setReadOnly(true);
 	_eePosInfoTxt->setStyleSheet(QString("color: blue; background: beige"));
-	/**
-	 * TODO: implement slot function
-	 * 
-	 * connect(_glWidgets, SIGNAL(updateEEPos(const QString &)), txSolutionInfo, SLOT(setText(const QString &))); 
-	 **/
 	connect(_glWidgets, SIGNAL(updateEEPos(const QString &)), _eePosInfoTxt, SLOT(setText(const QString &))); 
 	
 
@@ -71,6 +64,7 @@ QtWindow::QtWindow(QtMainWindow* mainWin)
 	container->addWidget(_zSlider);
 
 	widgetLayout->addWidget(_angleInputTxt);
+	widgetLayout->addWidget(_enableTrajBtn);
 	widgetLayout->addWidget(_execActionBtn);
 	widgetLayout->addWidget(_eePosInfoTxt);
 
@@ -92,11 +86,6 @@ void QtWindow::keyPressEvent(QKeyEvent* event) {
 	}
 }
 
-
-void QtWindow::execAction() {
-	// TODO: implementation
-	return;
-}
 
 QSlider* QtWindow::createSlider() {
 	QSlider* slider = new QSlider(Qt::Vertical);

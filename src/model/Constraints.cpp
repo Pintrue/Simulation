@@ -3,12 +3,38 @@
 
 using namespace std;
 
-void regulateJntAngles(const KDL::JntArray& jntAngles,
+
+bool areInValidRanges(double jntAngles[NUM_OF_JOINTS],
+						double result[NUM_OF_JOINTS]) {
+	result[0] = min(max(jntAngles[0], JA0_L), JA0_U);
+	result[1] = min(max(jntAngles[1], JA1_L), JA1_U);
+	result[2] = min(max(jntAngles[2], JA2_L), JA2_U);
+	return (jntAngles[0] == result[0]) && (jntAngles[1] == result[1]) && (jntAngles[2] == result[2]);
+}
+
+
+// if get regulated - true -> invalid; false -> valid
+bool regulateJntAngles(const KDL::JntArray& jntAngles,
 						const double delta[ACTION_DIM],
 						double result[FULL_STATE_NUM_COLS]) {
-	result[0] = min(max(jntAngles(0)+delta[0], JA0_L), JA0_U);
-	result[1] = min(max(jntAngles(1)+delta[1], JA1_L), JA1_U);
-	result[2] = min(max(jntAngles(2)+delta[2], JA2_L), JA2_U);
+	double ja[NUM_OF_JOINTS];
+	ja[0] = jntAngles(0)+delta[0];
+	ja[1] = jntAngles(1)+delta[1];
+	ja[2] = jntAngles(2)+delta[2];
+
+	double check[NUM_OF_JOINTS];
+	if (areInValidRanges(ja, check)) {
+		for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+			result[i] = check[i];
+		}
+		return true;
+	} else {
+		return false;
+	}
+	// result[0] = min(max(ja0, JA0_L), JA0_U);
+	// result[1] = min(max(ja1, JA1_L), JA1_U);
+	// result[2] = min(max(ja2, JA2_L), JA2_U);
+	
 }
 
 
