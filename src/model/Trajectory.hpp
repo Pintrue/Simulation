@@ -9,7 +9,7 @@ class Trajectory {
 	public:
 		Trajectory();
 		void init(int numJoints);
-		void prepare(KDL::JntArray& start, KDL::JntArray& end, double t);
+		void prepare(KDL::JntArray& start, KDL::JntArray& end, double duration);
 		bool nextTimeStep(double tNow, KDL::JntArray& next);
 		void finish();
 		double timeNow();

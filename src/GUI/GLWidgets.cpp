@@ -19,7 +19,7 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 
 	_timer = new QTimer(this);
 	_timer->setInterval(500);
-	connect(_timer, SIGNAL(timeout()), this, SLOT(trajAction()));
+	connect(_timer, SIGNAL(timeout()), this, SLOT(trajNextTimeStep()));
 
 
 	// initialize the kinematics modules
@@ -30,6 +30,7 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 	_glg._model.init(_sim._km);
 
 	_angleInput = "0.0, 0.0, 0.0";
+	_ja = KDL::JntArray(NUM_OF_JOINTS);
 }
 
 
@@ -126,18 +127,18 @@ void GLWidgets::enableTraj(bool on) {
 
 
 void GLWidgets::execAction() {
-	double ja[NUM_OF_JOINTS];
-	if (isValidJAFormat(_angleInput, ja)) {
-		copy(begin(ja), end(ja), begin(_jointAngles));
-		// for (int i = 0; i < 3; ++i)
-		// 	cout << _jointAngles[i] << " ";
-		// cout << endl;
+	double checkJA[NUM_OF_JOINTS];
+	if (isValidJAFormat(_angleInput, checkJA)) {
+		for (int i = 0; i < NUM_OF_JOINTS; ++i)
+			_ja(i) = checkJA[i];
+		// copy(begin(checkJA), end(checkJA), begin(_jointAngles));
+
 		if (_trajOn) {
-		// TODO: with trajectory
+		// TODO: implement trajectory actions
+			trajAction();
 			return;
 		} else {
 			plainAction();
-			return;
 		}
 	} else {
 		QMessageBox::information(0, tr("Stop"), tr("Invalid input format - try again."));
@@ -146,17 +147,13 @@ void GLWidgets::execAction() {
 
 
 void GLWidgets::plainAction() {
-	KDL::JntArray jnts = KDL::JntArray(NUM_OF_JOINTS);
-	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		jnts(i) = _jointAngles[i];
-	}
-
-	// for (int i = 0; i < 3; ++i)
-	// 	cout << jnts(i) << " ";
-	// cout << endl;
+	// KDL::JntArray toJA = KDL::JntArray(NUM_OF_JOINTS);
+	// for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+	// 	toJA(i) = _jointAngles[i];
+	// }
 	
 	KDL::Frame eeFrame;
-	if (_sim._km.jntsToCart(jnts, eeFrame)) {
+	if (_sim._km.jntsToCart(_ja, eeFrame)) {
 		double pose[POSE_DIM];
 		convFrameToPose(eeFrame, pose);
 		QString eePos = QString("[%1, %2, %3]")
@@ -166,6 +163,7 @@ void GLWidgets::plainAction() {
 		emit updateEEPos(eePos);
 	} else {
 		QMessageBox::information(0, tr("Stop"), tr("No solution - try again."));
+		_timer->stop();
 	}
 
 	update();
@@ -173,7 +171,28 @@ void GLWidgets::plainAction() {
 
 
 void GLWidgets::trajAction() {
-	
+	// KDL::JntArray toJA = KDL::JntArray(NUM_OF_JOINTS);
+	// for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+	// 	toJA(i) = _jointAngles[i];
+	// }
+	/**
+	 * prepare the trajectory from the current angle (1st param.)
+	 * to the intended angle (2nd param.)
+	 **/
+	_sim._tjt.prepare(_sim._km._jointAngles, _ja, 10.0);
+	_timer->start();
+}
+
+
+void GLWidgets::trajNextTimeStep() {
+	KDL::JntArray nextJA = KDL::JntArray(NUM_OF_JOINTS);
+	if (!_sim._tjt.nextTimeStep(_sim._tjt.timeNow() + 1, nextJA)) {
+		_timer->stop();
+	}
+
+	// KDL::Frame eeFrame;
+	_ja = nextJA;
+	plainAction();
 }
 
 
