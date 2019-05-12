@@ -19,9 +19,9 @@ void Trajectory::init(int numJoints) {
 }
 
 
-void Trajectory::prepare(JntArray& start, JntArray& end, double t) {
+void Trajectory::prepare(JntArray& start, JntArray& end, double duration) {
 	_tNow = 0;	// local time in the trajectory process
-	_tEnd = t;	// total time of the trajectory process
+	_tEnd = duration;	// total time of the trajectory process
 	AngularKinematics::TemporalData s, e;
 
 	for (int i = 0; i < _joints.size(); ++i) {
@@ -30,7 +30,7 @@ void Trajectory::prepare(JntArray& start, JntArray& end, double t) {
 		s.velocity = 0;
 		e.velocity = 0;
 
-		_joints[i]->init(s, e, t);
+		_joints[i]->init(s, e, duration);
 	}
 }
 
@@ -46,7 +46,7 @@ bool Trajectory::nextTimeStep(double tNow, JntArray& next) {
 	for (int i = 0; i < _joints.size(); ++i) {
 		_joints[i]->angleAtTime(_tNow, &angle);
 		next(i) = angle;
-		cout << i << " th joint's angle is " << angle << endl;
+		// cout << i << " th joint's angle is " << angle << endl;
 	}
 
 	return _tNow < _tEnd; // If trajectory is still in progress

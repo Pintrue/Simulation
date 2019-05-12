@@ -29,6 +29,7 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 		void execAction();
 		void plainAction();
 		void trajAction();
+		void trajNextTimeStep();
 
 	    void cleanup();
 
@@ -50,7 +51,8 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 
 	private:
 		QString _angleInput;
-		double _jointAngles[NUM_OF_JOINTS];
+		// double _jointAngles[NUM_OF_JOINTS];
+		KDL::JntArray _ja;
 		bool _trajOn;
 		QTimer* _timer;
 
