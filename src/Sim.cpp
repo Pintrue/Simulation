@@ -19,6 +19,8 @@ Sim::Sim() {
 	JntArray fromJA = JntArray(NUM_OF_JOINTS);
 	_km._jointAngles = fromJA;
 	SetToZero(_km._jointAngles);
+
+	_numOfSteps = 0;
 }
 
 

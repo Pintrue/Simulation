@@ -10,7 +10,7 @@
 #define JA1_U 120.0/180.0*M_PI
 #define JA2_L -M_PI/2
 #define JA2_U 0.0
-#define TIP_REACHED_RANGE 5.0
+
 
 using namespace std;
 using namespace KDL;
@@ -25,6 +25,8 @@ int initEnv() {
 
 
 matrix_t* resetState(int randAngle, int destPos) {
+	sim._numOfSteps = 0;	// reset number of steps executed
+
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
 	double* data = fullState->data;
 	
@@ -33,9 +35,6 @@ matrix_t* resetState(int randAngle, int destPos) {
 		data[0] = rand_uniform(JA0_L, JA0_U);
 		data[1] = rand_uniform(JA1_L, JA1_U);
 		data[2] = rand_uniform(JA2_L, JA2_U);
-		// data[0] = 0;
-		// data[1] = 0;
-		// data[2] = -M_PI/2;
 	}
 
 	// setting the current position of the end-effector
@@ -46,16 +45,6 @@ matrix_t* resetState(int randAngle, int destPos) {
 
 	Frame eeFrame;
 	sim._km.jntsToCart(angle, eeFrame);
-	
-	// // double a, b, g;
-	// // cout << "TESTING" << endl;
-	// // eeFrame.M.GetEulerZYX(a, b, g);
-	// cout << RAD_TO_DEG(g) << ", " << RAD_TO_DEG(b) << ", " << RAD_TO_DEG(g) << endl;
-	
-	for (int i = 0; i < CART_DIM; ++i) {
-		data[i + 3] = eeFrame.p(i);
-	}
-	// cout << "ENDED" << endl;
 	
 	// setting the target position for the end-effector
 	if (destPos == 1) {
@@ -69,13 +58,20 @@ matrix_t* resetState(int randAngle, int destPos) {
 		} while (!inGroundLvlWorkspace(dest));
 
 		for (int i = 0; i < CART_DIM; ++i) {
-			data[i + 6] = dest[i];
+			data[i + 3] = dest[i];
 		}
 	}
 
 	for (int i = 0; i < CART_DIM; ++i) {
-		sim._target[i] = data[i + 6];
+		sim._target[i] = data[i + 3];
 	}
+
+	for (int i = 0; i < CART_DIM; ++i) {
+		data[i + 6] = eeFrame.p(i);
+	}
+
+	data[9] = 0;	// terminal flag
+	data[10] = -1;	// reward bit
 
 	return fullState;
 }
@@ -93,7 +89,14 @@ int ifInReach(double fullState[FULL_STATE_NUM_COLS]) {
 }
 
 
+void setRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
+	fullState[10] = ifInReach(fullState) ? 0 : -1;
+}
+
+
 matrix_t* step(matrix_t* action) {
+	sim._numOfSteps += 1;	// increment the number of steps executed
+
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
 	double* data = fullState->data;
 	double* delta = action->data;
@@ -112,21 +115,22 @@ matrix_t* step(matrix_t* action) {
 		toJA(i) = data[i];
 	}
 
+	for (int i = 0; i < CART_DIM; ++i) {
+		data[i + 3] = sim._target[i];
+	}
+
 	Frame eeFrame;
 	sim._km.jntsToCart(toJA, eeFrame);
 
 	for (int i = 0; i < CART_DIM; ++i) {
-		data[i + 3] = eeFrame.p(i);
+		data[i + 6] = eeFrame.p(i);
 	}
-
-	for (int i = 0; i < CART_DIM; ++i) {
-		data[i + 6] = sim._target[i];
-	}
-
-	// set the terminal flag to 1, if within reach
-	if (ifInReach(data)) {
+	// this simulation set-up should terminate after 50 steps
+	if (sim._numOfSteps >= 50)
 		data[9] = 1;
-	}
+
+	// set the reward function
+	setRewardBit(data);
 
 	return fullState;
 }
@@ -135,6 +139,7 @@ matrix_t* step(matrix_t* action) {
 // int main() {
 // 	initEnv();
 // 	while (1) {
+// 		cout << "Initialize all states" << endl;
 // 		matrix_t* full = resetState(1, 1);
 // 		double* data = full->data;
 // 		for (int i = 0; i < full->rows; ++i) {
@@ -144,6 +149,14 @@ matrix_t* step(matrix_t* action) {
 // 		}
 // 		cout << endl;
 
+// 		// setRewardBit(data);
+// 		// for (int i = 0; i < full->rows; ++i) {
+// 		// 	for (int j = 0; j < full->cols; ++j) {
+// 		// 		cout << *(data + i * full->cols + j) << " ";
+// 		// 	}
+// 		// }
+
+// 		cout << "Make one step" << endl;
 // 		matrix_t* delta = new_matrix(1, 3);
 // 		delta->data[0] = 0.1;
 // 		delta->data[1] = 0;
@@ -156,9 +169,9 @@ matrix_t* step(matrix_t* action) {
 // 			}
 // 		}
 // 		cout << endl;
-// 		// cout << endl;
 // 		// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
 // 		// cout << ifInReach(test) << endl;
+
 // 		break;
 // 	}
 // 	return 0;

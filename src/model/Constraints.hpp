@@ -11,8 +11,8 @@
 #define JA1_U 120.0/180.0*M_PI
 #define JA2_L -M_PI/2
 #define JA2_U 0.0
-#define GROUND_INN_RADIUS 10.5
-#define GROUND_OUT_RADIUS 24.0
+#define GROUND_INN_RADIUS 13.5
+#define GROUND_OUT_RADIUS 27.0
 
 
 bool areInValidRanges(double jntAngles[NUM_OF_JOINTS],
