@@ -21,8 +21,10 @@ class Sim {
 		Trajectory _tjt;    // trajectory model
 
 		double _target[CART_DIM];
+		int _numOfSteps;
 
 	private:
+		
 
 		// double _origin[3];
 		// double _timeStep;

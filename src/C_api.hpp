@@ -2,8 +2,9 @@
 #define C_API_HPP
 
 #define CART_DIM 3
-#define FULL_STATE_NUM_COLS 10
+#define FULL_STATE_NUM_COLS 11
 #define ACTION_DIM 3
+#define TIP_REACHED_RANGE 5.0
 
 #include "robot_reinforcement_learning/C/matrix_op.h"
 #include "Sim.hpp"
