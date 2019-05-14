@@ -84,7 +84,7 @@ else()
 									${C}/rl_ddpg_her.c
 									${C}/normalizer.c
 	)
-	if (LINUX STREQUAL "ON")
+	if (LINUX STREQUAL "OFF")
 		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)
 	else()
 		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} $ENV{MKLROOT}/lib/intel64/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/intel64/libmkl_sequential.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -lpthread -lm -ldl)
