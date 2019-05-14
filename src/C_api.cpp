@@ -140,7 +140,19 @@ void closeEnv(int state_dim, int act_dim) {
 }
 
 matrix_t* random_action(int state_dim, int act_dim) {
-	return new_matrix(1, act_dim);
+	matrix_t* ret = new_matrix(1, act_dim);
+	double* data = ret->data;
+	double toJA[NUM_OF_JOINTS];
+	toJA[0] = rand_uniform(JA0_L, JA0_U);
+	toJA[1] = rand_uniform(JA1_L, JA1_U);
+	toJA[2] = rand_uniform(JA2_L, JA2_U);
+
+	JntArray ja = sim._km._jointAngles;
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		data[i] = toJA[i] - ja(i);
+	}
+
+	return ret;
 }
 
 
