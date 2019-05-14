@@ -24,7 +24,7 @@ void Trajectory::prepare(JntArray& start, JntArray& end, double duration) {
 	_tEnd = duration;	// total time of the trajectory process
 	AngularKinematics::TemporalData s, e;
 
-	for (int i = 0; i < _joints.size(); ++i) {
+	for (unsigned int i = 0; i < _joints.size(); ++i) {
 		s.angle = start(i);
 		e.angle = end(i);
 		s.velocity = 0;
