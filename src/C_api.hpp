@@ -7,6 +7,7 @@
 #define TIP_REACHED_RANGE 5.0
 
 #include "robot_reinforcement_learning/C/matrix_op.h"
+#include "robot_reinforcement_learning/C/main.h"
 #include "Sim.hpp"
 
 extern "C" int initEnv();

@@ -136,43 +136,44 @@ matrix_t* step(matrix_t* action) {
 }
 
 
-// int main() {
-// 	initEnv();
-// 	while (1) {
-// 		cout << "Initialize all states" << endl;
-// 		matrix_t* full = resetState(1, 1);
-// 		double* data = full->data;
-// 		for (int i = 0; i < full->rows; ++i) {
-// 			for (int j = 0; j < full->cols; ++j) {
-// 				cout << *(data + i * full->cols + j) << " ";
-// 			}
-// 		}
-// 		cout << endl;
+int main() {
+	initEnv();
+	while (1) {
+		cout << "Initialize all states" << endl;
+		matrix_t* full = resetState(1, 1);
+		double* data = full->data;
+		for (int i = 0; i < full->rows; ++i) {
+			for (int j = 0; j < full->cols; ++j) {
+				cout << *(data + i * full->cols + j) << " ";
+			}
+		}
+		cout << endl;
 
-// 		// setRewardBit(data);
-// 		// for (int i = 0; i < full->rows; ++i) {
-// 		// 	for (int j = 0; j < full->cols; ++j) {
-// 		// 		cout << *(data + i * full->cols + j) << " ";
-// 		// 	}
-// 		// }
+		// setRewardBit(data);
+		// for (int i = 0; i < full->rows; ++i) {
+		// 	for (int j = 0; j < full->cols; ++j) {
+		// 		cout << *(data + i * full->cols + j) << " ";
+		// 	}
+		// }
 
-// 		cout << "Make one step" << endl;
-// 		matrix_t* delta = new_matrix(1, 3);
-// 		delta->data[0] = 0.1;
-// 		delta->data[1] = 0;
-// 		delta->data[2] = 0;
-// 		matrix_t* newFull = step(delta);
-// 		double* newData = newFull->data;
-// 		for (int i = 0; i < newFull->rows; ++i) {
-// 			for (int j = 0; j < newFull->cols; ++j) {
-// 				cout << *(newData + i * newFull->cols + j) << " ";
-// 			}
-// 		}
-// 		cout << endl;
-// 		// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
-// 		// cout << ifInReach(test) << endl;
+		cout << "Make one step" << endl;
+		matrix_t* delta = new_matrix(1, 3);
+		delta->data[0] = 0.1;
+		delta->data[1] = 0;
+		delta->data[2] = 0;
+		matrix_t* newFull = step(delta);
+		double* newData = newFull->data;
+		for (int i = 0; i < newFull->rows; ++i) {
+			for (int j = 0; j < newFull->cols; ++j) {
+				cout << *(newData + i * newFull->cols + j) << " ";
+			}
+		}
+		cout << endl;
+		// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
+		// cout << ifInReach(test) << endl;
 
-// 		break;
-// 	}
-// 	return 0;
-// }
+		break;
+	}
+	_main();
+	return 0;
+}
