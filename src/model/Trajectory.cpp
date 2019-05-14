@@ -43,7 +43,7 @@ bool Trajectory::nextTimeStep(double tNow, JntArray& next) {
 	}
 	double angle;
 
-	for (int i = 0; i < _joints.size(); ++i) {
+	for (unsigned int i = 0; i < _joints.size(); ++i) {
 		_joints[i]->angleAtTime(_tNow, &angle);
 		next(i) = angle;
 		// cout << i << " th joint's angle is " << angle << endl;
