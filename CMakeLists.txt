@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.0)
 project(Simulation)
 
 OPTION(GUI "Build with Graphical User Interface" OFF)
+OPTION(LINUX "Build under linux env" OFF)
 
 set(SRC_DIR "src")
 set(C "src/robot_reinforcement_learning/C")
@@ -37,8 +38,7 @@ include_directories(${orocos_kdl_INCLUDE_DIRS})
 set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -O3")
-add_compile_definitions(C_AS_LIB=1)
+
 
 if(GUI STREQUAL "ON")
 	# Instruct CMake to run moc automatically when needed
@@ -60,6 +60,12 @@ if(GUI STREQUAL "ON")
 	target_link_libraries(simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL")
 
 else()
+	if (LINUX STREQUAL "ON")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -DMKL_ILP64 -m64 -I${MKLROOT}/include -O3")
+	else()
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -DMKL_ILP64 -m64 -I${MKLROOT}/include -O3")
+	endif()
+	add_compile_definitions(C_AS_LIB=1)
 	add_executable(simulation ${SRC_DIR}/C_api.cpp
 					${KM_FILES}
                 	${C}/main.c
@@ -71,9 +77,18 @@ else()
                 	${C}/model.c
                 	${C}/rl_ddpg.c
                 	${C}/rl_utils.c
+									${C}/socket_utils.c
+									${C}/optimizer.c
+									${C}/model_utils.c
+									${C}/sim_api.c
+									${C}/rl_ddpg_her.c
+									${C}/normalizer.c
 	)
-
-	target_link_libraries(simulation ${orocos_kdl_LIBRARIES})
+	if (LINUX STREQUAL "ON")
+		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)
+	else()
+		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} $ENV{MKLROOT}/lib/intel64/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/intel64/libmkl_sequential.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -lpthread -lm -ldl)
+	endif()
 endif()
 unset(GUI)
 

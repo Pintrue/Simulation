@@ -18,13 +18,13 @@ using namespace KDL;
 Sim sim;
 
 
-int initEnv() {
+int initEnv(int act_dim) {
 	sim = Sim();
 	return 0;
 }
 
 
-matrix_t* resetState(int randAngle, int destPos) {
+matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 	sim._numOfSteps = 0;	// reset number of steps executed
 
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
@@ -94,7 +94,7 @@ void setRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
 }
 
 
-matrix_t* step(matrix_t* action) {
+matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 	sim._numOfSteps += 1;	// increment the number of steps executed
 
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
@@ -135,12 +135,20 @@ matrix_t* step(matrix_t* action) {
 	return fullState;
 }
 
+void closeEnv(int state_dim, int act_dim) {
+	return;
+}
+
+matrix_t* random_action(int state_dim, int act_dim) {
+	return new_matrix(1, act_dim);
+}
+
 
 int main() {
-	initEnv();
+	initEnv(0);
 	while (1) {
 		cout << "Initialize all states" << endl;
-		matrix_t* full = resetState(1, 1);
+		matrix_t* full = resetState(1, 1, 0, 0);
 		double* data = full->data;
 		for (int i = 0; i < full->rows; ++i) {
 			for (int j = 0; j < full->cols; ++j) {
@@ -161,7 +169,7 @@ int main() {
 		delta->data[0] = 0.1;
 		delta->data[1] = 0;
 		delta->data[2] = 0;
-		matrix_t* newFull = step(delta);
+		matrix_t* newFull = step(delta, 0, 0);
 		double* newData = newFull->data;
 		for (int i = 0; i < newFull->rows; ++i) {
 			for (int j = 0; j < newFull->cols; ++j) {
