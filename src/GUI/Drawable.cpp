@@ -13,6 +13,7 @@
 #define FLR_MIN_Z -20.0
 #define FLR_MAX_Z 20.0
 
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 using namespace std;
 using namespace KDL;
@@ -21,6 +22,11 @@ using namespace KDL;
 Drawable::Drawable() {
 	_pose[0] = 0.0; _pose[1] = 0.0; _pose[2] = 0.0;
 	_pose[3] = 0.0; _pose[4] = 0.0; _pose[5] = 0.0;
+}
+
+
+Drawable::~Drawable() {
+
 }
 
 
@@ -41,8 +47,13 @@ void Drawable::setPose(double pose[POSE_DIM]) {
  * 
  **/
 Floor::Floor() : Drawable(), startX(FLR_MIN_X), endX(FLR_MAX_X),
-					startY(FLR_MIN_Y), endY(FLR_MAX_Y),
+					// startY(FLR_MIN_Y), endY(FLR_MAX_Y),
 					startZ(FLR_MIN_Z), endZ(FLR_MAX_Z) {
+
+}
+
+
+Floor::~Floor() {
 
 }
 
@@ -87,6 +98,11 @@ void Floor::draw() {
 Jnt::Jnt() {
 	_height = 0;
 	_radius = 0;
+}
+
+
+Jnt::~Jnt() {
+
 }
 
 
@@ -194,6 +210,11 @@ Model::Model() {
 }
 
 
+Model::~Model() {
+
+}
+
+
 void Model::init(const KinematicsModel& km) {
 	Frame frame;
 
@@ -264,7 +285,7 @@ void Model::draw() {
 	prevX = (*it)->_pose[0]; prevY = (*it)->_pose[1]; prevZ = (*it)->_pose[2];
 	++it;
 
-	for (it; it != _joints.end(); ++it) {
+	for (; it != _joints.end(); ++it) {
 		// draw line
 		glPushMatrix();
 

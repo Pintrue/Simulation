@@ -24,11 +24,11 @@ void KinematicsModel::init(double origin[3]) {
 	// Base joint
 	_kdlChain.addSegment(Segment(Joint(Joint::RotY), Frame(
 		Vector(0.0, 4.20, 0.0))));
-	// Shoulder joint
-	_kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(
-		Vector(0.0, 3.30, 5.0))));
-	// Elbow joint
+	// Shoulder joint - Used to be RotX / May 14
 	_kdlChain.addSegment(Segment(Joint(Joint::None),Frame(
+		Vector(0.0, 3.30, 5.0))));
+	// Elbow joint - Used to be None / May 14
+	_kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(
 		Vector(0.0, 2.0, -10.57))));
 	// End-effector
 	_kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(

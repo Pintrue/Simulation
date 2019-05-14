@@ -77,12 +77,6 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 	// _km._jointAngles = toJA; <- carried out by jntsToCart(...)
 }
 
-matrix_t* function_call_test() {
-	matrix_t* new_mat = new_matrix(3, 3);
-	xavier_init(new_mat, 1);
-	print_matrix(new_mat, 1);
-	return new_mat;
-}
 
 // int main() {
 // 	// // origin where the robot is based

@@ -11,6 +11,7 @@
 class Drawable {
 	public:
 		Drawable();
+		virtual ~Drawable();
 		virtual void draw() = 0; // pure virtual func.
 		void setPose(double pose[POSE_DIM]);
 
@@ -21,16 +22,19 @@ class Drawable {
 class Floor : public Drawable {
 	public:
 		Floor();
+		~Floor();
+
 		void draw() override;
 	
 	private:
-		double startX, endX, startY, endY, startZ, endZ;
+		double startX, endX, /*startY, endY,*/ startZ, endZ;
 };
 
 
 class Jnt : public Drawable {
 	public:
 		Jnt();
+		~Jnt();
 		
 		void draw() override;
 
@@ -74,6 +78,7 @@ class EndEffector : public Jnt {
 class Model : public Drawable {
 	public:
 		Model();
+		~Model();
 
 		void init(const KinematicsModel& km);
 		void finish();

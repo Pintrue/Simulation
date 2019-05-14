@@ -9,6 +9,8 @@
 #include "UIUtils.hpp"
 #include "../utils/Utils.hpp"
 
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 using namespace std;
 
 
