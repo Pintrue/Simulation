@@ -17,7 +17,6 @@ set(QT_OPENGL_FILES
 	${GRA}/GLWidgets.cpp
     ${GRA}/QtMainWindow.cpp
 	${GRA}/UIUtils.cpp
-#    ${GRA}/GUIMain.cpp
 )
 
 set(KM_FILES
@@ -33,16 +32,6 @@ set(KM_FILES
 find_package(orocos_kdl)
 include_directories(${orocos_kdl_INCLUDE_DIRS})
 
-# Instruct CMake to run moc automatically when needed
-set(CMAKE_AUTOMOC ON)
-
-# Create code from a list of Qt designer ui files
-set(CMAKE_AUTOUIC ON)
-
-# QT5 usage
-find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
-set(QT_USE_QTGUI TRUE)
-set(QT_USE_QTOPENGL TRUE)
 
 # enable C++11 standard
 set(CMAKE_CXX_STANDARD 11)
@@ -52,6 +41,17 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -O3")
 add_compile_definitions(C_AS_LIB=1)
 
 if(GUI STREQUAL "ON")
+	# Instruct CMake to run moc automatically when needed
+	set(CMAKE_AUTOMOC ON)
+
+	# Create code from a list of Qt designer ui files
+	set(CMAKE_AUTOUIC ON)
+
+	# QT5 usage
+	find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+	set(QT_USE_QTGUI TRUE)
+	set(QT_USE_QTOPENGL TRUE)
+	
 	add_executable(simulation ${GRA}/GUIMain.cpp
 					${QT_OPENGL_FILES}
 					${KM_FILES}
