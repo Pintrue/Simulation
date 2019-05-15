@@ -39,19 +39,18 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
+# Instruct CMake to run moc automatically when needed
+set(CMAKE_AUTOMOC ON)
 
-if(GUI STREQUAL "ON")
-	# Instruct CMake to run moc automatically when needed
-	set(CMAKE_AUTOMOC ON)
+# Create code from a list of Qt designer ui files
+set(CMAKE_AUTOUIC ON)
 
-	# Create code from a list of Qt designer ui files
-	set(CMAKE_AUTOUIC ON)
+# QT5 usage
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+set(QT_USE_QTGUI TRUE)
+set(QT_USE_QTOPENGL TRUE)
 
-	# QT5 usage
-	find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
-	set(QT_USE_QTGUI TRUE)
-	set(QT_USE_QTOPENGL TRUE)
-	
+if(GUI STREQUAL "ON")	
 	add_executable(simulation ${GRA}/GUIMain.cpp
 					${QT_OPENGL_FILES}
 					${KM_FILES}
@@ -62,12 +61,21 @@ if(GUI STREQUAL "ON")
 else()
 	if (LINUX STREQUAL "ON")
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -DMKL_ILP64 -m64 -I${MKLROOT}/include -O3")
+		set(SIM_FILES
+			${SRC_DIR}/C_api.cpp
+			${KM_FILES}
+		)
 	else()
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -DMKL_ILP64 -m64 -I${MKLROOT}/include -O3")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic")
+		set(SIM_FILES
+			${SRC_DIR}/C_api.cpp
+			${KM_FILES}
+			${QT_OPENGL_FILES}
+		)
 	endif()
 	add_compile_definitions(C_AS_LIB=1)
-	add_executable(simulation ${SRC_DIR}/C_api.cpp
-					${KM_FILES}
+	add_executable(simulation
+					${SIM_FILES}
                 	${C}/main.c
                 	${C}/matrix_op.c
                 	${C}/tests.c
@@ -77,33 +85,18 @@ else()
                 	${C}/model.c
                 	${C}/rl_ddpg.c
                 	${C}/rl_utils.c
-									${C}/socket_utils.c
-									${C}/optimizer.c
-									${C}/model_utils.c
-									${C}/sim_api.c
-									${C}/rl_ddpg_her.c
-									${C}/normalizer.c
+					${C}/socket_utils.c
+					${C}/optimizer.c
+					${C}/model_utils.c
+					${C}/sim_api.c
+					${C}/rl_ddpg_her.c
+					${C}/normalizer.c
+					${C}/test_agent.c
 	)
 	if (LINUX STREQUAL "OFF")
-		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)
+		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL")
 	else()
 		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} $ENV{MKLROOT}/lib/intel64/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/intel64/libmkl_sequential.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -lpthread -lm -ldl)
 	endif()
 endif()
 unset(GUI)
-
-# add_executable(simulation ${GRA}/GUIMain.cpp
-#				${QT_OPENGL_FILES}
-#				${KM_FILES}
-#				${SRC_DIR}/C_api.cpp
-#                ${C}/main.c
-#                ${C}/matrix_op.c
-#                ${C}/tests.c
-#                ${C}/utils.c
-#                ${C}/rl.c
-#                ${C}/layers.c
-#                ${C}/model.c
-#                ${C}/rl_ddpg.c
-#                ${C}/rl_utils.c)
-
-# target_link_libraries(simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL")

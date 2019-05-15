@@ -21,7 +21,7 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 
 	_timer = new QTimer(this);
 	_timer->setInterval(500);
-	connect(_timer, SIGNAL(timeout()), this, SLOT(trajNextTimeStep()));
+	// connect(_timer, SIGNAL(timeout()), this, SLOT(trajNextTimeStep()));
 
 
 	// initialize the kinematics modules
@@ -29,10 +29,12 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 	_sim = Sim(ori);
 
 	// initialize the graphical modules
-	_glg._model.init(_sim._km);
+	_glg = GLGraphics(_sim._km);
+	// _glg._model.init(_sim._km);
 
 	_angleInput = "0.0, 0.0, 0.0";
 	_ja = KDL::JntArray(NUM_OF_JOINTS);
+	_actionsIter = 0;
 }
 
 
@@ -60,6 +62,21 @@ QSize GLWidgets::minimumSizeHint() const {
 
 QSize GLWidgets::sizeHint() const {
 	return QSize(500, 500);
+}
+
+
+Sim GLWidgets::getSim() {
+	return _sim;
+}
+
+
+void GLWidgets::setSim(Sim sim) {
+	_sim = sim;
+}
+
+
+void GLWidgets::setJointAngle(KDL::JntArray ja) {
+	_ja = ja;
 }
 
 
@@ -181,6 +198,7 @@ void GLWidgets::trajAction() {
 	 * prepare the trajectory from the current angle (1st param.)
 	 * to the intended angle (2nd param.)
 	 **/
+	connect(_timer, SIGNAL(timeout()), this, SLOT(trajNextTimeStep()));
 	_sim._tjt.prepare(_sim._km._jointAngles, _ja, 10.0);
 	_timer->start();
 }
@@ -192,9 +210,38 @@ void GLWidgets::trajNextTimeStep() {
 		_timer->stop();
 	}
 
-	// KDL::Frame eeFrame;
 	_ja = nextJA;
 	plainAction();
+}
+
+
+void GLWidgets::moveByActionPath() {
+	// move to the initial JA set by resetState() in C_api
+	_ja = _sim._initJA;
+	plainAction();
+
+	connect(_timer, SIGNAL(timeout()), this, SLOT(actPathNextTimeStep()));
+	_timer->start();
+}
+
+
+void GLWidgets::actPathNextTimeStep() {
+	if (_actionsIter >= _sim._numOfActions) {
+		_timer->stop();
+		return;
+	}
+
+	double result[FULL_STATE_NUM_COLS];
+	if (regulateJntAngles(_ja, _sim._actions[_actionsIter], result)) {
+		for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+			_ja(i) += _sim._actions[_actionsIter][i];
+		}
+		++_actionsIter;
+		plainAction();
+	} else {
+		QMessageBox::information(0, tr("Stop"), tr("Path moved out of bounds."));
+		_timer->stop();
+	}
 }
 
 

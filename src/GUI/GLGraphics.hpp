@@ -5,6 +5,8 @@
 
 class GLGraphics {
 	public:
+		GLGraphics();
+		GLGraphics(const KinematicsModel& km);
 		void render();
 
 		Floor _floor;
