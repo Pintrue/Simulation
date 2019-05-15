@@ -18,6 +18,11 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 	    QSize minimumSizeHint() const override;
 	    QSize sizeHint() const override;
 
+		Sim getSim();
+		void setSim(Sim sim);
+		void setJointAngle(KDL::JntArray ja);
+		// KDL::JntArray _ja;
+
 	public slots:
 	    void setXRotation(int angle);
 	    void setYRotation(int angle);
@@ -30,6 +35,8 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 		void plainAction();
 		void trajAction();
 		void trajNextTimeStep();
+		void moveByActionPath();
+		void actPathNextTimeStep();
 
 	    void cleanup();
 
@@ -62,13 +69,10 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 
 		QPoint _mLastPos;
 
-		/**
-		 * TODO: put OpenGL components here
-		 * 
-		 * Graphics _graphics;
-		 **/
 		GLGraphics _glg;
 		Sim _sim;
+
+		int _actionsIter;
 };
 
 #endif

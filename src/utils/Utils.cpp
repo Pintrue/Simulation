@@ -38,3 +38,13 @@ void convFrameToPose(const KDL::Frame& frame, double pose[POSE_DIM]) {
 	frame.M.GetEulerZYX(alp, bet, gam);
 	pose[3] = gam; pose[4] = bet; pose[5] = alp;
 }
+
+
+void printJntArray(const KDL::JntArray& ja) {
+	cout << "The requested joint array: " << endl;
+	cout << "[ ";
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		cout << ja(i) << " ";
+	}
+	cout << "]" << endl;
+}

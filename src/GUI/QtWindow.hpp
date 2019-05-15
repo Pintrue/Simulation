@@ -15,6 +15,7 @@ class QtWindow : public QWidget {
 
 	public:
 		QtWindow(QtMainWindow* mainWin);
+		GLWidgets* getGLWidgets();
 
 	protected:
 		void keyPressEvent(QKeyEvent* event) override;

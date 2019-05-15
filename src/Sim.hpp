@@ -20,6 +20,11 @@ class Sim {
 		KinematicsModel _km;// kinematics model
 		Trajectory _tjt;    // trajectory model
 
+		KDL::JntArray _initJA;
+
+		double* _actions[ACTION_DIM];
+		int _numOfActions;
+
 		double _target[CART_DIM];
 		int _numOfSteps;
 

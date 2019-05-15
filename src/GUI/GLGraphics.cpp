@@ -1,5 +1,17 @@
 #include "GLGraphics.hpp"
 
+#include <iostream>
+using namespace std;
+
+GLGraphics::GLGraphics() {
+}
+
+
+GLGraphics::GLGraphics(const KinematicsModel& km) {
+	_model.init(km);
+}
+
+
 void GLGraphics::render() {
 	_floor.draw();
 	_model.draw();

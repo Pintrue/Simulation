@@ -78,6 +78,11 @@ QtWindow::QtWindow(QtMainWindow* mainWin)
 }
 
 
+GLWidgets* QtWindow::getGLWidgets() {
+	return _glWidgets;
+}
+
+
 void QtWindow::keyPressEvent(QKeyEvent* event) {
 	if (event->key() == Qt::Key_Escape) {
 		close();
