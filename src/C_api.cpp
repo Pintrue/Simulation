@@ -66,7 +66,7 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + FST_EE_POS_OFFSET] = eeFrame.p(i);
 		data[i + SND_EE_POS_OFFSET] = eeFrame.p(i);
-		sim._target[i] = eeFrame.p(i);
+		// sim._target[i] = eeFrame.p(i);
 	}
 	// for (int i = 0; i < CART_DIM; ++i) {
 	// 	sim._target[i] = data[i + FST_EE_POS_OFFSET];
@@ -85,6 +85,7 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + DEST_POS_OFFSET] = dest[i];
+			sim._target[i] = dest[i];
 		}
 	} else {
 		data[0 + DEST_POS_OFFSET] = 0;
