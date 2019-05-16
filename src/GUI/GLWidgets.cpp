@@ -172,7 +172,7 @@ void GLWidgets::plainAction() {
 	// }
 	
 	KDL::Frame eeFrame;
-	if (_sim._km.jntsToCart(_ja, eeFrame)) {
+	if (_sim._km.fwdKmt(_ja, eeFrame)) {
 		double pose[POSE_DIM];
 		convFrameToPose(eeFrame, pose);
 		QString eePos = QString("[%1, %2, %3]")

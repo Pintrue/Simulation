@@ -61,7 +61,7 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 	sim._initJA = angle;
 
 	Frame eeFrame;
-	sim._km.jntsToCart(angle, eeFrame);
+	sim._km.fwdKmt(angle, eeFrame);
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + FST_EE_POS_OFFSET] = eeFrame.p(i);
@@ -74,19 +74,23 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 
 	// setting the target position for the end-effector
 	if (destPos == 1) {
-		double dest[CART_DIM];
+		matrix_t* destPos = new_matrix(1, CART_DIM);
+		double* dest = destPos->data;
+		// double dest[CART_DIM];
 
 		// now destination is only considering GROUND-LEVEL workspace
 		do {
 			dest[0] = rand_uniform(-GROUND_OUT_RADIUS, GROUND_OUT_RADIUS);
 			dest[1] = 0;
-			dest[2] = rand_uniform(-GROUND_OUT_RADIUS, GROUND_OUT_RADIUS);
+			dest[2] = rand_uniform(0, GROUND_OUT_RADIUS);
+			cout << "Try find another" << endl;
 		} while (!inGroundLvlWorkspace(dest));
 
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + DEST_POS_OFFSET] = dest[i];
 			sim._target[i] = dest[i];
 		}
+		// sim._target = dest;
 	} else {
 		data[0 + DEST_POS_OFFSET] = 0;
 		data[1 + DEST_POS_OFFSET] = 0;
@@ -121,6 +125,7 @@ void setRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
 	fullState[REWARD_BIT_OFFSET] = ifInReach(fullState) ? 0 : -1;
 }
 
+
 void denormalize_action(matrix_t* action) {
 	double d1 = (double)(action->data[0] + 1) / (double)2 * (JA0_U - JA0_L) + JA0_L;
 	double d2 = (double)(action->data[1] + 1) / (double)2 * (JA1_U - JA1_L) + JA1_L;
@@ -129,6 +134,7 @@ void denormalize_action(matrix_t* action) {
 	action->data[1] = d2;
 	action->data[2] = d3;
 }
+
 
 matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 	denormalize_action(action);
@@ -153,7 +159,7 @@ matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 	}
 
 	Frame eeFrame;
-	sim._km.jntsToCart(toJA, eeFrame);
+	sim._km.fwdKmt(toJA, eeFrame);
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + FST_EE_POS_OFFSET] = eeFrame.p(i);
