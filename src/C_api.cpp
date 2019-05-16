@@ -232,15 +232,15 @@ int main() {
 		}
 		cout << endl;
 
-		matrix_t* steps[3];
-		steps[0] = new_matrix(1, ACTION_DIM);
-		steps[0]->data[1] = 0.5;
-		steps[1] = new_matrix(1, ACTION_DIM);
-		steps[1]->data[1] = 0.5;
-		steps[2] = new_matrix(1, ACTION_DIM);
-		steps[2]->data[1] = 0.5;
+		// matrix_t* steps[3];
+		// steps[0] = new_matrix(1, ACTION_DIM);
+		// steps[0]->data[1] = 0.5;
+		// steps[1] = new_matrix(1, ACTION_DIM);
+		// steps[1]->data[1] = 0.5;
+		// steps[2] = new_matrix(1, ACTION_DIM);
+		// steps[2]->data[1] = 0.5;
 
-		renderSteps(steps, 3);
+		// renderSteps(steps, 3);
 		
 		// setRewardBit(data);
 		// for (int i = 0; i < full->rows; ++i) {
