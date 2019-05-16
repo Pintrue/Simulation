@@ -79,17 +79,22 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 		// double dest[CART_DIM];
 
 		// now destination is only considering GROUND-LEVEL workspace
-		do {
-			dest[0] = rand_uniform(-GROUND_OUT_RADIUS, GROUND_OUT_RADIUS);
-			dest[1] = 0;
-			dest[2] = rand_uniform(0, GROUND_OUT_RADIUS);
-			cout << "Try find another" << endl;
-		} while (!inGroundLvlWorkspace(dest));
+		// do {
+		// 	dest[0] = rand_uniform(-GROUND_OUT_RADIUS, GROUND_OUT_RADIUS);
+		// 	dest[1] = 0;
+		// 	dest[2] = rand_uniform(0, GROUND_OUT_RADIUS);
+		// 	cout << "Try find another" << endl;
+		// } while (!inGroundLvlWorkspace(dest));
+
+		dest[0] = rand_uniform(-10.5, 10.5);
+		dest[1] = 0;
+		dest[2] = rand_uniform(12.5, 22.5);
 
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + DEST_POS_OFFSET] = dest[i];
 			sim._target[i] = dest[i];
 		}
+		free_matrix(destPos);
 		// sim._target = dest;
 	} else {
 		data[0 + DEST_POS_OFFSET] = 0;
@@ -126,23 +131,25 @@ void setRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
 }
 
 
-void denormalize_action(matrix_t* action) {
+matrix_t* denormalize_action(matrix_t* action) {
+	matrix_t* ret = new_matrix(action->rows, action->cols);
 	double d1 = (double)(action->data[0] + 1) / (double)2 * (JA0_U - JA0_L) + JA0_L;
 	double d2 = (double)(action->data[1] + 1) / (double)2 * (JA1_U - JA1_L) + JA1_L;
 	double d3 = (double)(action->data[2] + 1) / (double)2 * (JA2_U - JA2_L) + JA2_L;
-	action->data[0] = d1;
-	action->data[1] = d2;
-	action->data[2] = d3;
+	ret->data[0] = d1;
+	ret->data[1] = d2;
+	ret->data[2] = d3;
+	return ret;
 }
 
 
 matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
-	denormalize_action(action);
+	matrix_t* denormed_matrix = denormalize_action(action);
 	sim._numOfSteps += 1;	// increment the number of steps executed
 
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
 	double* data = fullState->data;
-	double* delta = action->data;
+	double* delta = denormed_matrix->data;
 	JntArray ja = sim._km._jointAngles;
 
 	// regulate the joint angle to within legal boundaries
@@ -180,6 +187,7 @@ matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 
 	// set the reward function
 	setRewardBit(data);
+	free_matrix(denormed_matrix);
 	return fullState;
 }
 
