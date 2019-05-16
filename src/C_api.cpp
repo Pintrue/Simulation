@@ -2,10 +2,14 @@
 #include "utils/Utils.hpp"
 #include "robot_reinforcement_learning/C/utils.h"
 #include "model/Constraints.hpp"
+
+#ifdef RENDER
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDesktopWidget>
 #include "GUI/QtMainWindow.hpp"
 #include "GUI/QtWindow.hpp"
+#endif
+
 #include <math.h>
 
 #define JA0_L -M_PI/2
@@ -156,6 +160,7 @@ matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 }
 
 
+#ifdef RENDER
 void renderSteps(matrix_t** actions, int numOfActions) {
 	sim._numOfActions = numOfActions;
 	for (int i = 0; i < numOfActions; ++i) {
@@ -183,6 +188,7 @@ void renderSteps(matrix_t** actions, int numOfActions) {
         window->showMaximized();
     app.exec();
 }
+#endif
 
 
 void closeEnv(int state_dim, int act_dim) {
