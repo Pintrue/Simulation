@@ -113,8 +113,17 @@ void setRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
 	fullState[REWARD_BIT_OFFSET] = ifInReach(fullState) ? 0 : -1;
 }
 
+void denormalize_action(matrix_t* action) {
+	double d1 = (double)(action->data[0] + 1) / (double)2 * (JA0_U - JA0_L) + JA0_L;
+	double d2 = (double)(action->data[1] + 1) / (double)2 * (JA1_U - JA1_L) + JA1_L;
+	double d3 = (double)(action->data[2] + 1) / (double)2 * (JA2_U - JA2_L) + JA2_L;
+	action->data[0] = d1;
+	action->data[1] = d2;
+	action->data[2] = d3;
+}
 
 matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
+	denormalize_action(action);
 	sim._numOfSteps += 1;	// increment the number of steps executed
 
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
@@ -157,7 +166,6 @@ matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 
 	// set the reward function
 	setRewardBit(data);
-
 	return fullState;
 }
 
@@ -219,54 +227,54 @@ matrix_t* random_action(int state_dim, int act_dim) {
 
 
 int main() {
-	initEnv(0);
-	while (1) {
-		cout << "Initialize all states" << endl;
-		matrix_t* full = resetState(1, 1, 0, 0);
-		// printJntArray(sim._initJA);
-		double* data = full->data;
-		for (int i = 0; i < full->rows; ++i) {
-			for (int j = 0; j < full->cols; ++j) {
-				cout << *(data + i * full->cols + j) << " ";
-			}
-		}
-		cout << endl;
+	// initEnv(0);
+	// while (1) {
+	// 	cout << "Initialize all states" << endl;
+	// 	matrix_t* full = resetState(1, 1, 0, 0);
+	// 	// printJntArray(sim._initJA);
+	// 	double* data = full->data;
+	// 	for (int i = 0; i < full->rows; ++i) {
+	// 		for (int j = 0; j < full->cols; ++j) {
+	// 			cout << *(data + i * full->cols + j) << " ";
+	// 		}
+	// 	}
+	// 	cout << endl;
 
-		// matrix_t* steps[3];
-		// steps[0] = new_matrix(1, ACTION_DIM);
-		// steps[0]->data[1] = 0.5;
-		// steps[1] = new_matrix(1, ACTION_DIM);
-		// steps[1]->data[1] = 0.5;
-		// steps[2] = new_matrix(1, ACTION_DIM);
-		// steps[2]->data[1] = 0.5;
+	// 	// matrix_t* steps[3];
+	// 	// steps[0] = new_matrix(1, ACTION_DIM);
+	// 	// steps[0]->data[1] = 0.5;
+	// 	// steps[1] = new_matrix(1, ACTION_DIM);
+	// 	// steps[1]->data[1] = 0.5;
+	// 	// steps[2] = new_matrix(1, ACTION_DIM);
+	// 	// steps[2]->data[1] = 0.5;
 
-		// renderSteps(steps, 3);
+	// 	// renderSteps(steps, 3);
 		
-		// setRewardBit(data);
-		// for (int i = 0; i < full->rows; ++i) {
-		// 	for (int j = 0; j < full->cols; ++j) {
-		// 		cout << *(data + i * full->cols + j) << " ";
-		// 	}
-		// }
+	// 	// setRewardBit(data);
+	// 	// for (int i = 0; i < full->rows; ++i) {
+	// 	// 	for (int j = 0; j < full->cols; ++j) {
+	// 	// 		cout << *(data + i * full->cols + j) << " ";
+	// 	// 	}
+	// 	// }
 
-		// cout << "Make one step" << endl;
-		// matrix_t* delta = new_matrix(1, 3);
-		// delta->data[0] = 0.1;
-		// delta->data[1] = 0;
-		// delta->data[2] = 0;
-		// matrix_t* newFull = step(delta, 0, 0);
-		// double* newData = newFull->data;
-		// for (int i = 0; i < newFull->rows; ++i) {
-		// 	for (int j = 0; j < newFull->cols; ++j) {
-		// 		cout << *(newData + i * newFull->cols + j) << " ";
-		// 	}
-		// }
-		// cout << endl;
-		// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
-		// cout << ifInReach(test) << endl;
+	// 	// cout << "Make one step" << endl;
+	// 	// matrix_t* delta = new_matrix(1, 3);
+	// 	// delta->data[0] = 0.1;
+	// 	// delta->data[1] = 0;
+	// 	// delta->data[2] = 0;
+	// 	// matrix_t* newFull = step(delta, 0, 0);
+	// 	// double* newData = newFull->data;
+	// 	// for (int i = 0; i < newFull->rows; ++i) {
+	// 	// 	for (int j = 0; j < newFull->cols; ++j) {
+	// 	// 		cout << *(newData + i * newFull->cols + j) << " ";
+	// 	// 	}
+	// 	// }
+	// 	// cout << endl;
+	// 	// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
+	// 	// cout << ifInReach(test) << endl;
 
-		break;
-	}
+	// 	break;
+	// }
 	_main();
 	return 0;
 }
