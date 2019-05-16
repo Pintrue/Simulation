@@ -46,6 +46,10 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 		data[0] = rand_uniform(JA0_L, JA0_U);
 		data[1] = rand_uniform(JA1_L, JA1_U);
 		data[2] = rand_uniform(JA2_L, JA2_U);
+	} else {
+		for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+			data[i] = 0;
+		}
 	}
 
 	// setting the current position of the end-effector
@@ -58,7 +62,6 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 
 	Frame eeFrame;
 	sim._km.jntsToCart(angle, eeFrame);
-
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + FST_EE_POS_OFFSET] = eeFrame.p(i);
@@ -83,6 +86,10 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + DEST_POS_OFFSET] = dest[i];
 		}
+	} else {
+		data[0 + DEST_POS_OFFSET] = 0;
+		data[1 + DEST_POS_OFFSET] = 0;
+		data[2 + DEST_POS_OFFSET] = 17.33;
 	}
 
 	// for (int i = 0; i < CART_DIM; ++i) {
@@ -227,18 +234,18 @@ matrix_t* random_action(int state_dim, int act_dim) {
 
 
 int main() {
-	// initEnv(0);
-	// while (1) {
-	// 	cout << "Initialize all states" << endl;
-	// 	matrix_t* full = resetState(1, 1, 0, 0);
-	// 	// printJntArray(sim._initJA);
-	// 	double* data = full->data;
-	// 	for (int i = 0; i < full->rows; ++i) {
-	// 		for (int j = 0; j < full->cols; ++j) {
-	// 			cout << *(data + i * full->cols + j) << " ";
-	// 		}
-	// 	}
-	// 	cout << endl;
+	initEnv(0);
+	while (1) {
+		cout << "Initialize all states" << endl;
+		matrix_t* full = resetState(1, 1, 0, 0);
+		// printJntArray(sim._initJA);
+		double* data = full->data;
+		for (int i = 0; i < full->rows; ++i) {
+			for (int j = 0; j < full->cols; ++j) {
+				cout << *(data + i * full->cols + j) << " ";
+			}
+		}
+		cout << endl;
 
 	// 	// matrix_t* steps[3];
 	// 	// steps[0] = new_matrix(1, ACTION_DIM);
@@ -273,8 +280,8 @@ int main() {
 	// 	// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
 	// 	// cout << ifInReach(test) << endl;
 
-	// 	break;
-	// }
+		break;
+	}
 	_main();
 	return 0;
 }
