@@ -80,7 +80,7 @@ else()
 		set(QT_USE_QTOPENGL TRUE)
 		
 		add_compile_definitions(RENDER=1)
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -O3")
 		set(SIM_FILES
 			${SRC_DIR}/C_api.cpp
 			${KM_FILES}
@@ -102,7 +102,6 @@ else()
 					${C}/socket_utils.c
 					${C}/optimizer.c
 					${C}/model_utils.c
-					${C}/sim_api.c
 					${C}/rl_ddpg_her.c
 					${C}/normalizer.c
 					${C}/test_agent.c
