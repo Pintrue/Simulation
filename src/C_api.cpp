@@ -194,7 +194,9 @@ void renderSteps(matrix_t** actions, int numOfActions) {
 
 
 void closeEnv(int state_dim, int act_dim) {
+	#ifdef RENDER
 	delete window;
+	#endif
 	return;
 }
 
