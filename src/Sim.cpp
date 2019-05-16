@@ -13,7 +13,7 @@ using namespace KDL;
 Sim::Sim() {
 	double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
 	_km.init(pos);
-	_tjt.init(NUM_OF_JOINTS);
+	// _tjt.init(NUM_OF_JOINTS);
 	
 	// set current joint angles to zero
 	JntArray fromJA = JntArray(NUM_OF_JOINTS);
@@ -76,7 +76,7 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 	cout << "t = " << _tjt.timeNow() << endl;
 	cout << "Finished." << endl << endl;
 
-	// _km._jointAngles = toJA; <- carried out by jntsToCart(...)
+	// _km._jointAngles = toJA; <- carried out by fwdKmt(...)
 }
 
 
@@ -98,7 +98,7 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 // 	toJA(2) = 0;			// Joint 3
 
 // 	Frame eeFrame;
-// 	sim._km.jntsToCart(toJA, eeFrame);
+// 	sim._km.fwdKmt((toJA, eeFrame);
 	
 // 	// Provide this as API
 // 	sim._km._cartPose = eeFrame;

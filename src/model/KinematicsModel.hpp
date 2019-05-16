@@ -12,7 +12,8 @@ class KinematicsModel {
         KinematicsModel();  // constructor
         
         void init(double origin[3]);
-        bool jntsToCart(const KDL::JntArray& jointAngles, KDL::Frame& eeFrame);
+        bool fwdKmt(const KDL::JntArray& jointAngles, KDL::Frame& eeFrame);
+		bool invKmt(const KDL::Frame& eeFrame, KDL::JntArray& jnts);
 
         KDL::Chain _kdlChain;       // data structure for fk model
         KDL::JntArray _jointAngles; // angles between segments

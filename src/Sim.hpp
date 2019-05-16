@@ -26,6 +26,7 @@ class Sim {
 		int _numOfActions;
 
 		double _target[CART_DIM];
+		// double* _target;
 		int _numOfSteps;
 
 	private:

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <kdl/chain.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
+#include <kdl/chainiksolverpos_lma.hpp>
 #include "KinematicsModel.hpp"
 #include "../utils/Utils.hpp"
 
@@ -46,16 +47,10 @@ void KinematicsModel::init(double origin[3]) {
 *	(also known as the tip of delivery part) in Car-
 *	tesian coordinate form.
 */
-bool KinematicsModel::jntsToCart(const JntArray& jointAngles, Frame& eeFrame) {
+bool KinematicsModel::fwdKmt(const JntArray& jointAngles, Frame& eeFrame) {
 	ChainFkSolverPos_recursive fKSolver =
 		ChainFkSolverPos_recursive(_kdlChain);
-	
-	// for (int i = 0; i < 3; ++i)
-	// 	cout << jointAngles(i) << " ";
-	// cout << endl;
-	// cout << "HERE" << endl;
-	// fKSolver.JntToCart(jointAngles, eeFrame);
-	// printFrame(eeFrame);
+
 	if (fKSolver.JntToCart(jointAngles, eeFrame) >= 0) {
 		_cartPose = eeFrame;
 		_jointAngles = jointAngles;
@@ -63,4 +58,12 @@ bool KinematicsModel::jntsToCart(const JntArray& jointAngles, Frame& eeFrame) {
 	} else {
 		return false;
 	}
+}
+
+
+bool KinematicsModel::invKmt(const Frame& eeFrame, JntArray& jnts) {
+	ChainIkSolverPos_LMA iKSolver =
+		ChainIkSolverPos_LMA(_kdlChain);
+	
+	
 }
