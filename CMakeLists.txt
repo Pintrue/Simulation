@@ -39,18 +39,18 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
-# Instruct CMake to run moc automatically when needed
-set(CMAKE_AUTOMOC ON)
+if(GUI STREQUAL "ON")
+	# Instruct CMake to run moc automatically when needed
+	set(CMAKE_AUTOMOC ON)
 
-# Create code from a list of Qt designer ui files
-set(CMAKE_AUTOUIC ON)
+	# Create code from a list of Qt designer ui files
+	set(CMAKE_AUTOUIC ON)
 
-# QT5 usage
-find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
-set(QT_USE_QTGUI TRUE)
-set(QT_USE_QTOPENGL TRUE)
-
-if(GUI STREQUAL "ON")	
+	# QT5 usage
+	find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+	set(QT_USE_QTGUI TRUE)
+	set(QT_USE_QTOPENGL TRUE)
+	
 	add_executable(simulation ${GRA}/GUIMain.cpp
 					${QT_OPENGL_FILES}
 					${KM_FILES}
@@ -66,6 +66,18 @@ else()
 			${KM_FILES}
 		)
 	else()
+		# Instruct CMake to run moc automatically when needed
+		set(CMAKE_AUTOMOC ON)
+
+		# Create code from a list of Qt designer ui files
+		set(CMAKE_AUTOUIC ON)
+
+		# QT5 usage
+		find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+		set(QT_USE_QTGUI TRUE)
+		set(QT_USE_QTOPENGL TRUE)
+		
+		add_compile_definitions(RENDER=1)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic")
 		set(SIM_FILES
 			${SRC_DIR}/C_api.cpp

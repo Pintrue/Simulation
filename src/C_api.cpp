@@ -23,7 +23,9 @@
 using namespace std;
 using namespace KDL;
 
+#ifdef RENDER
 QtWindow* window;
+#endif
 Sim sim;
 
 
