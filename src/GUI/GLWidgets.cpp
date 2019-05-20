@@ -30,7 +30,6 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 
 	// initialize the graphical modules
 	_glg = GLGraphics(_sim._km);
-	// _glg._model.init(_sim._km);
 
 	_angleInput = "0.0, 0.0, 0.0";
 	_ja = KDL::JntArray(NUM_OF_JOINTS);
@@ -70,8 +69,20 @@ Sim GLWidgets::getSim() {
 }
 
 
+/**
+ * 
+ * This function accepts external simulation configuration.
+ * 
+ **/
 void GLWidgets::setSim(Sim sim) {
 	_sim = sim;
+
+	// set the target cartesian position
+	double targetPos[6];
+	for (int i = 0; i < 3; ++i) {
+		targetPos[i] = _sim._target[i];
+	}
+	_glg._goal.setPose(targetPos);
 }
 
 
@@ -123,20 +134,9 @@ void GLWidgets::setZRotation(int angle) {
 }
 
 
-// void GLWidgets::setScale(int scale) {
-// 	if (scale >= 0 && scale != _scale) {
-// 		_scale = scale;
-// 		emit scaleChanged(scale);
-// 	}
-// }
-
-
 void GLWidgets::updateAngleInput(const QString& input) {
-
 	_angleInput = input;
 	
-	// emit updateEEPos(input);
-	// update();
 }
 
 
@@ -166,13 +166,8 @@ void GLWidgets::execAction() {
 
 
 void GLWidgets::plainAction() {
-	// KDL::JntArray toJA = KDL::JntArray(NUM_OF_JOINTS);
-	// for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-	// 	toJA(i) = _jointAngles[i];
-	// }
-	
 	KDL::Frame eeFrame;
-	if (_sim._km.fwdKmt(_ja, eeFrame)) {
+	if (_sim._km.getPoseByJnts(_ja, eeFrame)) {
 		double pose[POSE_DIM];
 		convFrameToPose(eeFrame, pose);
 		QString eePos = QString("[%1, %2, %3]")
@@ -190,10 +185,6 @@ void GLWidgets::plainAction() {
 
 
 void GLWidgets::trajAction() {
-	// KDL::JntArray toJA = KDL::JntArray(NUM_OF_JOINTS);
-	// for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-	// 	toJA(i) = _jointAngles[i];
-	// }
 	/**
 	 * prepare the trajectory from the current angle (1st param.)
 	 * to the intended angle (2nd param.)

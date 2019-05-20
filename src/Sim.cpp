@@ -25,8 +25,6 @@ Sim::Sim() {
 
 
 Sim::Sim(double ori[NUM_OF_JOINTS]) {
-	// copy(ori, ori + NUM_OF_JOINTS, _origin);
-
 	// initialize kinematics and trajectory models
 	_km.init(ori);
 	_tjt.init(NUM_OF_JOINTS);
@@ -76,7 +74,7 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 	cout << "t = " << _tjt.timeNow() << endl;
 	cout << "Finished." << endl << endl;
 
-	// _km._jointAngles = toJA; <- carried out by fwdKmt(...)
+	// _km._jointAngles = toJA; <- carried out by getPoseByJnts(...)
 }
 
 
@@ -98,7 +96,7 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 // 	toJA(2) = 0;			// Joint 3
 
 // 	Frame eeFrame;
-// 	sim._km.fwdKmt((toJA, eeFrame);
+// 	sim._km.getPoseByJnts((toJA, eeFrame);
 	
 // 	// Provide this as API
 // 	sim._km._cartPose = eeFrame;
