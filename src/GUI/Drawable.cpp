@@ -185,6 +185,11 @@ void ForearmJoint::draw() {
 }
 
 
+EndEffector::EndEffector() {
+
+}
+
+
 EndEffector::EndEffector(double radius) {
 	_radius = radius;
 }
@@ -306,4 +311,34 @@ void Model::draw() {
 		prevX = (*it)->_pose[0]; prevY = (*it)->_pose[1]; prevZ = (*it)->_pose[2];
 	}
 	glLineWidth(1);
+}
+
+
+Goal::Goal() {
+
+}
+
+
+Goal::Goal(double radius) {
+	_radius = radius;
+}
+
+
+Goal::~Goal() {
+
+}
+
+
+void Goal::draw() {
+	glPushMatrix();
+
+		glTranslatef(_pose[0], _pose[1], _pose[2]);
+		glRotated(_pose[5], 0, 0, 1);
+		glRotated(_pose[4], 0, 1, 0);
+		glRotated(_pose[3], 1, 0, 0);
+		glColor3d(0.0, 0.0, 1.0);
+
+		gluSphere(gluNewQuadric(), _radius, 10, 25);
+
+	glPopMatrix();
 }

@@ -69,6 +69,7 @@ class ForearmJoint : public Jnt {
 
 class EndEffector : public Jnt {
 	public:
+		EndEffector();
 		EndEffector(double radius);
 
 		void draw() override;
@@ -89,6 +90,19 @@ class Model : public Drawable {
 
 	    typedef std::vector<Drawable*> JointList;
 	    JointList _joints;
+};
+
+
+class Goal : public Drawable {
+	public:
+		Goal();
+		Goal(double radius);
+		~Goal();
+
+		void draw() override;
+
+	protected:
+		double _radius;
 };
 
 #endif

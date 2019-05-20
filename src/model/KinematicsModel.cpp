@@ -36,8 +36,7 @@ void KinematicsModel::init(double origin[3]) {
 		Vector(0.0, 3.50, 18.4))));
 
 	// Initialize 
-	unsigned int numJoints = _kdlChain.getNrOfJoints();
-	_jointAngles = JntArray(numJoints);
+	_jointAngles = JntArray(_kdlChain.getNrOfJoints());
 }
 
 
@@ -47,13 +46,13 @@ void KinematicsModel::init(double origin[3]) {
 *	(also known as the tip of delivery part) in Car-
 *	tesian coordinate form.
 */
-bool KinematicsModel::fwdKmt(const JntArray& jointAngles, Frame& eeFrame) {
+bool KinematicsModel::getPoseByJnts(const JntArray& jnts, Frame& eeFrame) {
 	ChainFkSolverPos_recursive fKSolver =
 		ChainFkSolverPos_recursive(_kdlChain);
 
-	if (fKSolver.JntToCart(jointAngles, eeFrame) >= 0) {
+	if (fKSolver.JntToCart(jnts, eeFrame) >= 0) {
 		_cartPose = eeFrame;
-		_jointAngles = jointAngles;
+		_jointAngles = jnts;
 		return true;
 	} else {
 		return false;
@@ -61,9 +60,15 @@ bool KinematicsModel::fwdKmt(const JntArray& jointAngles, Frame& eeFrame) {
 }
 
 
-bool KinematicsModel::invKmt(const Frame& eeFrame, JntArray& jnts) {
+bool KinematicsModel::getJntsByPose(const Frame& eeFrame, JntArray& jnts) {
 	ChainIkSolverPos_LMA iKSolver =
 		ChainIkSolverPos_LMA(_kdlChain);
 	
-	
+	if (iKSolver.CartToJnt(_jointAngles, eeFrame, jnts)) {
+		_cartPose = eeFrame;
+		_jointAngles = jnts;
+		return true;
+	} else {
+		return false;
+	}	
 }
