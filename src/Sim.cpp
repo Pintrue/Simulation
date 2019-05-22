@@ -21,6 +21,8 @@ Sim::Sim() {
 	SetToZero(_km._jointAngles);
 
 	_numOfSteps = 0;
+	_hasObj = false;
+	_eeState = false;
 }
 
 
@@ -35,6 +37,8 @@ Sim::Sim(double ori[NUM_OF_JOINTS]) {
 	SetToZero(_km._jointAngles);
 
 	_numOfSteps = 0;
+	_hasObj = false;
+	_eeState = false;
 }
 
 

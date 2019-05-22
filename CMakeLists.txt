@@ -38,8 +38,10 @@ include_directories(${orocos_kdl_INCLUDE_DIRS})
 
 # enable C++11 standard
 set(CMAKE_CXX_STANDARD 11)
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+
+#enable C11 standard
+set(CMAKE_C_STANDARD 11)
 
 if(GUI STREQUAL "ON")
 	# Instruct CMake to run moc automatically when needed
@@ -62,10 +64,11 @@ if(GUI STREQUAL "ON")
 
 else()
 	if (LINUX STREQUAL "ON")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -DMKL_ILP64 -m64 -I${MKLROOT}/include -O3")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Werror -pedantic -DMKL_ILP64 -m64 -I${MKLROOT}/include -O3")
 		set(SIM_FILES
 			${SRC_DIR}/C_api.cpp
 			${KM_FILES}
+
 		)
 	else()
 		# Instruct CMake to run moc automatically when needed
@@ -80,11 +83,12 @@ else()
 		set(QT_USE_QTOPENGL TRUE)
 		
 		add_compile_definitions(RENDER=1)
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -pedantic -O3")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Werror -pedantic -O3")
 		set(SIM_FILES
 			${SRC_DIR}/C_api.cpp
 			${KM_FILES}
 			${QT_OPENGL_FILES}
+
 		)
 	endif()
 	add_compile_definitions(C_AS_LIB=1)
@@ -105,6 +109,7 @@ else()
 					${C}/rl_ddpg_her.c
 					${C}/normalizer.c
 					${C}/test_agent.c
+					${SRC_DIR}/model/FwdKM.c
 	)
 	if (LINUX STREQUAL "OFF")
 		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL" $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)
