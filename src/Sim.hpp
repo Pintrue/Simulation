@@ -21,11 +21,15 @@ class Sim {
 		Trajectory _tjt;    // trajectory model
 
 		KDL::JntArray _initJA;
+		double _currentJA[NUM_OF_JOINTS];
 
-		double* _actions[ACTION_DIM];
+		double** _actions;
 		int _numOfActions;
 
 		double _target[CART_DIM];
+		double _obj[CART_DIM];
+		bool _hasObj;
+		bool _eeState;
 		// double* _target;
 		int _numOfSteps;
 
