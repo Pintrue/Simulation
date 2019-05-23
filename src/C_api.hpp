@@ -3,8 +3,9 @@
 
 #define CART_DIM 3
 #define TIP_REACHED_RANGE 5.0
-#define OBJ_ATTACHED_RANGE 0.5
+#define OBJ_ATTACHED_RANGE 1.0
 #define OBJ_NEAR_DEST_RANGE 3.0
+#define OBJ_HEIGHT 0.5
 
 // #define REACHING
 #define PICK_N_PLACE // testing now, DELETE LATER!!!!

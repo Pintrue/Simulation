@@ -33,6 +33,7 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 		void enableTraj(bool on);
 		void execAction();
 		void plainAction();
+		void plainActionObj();
 		void trajAction();
 		void trajNextTimeStep();
 		void moveByActionPath();
@@ -61,11 +62,12 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 		// double _jointAngles[NUM_OF_JOINTS];
 		KDL::JntArray _ja;
 		bool _trajOn;
+		bool _hasObj;
 		QTimer* _timer;
 
 		float _cam[3];
     	int _mRotX, _mRotY, _mRotZ, _scale;
-    	QPoint _lastEEPos;
+    	// QPoint _lastEEPos;
 
 		QPoint _mLastPos;
 

@@ -34,6 +34,7 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 	_angleInput = "0.0, 0.0, 0.0";
 	_ja = KDL::JntArray(NUM_OF_JOINTS);
 	_actionsIter = 0;
+	_hasObj = false;
 }
 
 
@@ -78,11 +79,14 @@ void GLWidgets::setSim(Sim sim) {
 	_sim = sim;
 
 	// set the target cartesian position
-	double targetPos[6];
+	double destPos[6];
+	double objPos[6];
 	for (int i = 0; i < 3; ++i) {
-		targetPos[i] = _sim._target[i];
+		destPos[i] = _sim._target[i];
+		objPos[i] = _sim._obj[i];
 	}
-	_glg._goal.setPose(targetPos);
+	_glg._goal.setPose(destPos);
+	_glg._obj.setPose(objPos);
 }
 
 
@@ -186,6 +190,49 @@ void GLWidgets::plainAction() {
 }
 
 
+bool ifHadObj(const double eePos[6], const double objPos[6]) {
+	double diff = 0;
+
+	for (int i = 0; i < CART_DIM; ++i) {
+		double delta = eePos[i] - objPos[i];
+		diff += delta * delta;
+	}
+
+	return sqrt(diff) <= OBJ_ATTACHED_RANGE;
+}
+
+
+void GLWidgets::plainActionObj() {
+	double pose[POSE_DIM];
+	if (_sim._km.getPoseByJnts(_ja, pose)) {
+		if (_sim._actions[_actionsIter - 1][3] == 1) {
+			if (_hasObj) {
+				_glg._obj.setPose(pose);
+			} else if (ifHadObj(pose, _sim._obj)) {
+				_glg._obj.setPose(pose);
+				_hasObj = true;
+			}
+		} else {
+			double objPos[6];
+			objPos[0] = _glg._obj._pose[0];
+			objPos[1] = OBJ_HEIGHT;
+			objPos[2] = _glg._obj._pose[2];
+			_glg._obj.setPose(objPos);
+		}
+		QString eePos = QString("[%1, %2, %3]")
+             .arg(QString::number(pose[0], 'f', 2),
+			 		QString::number(pose[1], 'f', 2),
+					QString::number(pose[2], 'f', 2));
+		emit updateEEPos(eePos);
+	} else {
+		QMessageBox::information(0, tr("Stop"), tr("No solution - try again."));
+		_timer->stop();
+	}
+
+	update();
+}
+
+
 void GLWidgets::trajAction() {
 	/**
 	 * prepare the trajectory from the current angle (1st param.)
@@ -229,8 +276,18 @@ void GLWidgets::actPathNextTimeStep() {
 		for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 			_ja(i) += _sim._actions[_actionsIter][i];
 		}
-		++_actionsIter;
-		plainAction();
+
+		if (ACTION_DIM == 4) {
+			// if (_sim._actions[_actionsIter][3] == 1) {
+				
+			// }
+			++_actionsIter;
+			plainActionObj();
+		} else {
+			++_actionsIter;
+			plainAction();
+		}
+
 	} else {
 		QMessageBox::information(0, tr("Stop"), tr("Path moved out of bounds."));
 		_timer->stop();

@@ -342,3 +342,35 @@ void Goal::draw() {
 
 	glPopMatrix();
 }
+
+
+Obj::Obj() {
+
+}
+
+
+Obj::Obj(double radius, double height) {
+	_radius = radius;
+	_height = height;
+}
+
+
+Obj::~Obj() {
+
+}
+
+
+void Obj::draw() {
+	glPushMatrix();
+
+		glTranslatef(_pose[0], _pose[1], _pose[2]);
+		// glRotated(_pose[5], 0, 0, 1);
+		// glRotated(_pose[4], 0, 1, 0);
+		// glRotated(_pose[3], 1, 0, 0);
+		glColor3d(1.0, 1.0, 0.0);
+		glRotated(90.0, -1.0, 0.0, 0.0);
+
+		gluCylinder(gluNewQuadric(), _radius, _radius, _height, 10, 25);
+
+	glPopMatrix();
+}

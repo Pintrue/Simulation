@@ -13,6 +13,7 @@ class GLGraphics {
 		Floor _floor;
 		Model _model;
 		Goal _goal;
+		Obj _obj;
 };
 
 #endif
