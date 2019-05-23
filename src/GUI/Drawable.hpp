@@ -105,4 +105,17 @@ class Goal : public Drawable {
 		double _radius;
 };
 
+
+class Obj : public Goal {
+	public:
+		Obj();
+		Obj(double radius, double height);
+		~Obj();
+
+		void draw() override;
+
+	protected:
+		double _height;
+};
+
 #endif

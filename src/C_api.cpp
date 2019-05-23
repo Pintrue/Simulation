@@ -22,7 +22,7 @@
 
 #define ACTION_BOUND_UPPER 0.0872664626
 #define ACTION_BOUND_LOWER -0.0872664626
-#define OBJ_HEIGHT 0.5
+
 
 using namespace std;
 using namespace KDL;
@@ -187,9 +187,9 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	matrix_t* objPos = new_matrix(1, CART_DIM);
 	double* obj = objPos->data;
 
-	obj[0] = rand_uniform(-10.5, 10.5);
+	obj[0] = -0.63;//rand_uniform(-10.5, 10.5);
 	obj[1] = OBJ_HEIGHT;
-	obj[2] = rand_uniform(12.5, 22.5);
+	obj[2] = 13.02;//rand_uniform(12.5, 22.5);
 	cout << "This is the target position" << endl;
 	print_matrix(objPos, 1);
 
@@ -517,8 +517,9 @@ void renderSteps(matrix_t** actions, int numOfActions) {
 	sim._actions = (double**) calloc(numOfActions, sizeof(double*));
 	sim._numOfActions = numOfActions;
 	for (int i = 0; i < numOfActions; ++i) {
-		matrix_t* denormedAction = denormalize_action(actions[i]);
-		sim._actions[i] = denormedAction->data;
+		// matrix_t* denormedAction = denormalize_action(actions[i]);
+		// sim._actions[i] = denormedAction->data;
+		sim._actions[i] = actions[i]->data;
 	}
 
 	char arg0[] = "Program Name";
@@ -529,7 +530,7 @@ void renderSteps(matrix_t** actions, int numOfActions) {
 	QApplication app(argc, argv);
 	QtMainWindow mainWindow;
 	window = new QtWindow(&mainWindow);
-	// cout << "At renderSteps()" << endl;
+	cout << "At renderSteps()" << endl;
 	window->getGLWidgets()->setSim(sim);
 	window->resize(window->sizeHint());
 	int desktopArea = QApplication::desktop()->width() * QApplication::desktop()->height();
@@ -609,11 +610,11 @@ matrix_t* random_action(int state_dim, int act_dim) {
 }
 
 
-// int main() {
+int main() {
 	// initEnv(0, 200);
 	// while (1) {
 	// 	cout << "Initialize all states" << endl;
-	// 	matrix_t* full = resetState(1, 1, 0, 0);
+	// 	matrix_t* full = resetState(0, 1, 0, 0);
 		
 	// 	double* data = full->data;
 	// 	for (int i = 0; i < full->rows; ++i) {
@@ -625,15 +626,29 @@ matrix_t* random_action(int state_dim, int act_dim) {
 	// 	break;
 	// }
 
-	// 	matrix_t* steps[3];
-	// 	steps[0] = new_matrix(1, ACTION_DIM);
-	// 	steps[0]->data[1] = 0.5;
-	// 	steps[1] = new_matrix(1, ACTION_DIM);
-	// 	steps[1]->data[1] = 0.5;
-	// 	steps[2] = new_matrix(1, ACTION_DIM);
-	// 	steps[2]->data[1] = 0.5;
+	// matrix_t* steps[3];
 
-	// 	renderSteps(steps, 3);
+	// // steps[0] = new_matrix(1, ACTION_DIM);
+	// // steps[0]->data[1] = 0.5;
+	// // steps[1] = new_matrix(1, ACTION_DIM);
+	// // steps[1]->data[1] = 0.5;
+	// // steps[2] = new_matrix(1, ACTION_DIM);
+	// // steps[2]->data[1] = 0.5;
+	// // steps[2]->data[3] = 1;
+
+	// steps[0] = new_matrix(1, ACTION_DIM);
+	// steps[0]->data[0] = -0.04867;
+	// steps[0]->data[1] =  1.57;
+	// steps[0]->data[2] = -0.14;
+	// steps[0]->data[3] = 1;
+	// steps[1] = new_matrix(1, ACTION_DIM);
+	// steps[1]->data[0] = 0.04867;
+	// steps[1]->data[1] =  -1.57;
+	// steps[1]->data[2] = 0.14;
+	// steps[1]->data[3] = 1;
+	// steps[2] = new_matrix(1, ACTION_DIM);
+	// steps[2]->data[3] = 0;
+	// renderSteps(steps, 3);
 		
 	// 	// setReachingRewardBit(data);
 	// 	// for (int i = 0; i < full->rows; ++i) {
@@ -663,39 +678,44 @@ matrix_t* random_action(int state_dim, int act_dim) {
 	// }
 	// _main();
 
-	// double ori[3] = {0.0, 0.0, 0.0};
-	// KinematicsModel fwdKM = KinematicsModel();
-	// fwdKM.init(ori);
+	double ori[3] = {0.0, 0.0, 0.0};
+	KinematicsModel fwdKM = KinematicsModel();
+	fwdKM.init(ori);
 
-	// KinematicsModel invKM = KinematicsModel();
-	// invKM.init(ori);
+	KinematicsModel invKM = KinematicsModel();
+	invKM.init(ori);
 
-	// JntArray toJA = JntArray(NUM_OF_JOINTS);
+	JntArray toJA = JntArray(NUM_OF_JOINTS);
 	// toJA(0) = M_PI / 2.0 / 3.0; // 30 deg
 	// toJA(1) = M_PI * 0.6111; // 110 deg
 	// toJA(2) = -M_PI * 0.3889; // 70 deg
 
+	toJA(0) = -0.1992;
+	toJA(1) = 1.211;
+	toJA(2) = -1.282;
+
 	// printJntArray(toJA);
 	// // Frame eeFrame;
-	// double eePos[6];
-	// fwdKM.getPoseByJnts(toJA, eePos);
+	double eePos[6];
+	fwdKM.getPoseByJnts(toJA, eePos);
 	// // printFrame(eeFrame);
-	// printPose(eePos);
-	// cout << endl;
+	printPose(eePos);
+	cout << endl;
 
 	// // Frame invEEFrame;
 	// // invEEFrame.p(0) = eeFrame.p(0);
 	// // invEEFrame.p(1) = eeFrame.p(1);
 	// // invEEFrame.p(2) = eeFrame.p(2);
-	// eePos[3] = 0;
-	// eePos[4] = 0;
-	// eePos[5] = 0;
-	// JntArray invToJA = JntArray(NUM_OF_JOINTS);
-	// invKM.getJntsByPose(eePos, invToJA);
-	// printJntArray(invToJA);
-	// // printFrame(invEEFrame);
-	// printPose(eePos);
-	// cout << endl;
+	  
+	eePos[0] = -3.563496e+00;
+	eePos[1] = 5.000000e-01;
+	eePos[2] = 1.765392e+01;
+	JntArray invToJA = JntArray(NUM_OF_JOINTS);
+	invKM.getJntsByPose(eePos, invToJA);
+	printJntArray(invToJA);
+	// printFrame(invEEFrame);
+	printPose(eePos);
+	cout << endl;
 
 	// KinematicsModel invKM1 = KinematicsModel();
 	// invKM1.init(ori);
@@ -731,4 +751,4 @@ matrix_t* random_action(int state_dim, int act_dim) {
 	// 	renderSteps(mat, 50);
 	// }
 	// return 0;
-// }
+}
