@@ -110,6 +110,7 @@ else()
 					${C}/normalizer.c
 					${C}/test_agent.c
 					${SRC_DIR}/model/FwdKM.c
+					${SRC_DIR}/model/InvKM.c
 	)
 	if (LINUX STREQUAL "OFF")
 		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL" $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)

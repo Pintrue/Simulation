@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include "model/FwdKM.h"
+#include "model/InvKM.h"
 
 #define JA0_L -M_PI/2
 #define JA0_U M_PI/2
@@ -86,7 +87,7 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 	
 	/* USED to make user of kdl, get rid of it now*/
 
-	initKM();
+	initFwdKM();
 	getEEPoseByJnts(sim._currentJA, eePos);
 
 
@@ -167,7 +168,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	
 	/* USED to make user of kdl, get rid of it now*/
 
-	initKM();
+	initFwdKM();
 	getEEPoseByJnts(sim._currentJA, eePos);
 
 
@@ -352,7 +353,7 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 
 	double eePos[6];
 
-	initKM();
+	initFwdKM();
 	getEEPoseByJnts(sim._currentJA, eePos);
 
 	for (int i = 0; i < CART_DIM; ++i) {
@@ -411,7 +412,7 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 
 	double eePos[6];
 
-	initKM();
+	initFwdKM();
 	getEEPoseByJnts(sim._currentJA, eePos);
 
 	for (int i = 0; i < CART_DIM; ++i) {
@@ -493,20 +494,25 @@ matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 }
 
 matrix_t* inverse_km(matrix_t* eePos) {
-	// Frame eeFrame;
-	double pose[POSE_DIM];
+	initInvKM();
 
+	double pose[POSE_DIM];
 	for (int i = 0; i < CART_DIM; ++i) {
-		// eeFrame.p(i) = eePos->data[i];
 		pose[i] = eePos->data[i];
 	}
 
-	JntArray ja = JntArray(NUM_OF_JOINTS);
-	sim._km.getJntsByPose(pose, ja);
+	double jntArray[NUM_OF_JOINTS];
+
+	int res = getJntsByEEPos(pose, jntArray);
+	finishInvKM();
+
+	if (res < 0) {
+		cout << "EE Pos not in eligible range." << endl;
+	}
 
 	matrix_t* ret = new_matrix(1, NUM_OF_JOINTS);
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		ret->data[i] = ja(i);
+		ret->data[i] = jntArray[i];
 	}
 	return ret;
 }
@@ -551,7 +557,7 @@ void closeEnv(int state_dim, int act_dim) {
 	#ifdef RENDER
 	delete window;
 	#endif
-	finishKM();
+	finish();
 	return;
 }
 
@@ -678,44 +684,49 @@ int main() {
 	// }
 	// _main();
 
-	double ori[3] = {0.0, 0.0, 0.0};
-	KinematicsModel fwdKM = KinematicsModel();
-	fwdKM.init(ori);
+	// double ori[3] = {0.0, 0.0, 0.0};
+	// KinematicsModel fwdKM = KinematicsModel();
+	// fwdKM.init(ori);
 
-	KinematicsModel invKM = KinematicsModel();
-	invKM.init(ori);
+	// KinematicsModel invKM = KinematicsModel();
+	// invKM.init(ori);
 
-	JntArray toJA = JntArray(NUM_OF_JOINTS);
-	// toJA(0) = M_PI / 2.0 / 3.0; // 30 deg
-	// toJA(1) = M_PI * 0.6111; // 110 deg
-	// toJA(2) = -M_PI * 0.3889; // 70 deg
+	// JntArray toJA = JntArray(NUM_OF_JOINTS);
+	// // toJA(0) = M_PI / 2.0 / 3.0; // 30 deg
+	// // toJA(1) = M_PI * 0.6111; // 110 deg
+	// // toJA(2) = -M_PI * 0.3889; // 70 deg
 
-	toJA(0) = -0.1992;
-	toJA(1) = 1.211;
-	toJA(2) = -1.282;
+	// toJA(0) = -0.1992;
+	// toJA(1) = 1.211;
+	// toJA(2) = -1.282;
 
-	// printJntArray(toJA);
-	// // Frame eeFrame;
-	double eePos[6];
-	fwdKM.getPoseByJnts(toJA, eePos);
-	// // printFrame(eeFrame);
-	printPose(eePos);
-	cout << endl;
+	// // printJntArray(toJA);
+	// // // Frame eeFrame;
+	// double eePos[6];
+	// fwdKM.getPoseByJnts(toJA, eePos);
+	// // // printFrame(eeFrame);
+	// printPose(eePos);
+	// cout << endl;
 
-	// // Frame invEEFrame;
-	// // invEEFrame.p(0) = eeFrame.p(0);
-	// // invEEFrame.p(1) = eeFrame.p(1);
-	// // invEEFrame.p(2) = eeFrame.p(2);
-	  
-	eePos[0] = -3.563496e+00;
-	eePos[1] = 5.000000e-01;
-	eePos[2] = 1.765392e+01;
-	JntArray invToJA = JntArray(NUM_OF_JOINTS);
-	invKM.getJntsByPose(eePos, invToJA);
-	printJntArray(invToJA);
-	// printFrame(invEEFrame);
-	printPose(eePos);
-	cout << endl;
+	// // // Frame invEEFrame;
+	// // // invEEFrame.p(0) = eeFrame.p(0);
+	// // // invEEFrame.p(1) = eeFrame.p(1);
+	// // // invEEFrame.p(2) = eeFrame.p(2);
+	// eePos[0] = -4.21;
+	// eePos[1] = 22.89;
+	// eePos[2] = 20.84;
+	// // JntArray invToJA = JntArray(NUM_OF_JOINTS);
+	// // invKM.getJntsByPose(eePos, invToJA);
+	// // printJntArray(invToJA);
+	// // // printFrame(invEEFrame);
+	// // printPose(eePos);
+	// // cout << endl;
+	// matrix_t* eePosM = new_matrix(1,3);
+	// eePosM->data[0] = eePos[0];
+	// eePosM->data[1] = eePos[1];
+	// eePosM->data[2] = eePos[2];
+	// matrix_t* inv = inverse_km(eePosM);
+	// print_matrix(inv, 1);
 
 	// KinematicsModel invKM1 = KinematicsModel();
 	// invKM1.init(ori);

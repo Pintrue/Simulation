@@ -6,17 +6,17 @@
 #define TO_DECIMAL_PLACE(v, n) (roundf(v * pow(10, n)) / pow(10, n))
 
 
-static threeDOFs* arm;
+static threeDOFsFwd* arm;
 
 
-int initKM() {
+int initFwdKM() {
 	/* DESCRIPTION of the arm */
 	double linkLength[3] = {5.9908, 10.7575, 18.7299};
 	double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
 	double baseHeight = 4.20;
 
 
-	arm = (threeDOFs*) malloc(sizeof(threeDOFs));
+	arm = (threeDOFsFwd*) malloc(sizeof(threeDOFsFwd));
 
 	arm->l1 = linkLength[0];
 	arm->l2 = linkLength[1];
@@ -28,6 +28,65 @@ int initKM() {
 	arm->a2 = 0.58337;
 	arm->a3 = initJntAngles[1];
 	arm->a4 = initJntAngles[2];
+
+	return 0;
+}
+
+/**
+ * numOfPoss > 1 -> calculate and return both the coordinates 
+ * of shoulder and forearm joints;
+ * 
+ * otherwise, just the shoulder joint coordinate.
+ */
+int getJntPosByAngle(const double jntArray[JNT_NUMBER],
+						double allPoss[2][CART_COORD_DIM], int numOfPoss) {
+	if (jntArray[0] > JNT0_U || jntArray[0] < JNT0_L ||
+		jntArray[1] > JNT1_U || jntArray[1] < JNT1_L ||
+		jntArray[2] > JNT2_U || jntArray[2] < JNT2_L) {
+		
+		return JNT_ANGLES_OUT_OF_BOUND;
+	}
+	printf("get to here\n");
+
+	arm->a1 += jntArray[0];
+	arm->a3 += jntArray[1];
+	arm->a4 -= jntArray[2] + jntArray[1];
+
+	double shoulderCoord[CART_COORD_DIM], forearmCoord[CART_COORD_DIM];
+
+	/* calculate the coordinate of shoulder arm joint */
+
+	/* side-view */
+	double shoulderSideX = arm->l1 * cos(arm->a2); // 2D x-position
+	double shoulderY = arm->l1 * sin(arm->a2) + arm->baseHeight;	// 2D y-position
+
+	/* top-view */
+	double shoulderX = shoulderSideX * sin(arm->a1);
+	double shoulderZ = shoulderSideX * cos(arm->a1);
+
+	shoulderCoord[0] = shoulderX; shoulderCoord[1] = shoulderY; shoulderCoord[2] = shoulderZ;
+	for (int i = 0; i < CART_COORD_DIM; ++i) {
+		allPoss[0][i] = shoulderCoord[i];
+	}
+
+	--numOfPoss;
+
+	if (numOfPoss > 0) {
+		/* calculate the coordinate of forearm joint */
+	
+		/* side-view */
+		double forearmSideX = arm->l2 * cos(arm->a3) - shoulderSideX;
+		double forearmY = arm->l2 * sin(arm->a3) + shoulderY;
+
+		/* top-view */
+		double forearmX = forearmSideX * sin(M_PI + arm->a1);
+		double forearmZ = forearmSideX * cos(M_PI + arm->a1);
+
+		forearmCoord[0] = forearmX; forearmCoord[1] = forearmY; forearmCoord[2] = forearmZ;
+		for (int i = 0; i < CART_COORD_DIM; ++i) {
+		allPoss[1][i] = forearmCoord[i];
+		}
+	}
 
 	return 0;
 }
@@ -97,14 +156,14 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 }
 
 
-int finishKM() {
+int finish() {
 	free(arm);
 	return 0;
 }
 
 
 // int main() {
-// 	initKM();
+// 	initFwdKM();
 
 // 	double delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
 // 	double eePos[POSE_FRAME_DIM];
