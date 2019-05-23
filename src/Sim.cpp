@@ -77,8 +77,6 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 	}
 	cout << "t = " << _tjt.timeNow() << endl;
 	cout << "Finished." << endl << endl;
-
-	// _km._jointAngles = toJA; <- carried out by getPoseByJnts(...)
 }
 
 

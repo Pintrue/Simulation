@@ -166,10 +166,12 @@ void GLWidgets::execAction() {
 
 
 void GLWidgets::plainAction() {
-	KDL::Frame eeFrame;
-	if (_sim._km.getPoseByJnts(_ja, eeFrame)) {
-		double pose[POSE_DIM];
-		convFrameToPose(eeFrame, pose);
+	// KDL::Frame eeFrame;
+	double pose[POSE_DIM];
+	// if (_sim._km.getPoseByJnts(_ja, eeFrame)) {
+	if (_sim._km.getPoseByJnts(_ja, pose)) {
+		// double pose[POSE_DIM];
+		// convFrameToPose(eeFrame, pose);
 		QString eePos = QString("[%1, %2, %3]")
              .arg(QString::number(pose[0], 'f', 2),
 			 		QString::number(pose[1], 'f', 2),

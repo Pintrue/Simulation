@@ -46,12 +46,13 @@ void KinematicsModel::init(double origin[3]) {
 *	(also known as the tip of delivery part) in Car-
 *	tesian coordinate form.
 */
-bool KinematicsModel::getPoseByJnts(const JntArray& jnts, Frame& eeFrame) {
+bool KinematicsModel::getPoseByJnts(const JntArray& jnts,
+										double pose[6]) {
 	ChainFkSolverPos_recursive fKSolver =
 		ChainFkSolverPos_recursive(_kdlChain);
 
-	if (fKSolver.JntToCart(jnts, eeFrame) >= 0) {
-		_cartPose = eeFrame;
+	if (fKSolver.JntToCart(jnts, _cartPose) >= 0) {
+		convFrameToPose(_cartPose, pose);
 		_jointAngles = jnts;
 		return true;
 	} else {
@@ -60,10 +61,15 @@ bool KinematicsModel::getPoseByJnts(const JntArray& jnts, Frame& eeFrame) {
 }
 
 
-bool KinematicsModel::getJntsByPose(const Frame& eeFrame, JntArray& jnts) {
+bool KinematicsModel::getJntsByPose(const double pose[6],
+										JntArray& jnts) {
 	ChainIkSolverPos_LMA iKSolver =
 		ChainIkSolverPos_LMA(_kdlChain);
 	
+	Frame eeFrame;
+	for (int i = 0; i < 3; ++i) {
+		eeFrame.p(i) = pose[i];
+	}
 	if (iKSolver.CartToJnt(_jointAngles, eeFrame, jnts)) {
 		_cartPose = eeFrame;
 		_jointAngles = jnts;

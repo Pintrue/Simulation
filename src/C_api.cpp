@@ -492,6 +492,25 @@ matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 	return ret;
 }
 
+matrix_t* inverse_km(matrix_t* eePos) {
+	// Frame eeFrame;
+	double pose[POSE_DIM];
+
+	for (int i = 0; i < CART_DIM; ++i) {
+		// eeFrame.p(i) = eePos->data[i];
+		pose[i] = eePos->data[i];
+	}
+
+	JntArray ja = JntArray(NUM_OF_JOINTS);
+	sim._km.getJntsByPose(pose, ja);
+
+	matrix_t* ret = new_matrix(1, NUM_OF_JOINTS);
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		ret->data[i] = ja(i);
+	}
+	return ret;
+}
+
 
 #ifdef RENDER
 void renderSteps(matrix_t** actions, int numOfActions) {
@@ -655,15 +674,54 @@ matrix_t* random_action(int state_dim, int act_dim) {
 	// toJA(0) = M_PI / 2.0 / 3.0; // 30 deg
 	// toJA(1) = M_PI * 0.6111; // 110 deg
 	// toJA(2) = -M_PI * 0.3889; // 70 deg
+
 	// printJntArray(toJA);
+	// // Frame eeFrame;
+	// double eePos[6];
+	// fwdKM.getPoseByJnts(toJA, eePos);
+	// // printFrame(eeFrame);
+	// printPose(eePos);
+	// cout << endl;
 
-	// Frame eeFrame;
-	// fwdKM.getPoseByJnts(toJA, eeFrame);
-	// printFrame(eeFrame);
-
+	// // Frame invEEFrame;
+	// // invEEFrame.p(0) = eeFrame.p(0);
+	// // invEEFrame.p(1) = eeFrame.p(1);
+	// // invEEFrame.p(2) = eeFrame.p(2);
+	// eePos[3] = 0;
+	// eePos[4] = 0;
+	// eePos[5] = 0;
 	// JntArray invToJA = JntArray(NUM_OF_JOINTS);
-	// invKM.getJntsByPose(eeFrame, invToJA);
+	// invKM.getJntsByPose(eePos, invToJA);
 	// printJntArray(invToJA);
+	// // printFrame(invEEFrame);
+	// printPose(eePos);
+	// cout << endl;
+
+	// KinematicsModel invKM1 = KinematicsModel();
+	// invKM1.init(ori);
+	// invKM1._jointAngles(0) = 0.5236;
+	// double eePos1[6];
+	// eePos1[0] = eePos[0];
+	// eePos1[1] = eePos[1];
+	// eePos1[2] = eePos[2];
+	// // Frame invEEFrame1;
+	// // invEEFrame1.p(0) = eeFrame.p(0);
+	// // invEEFrame1.p(1) = eeFrame.p(1);
+	// // invEEFrame1.p(2) = eeFrame.p(2);
+	// JntArray invToJA1 = JntArray(NUM_OF_JOINTS);
+	// invKM1.getJntsByPose(eePos1, invToJA1);
+	// printJntArray(invToJA1);
+	// printPose(eePos1);
+
+	// matrix_t* test = new_matrix(1,3);
+	// test->data[0] = 13.42;
+	// test->data[1] = 7.604;
+	// test->data[2] = 23.24;
+
+	// matrix_t* ret = inverse_km(test);
+	// print_matrix(ret, 1);
+	// free_matrix(test);
+	// free_matrix(ret);
 
 	// while (1) {
 	// 	matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_SIM_NORM.model", 1, (char*)"DDPG_NORM_SIM_NORM.norm");
