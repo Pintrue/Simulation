@@ -6,7 +6,9 @@
 
 void printFrame(const KDL::Frame& eeFrame);
 
-void convFrameToPose(const KDL::Frame& frame, double pose[POSE_DIM]);
+void printPose(const double pose[6]);
+
+void convFrameToPose(const KDL::Frame& frame, double pose[6]);
 
 void printJntArray(const KDL::JntArray& ja);
 
