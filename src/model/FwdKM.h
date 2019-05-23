@@ -24,18 +24,21 @@ extern "C" {
 // 	yAxis = 2,
 // 	zAxis = 3
 // } Axis;
-typedef struct _threeDOFs {
+typedef struct _threeDOFsFwd {
 	double l1, l2, l3;	// lengths of the three links
 	double baseHeight;
 	double a1, a2, a3, a4;	// four angles between links, where a2 is fixed
-} threeDOFs;
+} threeDOFsFwd;
 
 
-int initKM();
+int initFwdKM();
+
+int getJntPosByAngle(const double jntArray[JNT_NUMBER],
+						double allPoss[JNT_NUMBER][CART_COORD_DIM], int numOfPoss);
 
 int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
 
-int finishKM();
+int finish();
 
 #ifdef __cplusplus
 }
