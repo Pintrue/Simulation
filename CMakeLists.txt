@@ -1,5 +1,5 @@
 # cmake version to be used
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 
 # A few env variable
 set(ENV{PATH} "/usr/local/opt/qt/bin:$ENV{PATH}")

@@ -86,11 +86,7 @@ void GLWidgets::setSim(Sim sim) {
 		objPos[i] = _sim._initObj[i];
 		_sim._obj[i] = _sim._initObj[i];
 	}
-	cout << "Setting target position" << endl;
-	printPose(destPos);
 	_glg._goal.setPose(destPos);
-	cout << "Setting object position" << endl;
-	printPose(objPos);
 	_glg._obj.setPose(objPos);
 }
 
@@ -211,17 +207,13 @@ void GLWidgets::plainActionObj() {
 	double pose[POSE_DIM];
 	if (_sim._km.getPoseByJnts(_ja, pose)) {
 		if (_sim._actions[_actionsIter - 1][3] == 1) {
-			cout << "Magnet current on " << endl;
 			if (_hasObj) {
 				_glg._obj.setPose(pose);
-				cout << "I had it." << endl;
 			} else if (ifHadObj(pose, _sim._obj)) {
-				cout << "I grabbed it." << endl;
 				_glg._obj.setPose(pose);
 				_hasObj = true;
 			}
 		} else {
-			cout << "No magnet current." << endl;
 			double objPos[6];
 			objPos[0] = _glg._obj._pose[0];
 			objPos[1] = OBJ_HEIGHT;
