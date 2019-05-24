@@ -32,8 +32,8 @@ set(KM_FILES
 )
 
 # kdl usage
-find_package(orocos_kdl)
-include_directories(${orocos_kdl_INCLUDE_DIRS})
+# find_package(orocos_kdl)
+# include_directories(${orocos_kdl_INCLUDE_DIRS})
 
 
 # enable C++11 standard
@@ -54,6 +54,10 @@ if(GUI STREQUAL "ON")
 	find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 	set(QT_USE_QTGUI TRUE)
 	set(QT_USE_QTOPENGL TRUE)
+
+	# kdl usage
+	find_package(orocos_kdl)
+	include_directories(${orocos_kdl_INCLUDE_DIRS})
 	
 	add_executable(simulation ${GRA}/GUIMain.cpp
 					${QT_OPENGL_FILES}
@@ -67,9 +71,13 @@ else()
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Werror -pedantic -DMKL_ILP64 -m64 -I${MKLROOT}/include -O3")
 		set(SIM_FILES
 			${SRC_DIR}/C_api.cpp
-			${KM_FILES}
-
+			${SRC_DIR}/Sim.cpp
+		    ${SRC_DIR}/model/Trajectory.cpp
+		    ${SRC_DIR}/model/AngularKinematics.cpp
+			${SRC_DIR}/model/Constraints.cpp
+		    ${SRC_DIR}/utils/Utils.cpp
 		)
+			#${KM_FILES}
 	else()
 		# Instruct CMake to run moc automatically when needed
 		set(CMAKE_AUTOMOC ON)
@@ -81,6 +89,10 @@ else()
 		find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 		set(QT_USE_QTGUI TRUE)
 		set(QT_USE_QTOPENGL TRUE)
+
+		# kdl usage
+		find_package(orocos_kdl)
+		include_directories(${orocos_kdl_INCLUDE_DIRS})
 		
 		# add_compile_definitions(RENDER=1)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Werror -pedantic -O3")
@@ -117,7 +129,7 @@ else()
 	if (LINUX STREQUAL "OFF")
 		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL" $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)
 	else()
-		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} $ENV{MKLROOT}/lib/intel64/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/intel64/libmkl_sequential.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -lpthread -lm -ldl)
+		target_link_libraries(simulation $ENV{MKLROOT}/lib/intel64/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/intel64/libmkl_sequential.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -lpthread -lm -ldl)
 	endif()
 endif()
 unset(GUI)
