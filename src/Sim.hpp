@@ -28,6 +28,7 @@ class Sim {
 
 		double _target[CART_DIM];
 		double _obj[CART_DIM];
+		double _initObj[CART_DIM];
 		bool _hasObj;
 		bool _eeState;
 		// double* _target;
