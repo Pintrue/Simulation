@@ -188,9 +188,9 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	matrix_t* objPos = new_matrix(1, CART_DIM);
 	double* obj = objPos->data;
 
-	obj[0] = -0.63;//rand_uniform(-10.5, 10.5);
+	obj[0] = rand_uniform(-10.5, 10.5);
 	obj[1] = OBJ_HEIGHT;
-	obj[2] = 13.02;//rand_uniform(12.5, 22.5);
+	obj[2] = rand_uniform(12.5, 20.5);
 	cout << "This is the target position" << endl;
 	print_matrix(objPos, 1);
 
@@ -214,7 +214,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 
 		dest[0] = rand_uniform(-10.5, 10.5);
 		dest[1] = 0;
-		dest[2] = rand_uniform(12.5, 22.5);
+		dest[2] = rand_uniform(12.5, 20.5);
 
 		cout << "This is the target position" << endl;
 		print_matrix(destPos, 1);
@@ -443,6 +443,9 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 		 * in the last time step, by checking if the EE with magnet current
 		 * on is in certain range to the object.
 		 **/
+		for (int i = 0; i < CART_DIM; ++i) {
+			data[i + PNP_FST_OBJ_POS_OFFSET] = sim._obj[i];
+		}
 		if (ifHadObj(data)) {
 			data[PNP_HAS_OBJ_OFFSET] = 1;
 			for (int i = 0; i < CART_DIM; ++i) {
@@ -450,6 +453,8 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 			}
 			sim._hasObj = true;
 			data[PNP_HAS_OBJ_OFFSET] = 1;
+		} else {
+
 		}
 		sim._eeState = true;
 	}
@@ -617,22 +622,22 @@ matrix_t* random_action(int state_dim, int act_dim) {
 
 
 int main() {
-	// initEnv(0, 200);
-	// while (1) {
-	// 	cout << "Initialize all states" << endl;
-	// 	matrix_t* full = resetState(0, 1, 0, 0);
+	initEnv(0, 200);
+	while (1) {
+		cout << "Initialize all states" << endl;
+		matrix_t* full = resetState(0, 1, 0, 0);
 		
-	// 	double* data = full->data;
-	// 	for (int i = 0; i < full->rows; ++i) {
-	// 		for (int j = 0; j < full->cols; ++j) {
-	// 			cout << *(data + i * full->cols + j) << " ";
-	// 		}
-	// 	}
-	// 	cout << endl;
-	// 	break;
-	// }
+		double* data = full->data;
+		for (int i = 0; i < full->rows; ++i) {
+			for (int j = 0; j < full->cols; ++j) {
+				cout << *(data + i * full->cols + j) << " ";
+			}
+		}
+		cout << endl;
+		break;
+	}
 
-	// matrix_t* steps[3];
+	matrix_t* steps[3];
 
 	// // steps[0] = new_matrix(1, ACTION_DIM);
 	// // steps[0]->data[1] = 0.5;
@@ -642,19 +647,19 @@ int main() {
 	// // steps[2]->data[1] = 0.5;
 	// // steps[2]->data[3] = 1;
 
-	// steps[0] = new_matrix(1, ACTION_DIM);
-	// steps[0]->data[0] = -0.04867;
-	// steps[0]->data[1] =  1.57;
-	// steps[0]->data[2] = -0.14;
-	// steps[0]->data[3] = 1;
-	// steps[1] = new_matrix(1, ACTION_DIM);
-	// steps[1]->data[0] = 0.04867;
-	// steps[1]->data[1] =  -1.57;
-	// steps[1]->data[2] = 0.14;
-	// steps[1]->data[3] = 1;
-	// steps[2] = new_matrix(1, ACTION_DIM);
-	// steps[2]->data[3] = 0;
-	// renderSteps(steps, 3);
+	steps[0] = new_matrix(1, ACTION_DIM);
+	steps[0]->data[0] = -0.04867;
+	steps[0]->data[1] =  1.57;
+	steps[0]->data[2] = -0.14;
+	steps[0]->data[3] = 1;
+	steps[1] = new_matrix(1, ACTION_DIM);
+	steps[1]->data[0] = 0.04867;
+	steps[1]->data[1] =  -1.57;
+	steps[1]->data[2] = 0.14;
+	steps[1]->data[3] = 1;
+	steps[2] = new_matrix(1, ACTION_DIM);
+	steps[2]->data[3] = 0;
+	renderSteps(steps, 3);
 		
 	// 	// setReachingRewardBit(data);
 	// 	// for (int i = 0; i < full->rows; ++i) {
