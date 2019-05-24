@@ -191,12 +191,13 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	obj[0] = rand_uniform(-10.5, 10.5);
 	obj[1] = OBJ_HEIGHT;
 	obj[2] = rand_uniform(12.5, 20.5);
-	cout << "This is the target position" << endl;
+	cout << "This is the object position" << endl;
 	print_matrix(objPos, 1);
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + PNP_FST_OBJ_POS_OFFSET] = obj[i];
 		data[i + PNP_SND_OBJ_POS_OFFSET] = obj[i]; 
+		sim._initObj[i] = obj[i];
 		sim._obj[i] = obj[i];
 	}
 	free_matrix(objPos);
@@ -222,6 +223,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + PNP_DEST_POS_OFFSET] = dest[i];
 			sim._target[i] = dest[i];
+			
 		}
 		free_matrix(destPos);
 	} else {
@@ -528,9 +530,14 @@ void renderSteps(matrix_t** actions, int numOfActions) {
 	sim._actions = (double**) calloc(numOfActions, sizeof(double*));
 	sim._numOfActions = numOfActions;
 	for (int i = 0; i < numOfActions; ++i) {
-		// matrix_t* denormedAction = denormalize_action(actions[i]);
-		// sim._actions[i] = denormedAction->data;
-		sim._actions[i] = actions[i]->data;
+		matrix_t* denormedAction = denormalize_action(actions[i]);
+		sim._actions[i] = denormedAction->data;
+	}
+
+	if (taskFlag == PICK_N_PLACE_TASK_FLAG) {
+		for (int i = 0; i < numOfActions; ++i) {
+			sim._actions[i][3] = actions[i]->data[3];
+		}
 	}
 
 	char arg0[] = "Program Name";
@@ -622,22 +629,22 @@ matrix_t* random_action(int state_dim, int act_dim) {
 
 
 int main() {
-	initEnv(0, 200);
-	while (1) {
-		cout << "Initialize all states" << endl;
-		matrix_t* full = resetState(0, 1, 0, 0);
+	// initEnv(0, 200);
+	// while (1) {
+	// 	cout << "Initialize all states" << endl;
+	// 	matrix_t* full = resetState(0, 1, 0, 0);
 		
-		double* data = full->data;
-		for (int i = 0; i < full->rows; ++i) {
-			for (int j = 0; j < full->cols; ++j) {
-				cout << *(data + i * full->cols + j) << " ";
-			}
-		}
-		cout << endl;
-		break;
-	}
+	// 	double* data = full->data;
+	// 	for (int i = 0; i < full->rows; ++i) {
+	// 		for (int j = 0; j < full->cols; ++j) {
+	// 			cout << *(data + i * full->cols + j) << " ";
+	// 		}
+	// 	}
+	// 	cout << endl;
+	// 	break;
+	// }
 
-	matrix_t* steps[3];
+	// matrix_t* steps[3];
 
 	// // steps[0] = new_matrix(1, ACTION_DIM);
 	// // steps[0]->data[1] = 0.5;
@@ -646,20 +653,20 @@ int main() {
 	// // steps[2] = new_matrix(1, ACTION_DIM);
 	// // steps[2]->data[1] = 0.5;
 	// // steps[2]->data[3] = 1;
-
-	steps[0] = new_matrix(1, ACTION_DIM);
-	steps[0]->data[0] = -0.04867;
-	steps[0]->data[1] =  1.57;
-	steps[0]->data[2] = -0.14;
-	steps[0]->data[3] = 1;
-	steps[1] = new_matrix(1, ACTION_DIM);
-	steps[1]->data[0] = 0.04867;
-	steps[1]->data[1] =  -1.57;
-	steps[1]->data[2] = 0.14;
-	steps[1]->data[3] = 1;
-	steps[2] = new_matrix(1, ACTION_DIM);
-	steps[2]->data[3] = 0;
-	renderSteps(steps, 3);
+	return _main();
+	// steps[0] = new_matrix(1, ACTION_DIM);
+	// steps[0]->data[0] = -0.04867;
+	// steps[0]->data[1] =  1.57;
+	// steps[0]->data[2] = -0.14;
+	// steps[0]->data[3] = 1;
+	// steps[1] = new_matrix(1, ACTION_DIM);
+	// steps[1]->data[0] = 0.04867;
+	// steps[1]->data[1] =  -1.57;
+	// steps[1]->data[2] = 0.14;
+	// steps[1]->data[3] = 1;
+	// steps[2] = new_matrix(1, ACTION_DIM);
+	// steps[2]->data[3] = 0;
+	// renderSteps(steps, 3);
 		
 	// 	// setReachingRewardBit(data);
 	// 	// for (int i = 0; i < full->rows; ++i) {
