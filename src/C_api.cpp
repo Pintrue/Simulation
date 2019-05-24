@@ -11,6 +11,8 @@
 #include "GUI/QtWindow.hpp"
 #endif
 
+#include <stdio.h>
+#include <iostream>
 #include <math.h>
 #include "model/FwdKM.h"
 #include "model/InvKM.h"
@@ -27,7 +29,6 @@
 
 
 using namespace std;
-using namespace KDL;
 
 #ifdef RENDER
 QtWindow* window;
@@ -56,7 +57,7 @@ int initEnv(int act_dim, int task_flag) {
 
 matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_dim) {
 	/* Nothing needs to be done rn.*/
-	cout << "Reaching full state dim: " << FULL_STATE_NUM_COLS << endl;
+	// cout << "Reaching full state dim: " << FULL_STATE_NUM_COLS << endl;
 	matrix_t* ret = new_matrix(1, FULL_STATE_NUM_COLS);
 	double* data = ret->data;
 
@@ -78,15 +79,12 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 	// TESTING VARIABLE, delete later.
 	double eePos[6];
 	
-	JntArray angle = JntArray(NUM_OF_JOINTS);
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		angle(i) = data[i];
+		sim._initJA[i] = data[i];
 		sim._currentJA[i] = data[i];
 	}
-
-	sim._initJA = angle;
 	
-	/* USED to make user of kdl, get rid of it now*/
+	/* USED to make use of kdl, get rid of it now*/
 
 	initFwdKM();
 	getEEPoseByJnts(sim._currentJA, eePos);
@@ -139,7 +137,7 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 }
 
 matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) {
-	cout << "PnP full state dim: " << FULL_STATE_NUM_COLS << endl;
+	// cout << "PnP full state dim: " << FULL_STATE_NUM_COLS << endl;
 	matrix_t* ret = new_matrix(1, FULL_STATE_NUM_COLS);
 	double* data = ret->data;
 
@@ -159,15 +157,12 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	/* setting the current position of the end-effector */
 	double eePos[6];
 	
-	JntArray angle = JntArray(NUM_OF_JOINTS);
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		angle(i) = data[i];
+		sim._initJA[i] = data[i];
 		sim._currentJA[i] = data[i];
 	}
-
-	sim._initJA = angle;
 	
-	/* USED to make user of kdl, get rid of it now*/
+	/* USED to make use of kdl, get rid of it now*/
 
 	initFwdKM();
 	getEEPoseByJnts(sim._currentJA, eePos);
@@ -244,10 +239,10 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 	matrix_t* ret;
 
 	if (taskFlag == REACHING_TASK_FLAG) {
-		cout << "Reaching task flag set." << endl;
+		// cout << "Reaching task flag set." << endl;
 		ret = resetStateReaching(randAngle, destPos, state_dim, act_dim);
 	} else if (taskFlag == PICK_N_PLACE_TASK_FLAG) {
-		cout << "Pick n place task flag set." << endl;
+		// cout << "Pick n place task flag set." << endl;
 		ret = resetStatePnP(randAngle, destPos, state_dim, act_dim);
 	} else {
 		/* SHOULD NOT have reached here. */
@@ -335,9 +330,9 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
 	double* data = fullState->data;
 	double* delta = denormed_matrix->data;
-	JntArray ja = JntArray(NUM_OF_JOINTS);//sim._km._jointAngles;
+	double ja[NUM_OF_JOINTS];
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		ja(i) = sim._currentJA[i];
+		ja[i] = sim._currentJA[i];
 	}
 
 	/* regulate the joint angle to within legal boundaries */
@@ -400,9 +395,9 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 	double* data = fullState->data;
 	double* delta = denormed_matrix->data;
 
-	JntArray ja = JntArray(NUM_OF_JOINTS);
+	double ja[NUM_OF_JOINTS];
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		ja(i) = sim._currentJA[i];
+		ja[i] = sim._currentJA[i];
 	}
 
 	/* regulate the joint angle to within legal boundaries */
@@ -486,10 +481,10 @@ matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 	matrix_t* ret;
 
 	if (taskFlag == REACHING_TASK_FLAG) {
-		cout << "Reaching task flag set." << endl;
+		// cout << "Reaching task flag set." << endl;
 		ret = stepReaching(action, state_dim, act_dim);
 	} else if (taskFlag == PICK_N_PLACE_TASK_FLAG) {
-		cout << "Pick n place task flag set." << endl;
+		// cout << "Pick n place task flag set." << endl;
 		ret = stepPnP(action, state_dim, act_dim);
 	} else {
 		/* SHOULD NOT have reached here. */
@@ -549,7 +544,7 @@ void renderSteps(matrix_t** actions, int numOfActions) {
 	QApplication app(argc, argv);
 	QtMainWindow mainWindow;
 	window = new QtWindow(&mainWindow);
-	cout << "At renderSteps()" << endl;
+	// cout << "At renderSteps()" << endl;
 	window->getGLWidgets()->setSim(sim);
 	window->resize(window->sizeHint());
 	int desktopArea = QApplication::desktop()->width() * QApplication::desktop()->height();
@@ -570,7 +565,7 @@ void closeEnv(int state_dim, int act_dim) {
 	#ifdef RENDER
 	delete window;
 	#endif
-	finish();
+	finishFwdKM();
 	return;
 }
 
@@ -613,10 +608,10 @@ matrix_t* random_action(int state_dim, int act_dim) {
 	matrix_t* ret;
 
 	if (taskFlag == REACHING_TASK_FLAG) {
-		cout << "Reaching task flag set." << endl;
+		// cout << "Reaching task flag set." << endl;
 		ret = reachingRandomAction(state_dim, act_dim);
 	} else if (taskFlag == PICK_N_PLACE_TASK_FLAG) {
-		cout << "Pick n place task flag set." << endl;
+		// cout << "Pick n place task flag set." << endl;
 		ret = pnpRandomAction(state_dim, act_dim);
 	} else {
 		/* SHOULD NOT have reached here. */

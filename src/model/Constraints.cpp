@@ -14,13 +14,13 @@ bool areInValidRanges(double jntAngles[NUM_OF_JOINTS],
 
 
 // whether get regulated - false -> invalid; true -> valid
-bool regulateJntAngles(const KDL::JntArray& jntAngles,
+bool regulateJntAngles(double jntAngles[NUM_OF_JOINTS],
 						const double delta[ACTION_DIM],
 						double result[FULL_STATE_NUM_COLS]) {
 	double ja[NUM_OF_JOINTS];
-	ja[0] = jntAngles(0) + delta[0];
-	ja[1] = jntAngles(1) + delta[1];
-	ja[2] = jntAngles(2) + delta[2];
+	ja[0] = jntAngles[0] + delta[0];
+	ja[1] = jntAngles[1] + delta[1];
+	ja[2] = jntAngles[2] + delta[2];
 
 	double check[NUM_OF_JOINTS];
 	if (areInValidRanges(ja, check)) {

@@ -1,44 +1,13 @@
 #include <stdio.h>
-#include <kdl/chain.hpp>
-#include <kdl/chainfksolverpos_recursive.hpp>
-#include <kdl/chainiksolverpos_lma.hpp>
 #include "KinematicsModel.hpp"
 #include "../utils/Utils.hpp"
+#include <iostream>
+
 
 using namespace std;
-using namespace KDL;
 
 
 KinematicsModel::KinematicsModel() {}
-
-
-/*
-*	Description of the measurements of the
-*	arm to feed to the KDL library.
-*/
-void KinematicsModel::init(double origin[3]) {
-	// Construct segments: links of the arm
-
-	// Origin
-	_kdlChain.addSegment(Segment(Joint(Joint::None), Frame(
-		Vector(origin[0], origin[1], origin[2]))));
-	// Base joint
-	_kdlChain.addSegment(Segment(Joint(Joint::RotY), Frame(
-		Vector(0.0, 4.20, 0.0))));
-	// Shoulder joint - Used to be RotX / May 14
-	_kdlChain.addSegment(Segment(Joint(Joint::None),Frame(
-		Vector(0.0, 3.30, 5.0))));
-	// Elbow joint - Used to be None / May 14
-	_kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(
-		Vector(0.0, 2.0, -10.57))));
-	// End-effector
-	_kdlChain.addSegment(Segment(Joint(Joint::RotX),Frame(
-		Vector(0.0, 3.50, 18.4))));
-
-	// Initialize 
-	_jointAngles = JntArray(_kdlChain.getNrOfJoints());
-}
-
 
 /*
 *	Given the joint angles the arm needs to move to,
@@ -46,35 +15,56 @@ void KinematicsModel::init(double origin[3]) {
 *	(also known as the tip of delivery part) in Car-
 *	tesian coordinate form.
 */
-bool KinematicsModel::getPoseByJnts(const JntArray& jnts,
-										double pose[6]) {
-	ChainFkSolverPos_recursive fKSolver =
-		ChainFkSolverPos_recursive(_kdlChain);
-
-	if (fKSolver.JntToCart(jnts, _cartPose) >= 0) {
-		convFrameToPose(_cartPose, pose);
-		_jointAngles = jnts;
+bool KinematicsModel::getPoseByJnts(const double jnts[NUM_OF_JOINTS],
+										double pose[POSE_FRAME_DIM]) {
+	initFwdKM();
+	if (getEEPoseByJnts(jnts, pose) >= 0) {
+		for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+			_jointAngles[i] = jnts[i];
+		}
+		for (int i = 0; i < POSE_FRAME_DIM; ++i) {
+			_cartPose[i] = pose[i];
+		}
+		finishFwdKM();
 		return true;
 	} else {
+		finishFwdKM();
+		cout << "Angle out of bound, at function getPoseByJnts() in file "
+				<< "KinematicsModel.cpp." << endl;
 		return false;
 	}
-}
-
-
-bool KinematicsModel::getJntsByPose(const double pose[6],
-										JntArray& jnts) {
-	ChainIkSolverPos_LMA iKSolver =
-		ChainIkSolverPos_LMA(_kdlChain);
 	
-	Frame eeFrame;
-	for (int i = 0; i < 3; ++i) {
-		eeFrame.p(i) = pose[i];
-	}
-	if (iKSolver.CartToJnt(_jointAngles, eeFrame, jnts)) {
-		_cartPose = eeFrame;
-		_jointAngles = jnts;
+}
+
+
+bool KinematicsModel::getAllPoss(const double jnts[NUM_OF_JOINTS], double allPoss[POSS_NUMBER][POSE_FRAME_DIM]) {
+	initFwdKM();
+	if (getAllPossByJnts(jnts, allPoss) >= 0) {
+		finishFwdKM();
 		return true;
 	} else {
+		finishFwdKM();
+		cout << "Angle out of bound, at function getAllPossByJnts() in file "
+				<< "KinematicsModel.cpp." << endl;
 		return false;
-	}	
+	}
 }
+
+
+// bool KinematicsModel::getJntsByPose(const double pose[6],
+// 										JntArray& jnts) {
+// 	ChainIkSolverPos_LMA iKSolver =
+// 		ChainIkSolverPos_LMA(_kdlChain);
+	
+// 	Frame eeFrame;
+// 	for (int i = 0; i < 3; ++i) {
+// 		eeFrame.p(i) = pose[i];
+// 	}
+// 	if (iKSolver.CartToJnt(_jointAngles, eeFrame, jnts)) {
+// 		_cartPose = eeFrame;
+// 		_jointAngles = jnts;
+// 		return true;
+// 	} else {
+// 		return false;
+// 	}	
+// }

@@ -1,21 +1,23 @@
 #include <stdio.h>
 #include "Utils.hpp"
+#include <iostream>
+#include <iomanip>
 
 using namespace std;
 
 
-void printFrame(const KDL::Frame& eeFrame) {// Print the frame
-	for (int i = 0; i < 4; i++){
-		for (int j = 0; j < 4; j++) {
-			double v = eeFrame(i, j);
-			if (v < 0.0001 && v > -0.001) {
-				v = 0.0;
-			}
-			cout << setprecision(4) << v << "\t\t";
-		}
-		cout << endl;
-	}
-}
+// void printFrame(const KDL::Frame& eeFrame) {// Print the frame
+// 	for (int i = 0; i < 4; i++){
+// 		for (int j = 0; j < 4; j++) {
+// 			double v = eeFrame(i, j);
+// 			if (v < 0.0001 && v > -0.001) {
+// 				v = 0.0;
+// 			}
+// 			cout << setprecision(4) << v << "\t\t";
+// 		}
+// 		cout << endl;
+// 	}
+// }
 
 
 void printPose(const double eePos[POSE_DIM]) {
@@ -38,30 +40,30 @@ void printPose(const double eePos[POSE_DIM]) {
 }
 
 
-void convFrameToPose(const KDL::Frame& frame, double pose[POSE_DIM]) {
-	/**
-	 * Pose is consist of cartesian coordinate and
-	 * orientation in the form of Euler angle, e.g.
-	 * 
-	 * 	pose => (x, y, z, alpha, beta, gamma)
-	 * 
-	**/
+// void convFrameToPose(const KDL::Frame& frame, double pose[POSE_DIM]) {
+// 	/**
+// 	 * Pose is consist of cartesian coordinate and
+// 	 * orientation in the form of Euler angle, e.g.
+// 	 * 
+// 	 * 	pose => (x, y, z, alpha, beta, gamma)
+// 	 * 
+// 	**/
 
-	for (int i = 0; i < 3; ++i) {
-		pose[i] = frame.p(i);
-	}
+// 	for (int i = 0; i < 3; ++i) {
+// 		pose[i] = frame.p(i);
+// 	}
 
-	double z, y, x;	// Euler angles Z, Y, X
-	frame.M.GetEulerZYX(z, y, x);
-	pose[3] = x; pose[4] = y; pose[5] = z;
-}
+// 	double z, y, x;	// Euler angles Z, Y, X
+// 	frame.M.GetEulerZYX(z, y, x);
+// 	pose[3] = x; pose[4] = y; pose[5] = z;
+// }
 
 
-void printJntArray(const KDL::JntArray& ja) {
-	cout << "The requested joint array: " << endl;
-	cout << "[ ";
-	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		cout << setprecision(4) << ja(i) << " ";
-	}
-	cout << "]" << endl;
-}
+// void printJntArray(const KDL::JntArray& ja) {
+// 	cout << "The requested joint array: " << endl;
+// 	cout << "[ ";
+// 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+// 		cout << setprecision(4) << ja(i) << " ";
+// 	}
+// 	cout << "]" << endl;
+// }

@@ -29,12 +29,9 @@ set(KM_FILES
     ${SRC_DIR}/model/AngularKinematics.cpp
 	${SRC_DIR}/model/Constraints.cpp
     ${SRC_DIR}/utils/Utils.cpp
+	${SRC_DIR}/model/FwdKM.c
+	${SRC_DIR}/model/InvKM.c
 )
-
-# kdl usage
-# find_package(orocos_kdl)
-# include_directories(${orocos_kdl_INCLUDE_DIRS})
-
 
 # enable C++11 standard
 set(CMAKE_CXX_STANDARD 11)
@@ -54,30 +51,22 @@ if(GUI STREQUAL "ON")
 	find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 	set(QT_USE_QTGUI TRUE)
 	set(QT_USE_QTOPENGL TRUE)
-
-	# kdl usage
-	find_package(orocos_kdl)
-	include_directories(${orocos_kdl_INCLUDE_DIRS})
 	
 	add_executable(simulation ${GRA}/GUIMain.cpp
 					${QT_OPENGL_FILES}
 					${KM_FILES}
+
 	)
 
-	target_link_libraries(simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL")
+	target_link_libraries(simulation Qt5::Widgets "-framework OpenGL")
 
 else()
 	if (LINUX STREQUAL "ON")
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Werror -pedantic -DMKL_ILP64 -m64 -I${MKLROOT}/include -O3")
 		set(SIM_FILES
 			${SRC_DIR}/C_api.cpp
-			${SRC_DIR}/Sim.cpp
-		    ${SRC_DIR}/model/Trajectory.cpp
-		    ${SRC_DIR}/model/AngularKinematics.cpp
-			${SRC_DIR}/model/Constraints.cpp
-		    ${SRC_DIR}/utils/Utils.cpp
+			${KM_FILES}
 		)
-			#${KM_FILES}
 	else()
 		# Instruct CMake to run moc automatically when needed
 		set(CMAKE_AUTOMOC ON)
@@ -89,10 +78,6 @@ else()
 		find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 		set(QT_USE_QTGUI TRUE)
 		set(QT_USE_QTOPENGL TRUE)
-
-		# kdl usage
-		find_package(orocos_kdl)
-		include_directories(${orocos_kdl_INCLUDE_DIRS})
 		
 		# add_compile_definitions(RENDER=1)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Werror -pedantic -O3")
@@ -123,11 +108,11 @@ else()
 					${C}/test_agent.c
 					${C}/rl_ddpg_her_demo.c
 					${C}/rl_ddpg_her_sim.c
-					${SRC_DIR}/model/FwdKM.c
-					${SRC_DIR}/model/InvKM.c
 	)
+					#${SRC_DIR}/model/FwdKM.c
+					#${SRC_DIR}/model/InvKM.c
 	if (LINUX STREQUAL "OFF")
-		target_link_libraries(simulation ${orocos_kdl_LIBRARIES} Qt5::Widgets "-framework OpenGL" $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)
+		target_link_libraries(simulation Qt5::Widgets "-framework OpenGL" $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)
 	else()
 		target_link_libraries(simulation $ENV{MKLROOT}/lib/intel64/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/intel64/libmkl_sequential.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -lpthread -lm -ldl)
 	endif()

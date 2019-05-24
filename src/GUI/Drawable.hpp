@@ -2,6 +2,8 @@
 #define GUI_DRAWABLE_HPP
 
 #include "../model/KinematicsModel.hpp"
+#include <stdlib.h>
+#include <vector>
 
 #define POSE_DIM 6
 #define RAD_TO_DEG(x) (180/M_PI)*x
@@ -81,9 +83,9 @@ class Model : public Drawable {
 		Model();
 		~Model();
 
-		void init(const KinematicsModel& km);
+		void init();
 		void finish();
-		void update(const KinematicsModel& km, const KDL::JntArray& jnts);
+		void update(double jnts[NUM_OF_JOINTS]);
 		void draw() override;
 
 	protected:

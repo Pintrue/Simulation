@@ -8,6 +8,7 @@ extern "C" {
 #define JNT_NUMBER 3
 #define CART_COORD_DIM 3
 #define POSE_FRAME_DIM 6
+#define POSS_NUMBER 4
 
 #define JNT0_L -M_PI/2
 #define JNT0_U M_PI/2
@@ -38,7 +39,9 @@ int getJntPosByAngle(const double jntArray[JNT_NUMBER],
 
 int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
 
-int finish();
+int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[4][POSE_FRAME_DIM]);
+
+int finishFwdKM();
 
 #ifdef __cplusplus
 }

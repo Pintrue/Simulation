@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 using namespace std;
-using namespace KDL;
 
 
 Trajectory::Trajectory() : _numJoints(0) {
@@ -19,14 +18,14 @@ void Trajectory::init(int numJoints) {
 }
 
 
-void Trajectory::prepare(JntArray& start, JntArray& end, double duration) {
+void Trajectory::prepare(double start[NUM_OF_JOINTS], double end[NUM_OF_JOINTS], double duration) {
 	_tNow = 0;	// local time in the trajectory process
 	_tEnd = duration;	// total time of the trajectory process
 	AngularKinematics::TemporalData s, e;
 
 	for (unsigned int i = 0; i < _joints.size(); ++i) {
-		s.angle = start(i);
-		e.angle = end(i);
+		s.angle = start[i];
+		e.angle = end[i];
 		s.velocity = 0;
 		e.velocity = 0;
 
@@ -35,7 +34,7 @@ void Trajectory::prepare(JntArray& start, JntArray& end, double duration) {
 }
 
 
-bool Trajectory::nextTimeStep(double tNow, JntArray& next) {
+bool Trajectory::nextTimeStep(double tNow, double next[NUM_OF_JOINTS]) {
 	if (tNow > _tEnd) {
 		_tNow = _tEnd;
 	} else {
@@ -45,7 +44,7 @@ bool Trajectory::nextTimeStep(double tNow, JntArray& next) {
 
 	for (unsigned int i = 0; i < _joints.size(); ++i) {
 		_joints[i]->angleAtTime(_tNow, &angle);
-		next(i) = angle;
+		next[i] = angle;
 		// cout << i << " th joint's angle is " << angle << endl;
 	}
 

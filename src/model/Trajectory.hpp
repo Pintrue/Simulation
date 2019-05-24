@@ -3,14 +3,14 @@
 
 #include <vector>
 #include "AngularKinematics.hpp"
-#include "kdl/jntarray.hpp"
+#include "KinematicsModel.hpp"
 
 class Trajectory {
 	public:
 		Trajectory();
 		void init(int numJoints);
-		void prepare(KDL::JntArray& start, KDL::JntArray& end, double duration);
-		bool nextTimeStep(double tNow, KDL::JntArray& next);
+		void prepare(double start[NUM_OF_JOINTS], double end[NUM_OF_JOINTS], double duration);
+		bool nextTimeStep(double tNow, double next[NUM_OF_JOINTS]);
 		void finish();
 		double timeNow();
 
