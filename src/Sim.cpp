@@ -1,9 +1,10 @@
 #include "Sim.hpp"
 #include "utils/Utils.hpp"
 #include <algorithm>
+#include <iostream>
+#include <stdio.h>
 
 using namespace std;
-using namespace KDL;
 
 
 /*
@@ -11,14 +12,10 @@ using namespace KDL;
 *   for the trajectory.
 */
 Sim::Sim() {
-	double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
-	_km.init(pos);
-	// _tjt.init(NUM_OF_JOINTS);
-	
 	// set current joint angles to zero
-	JntArray fromJA = JntArray(NUM_OF_JOINTS);
-	_km._jointAngles = fromJA;
-	SetToZero(_km._jointAngles);
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		_km._jointAngles[i] = 0;
+	}
 
 	_numOfSteps = 0;
 	_hasObj = false;
@@ -28,13 +25,12 @@ Sim::Sim() {
 
 Sim::Sim(double ori[NUM_OF_JOINTS]) {
 	// initialize kinematics and trajectory models
-	_km.init(ori);
 	_tjt.init(NUM_OF_JOINTS);
 	
 	// set current joint angles to zero
-	JntArray fromJA = JntArray(NUM_OF_JOINTS);
-	_km._jointAngles = fromJA;
-	SetToZero(_km._jointAngles);
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		_km._jointAngles[i] = 0;
+	}
 
 	_numOfSteps = 0;
 	_hasObj = false;
@@ -42,12 +38,12 @@ Sim::Sim(double ori[NUM_OF_JOINTS]) {
 }
 
 
-JntArray Sim::getJointAngles() {
+double* Sim::getJointAngles() {
 	return _km._jointAngles;
 }
 
 
-Frame Sim::getEEPose() {
+double* Sim::getEEPose() {
 	return _km._cartPose;
 }
 
@@ -59,15 +55,16 @@ Frame Sim::getEEPose() {
 *   tion.
 */
 void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) {
-	JntArray toJA = JntArray(NUM_OF_JOINTS);
+	// JntArray toJA = JntArray(NUM_OF_JOINTS);
+	double toJA[NUM_OF_JOINTS];
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		toJA(i) = jointAngles[i];
+		toJA[i] = jointAngles[i];
 	}
 
 	// plan the trajectory - calculate the coeficients
 	_tjt.prepare(_km._jointAngles, toJA, duration);
-	JntArray interJA = JntArray(NUM_OF_JOINTS);
-
+	// JntArray interJA = JntArray(NUM_OF_JOINTS);
+	double interJA[NUM_OF_JOINTS];
 	cout << "t = " << _tjt.timeNow() << endl << endl;
 
 	// keep looping if still in progress

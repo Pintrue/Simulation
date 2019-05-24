@@ -13,14 +13,14 @@ class Sim {
 		Sim();				// default constructor
 		Sim(double ori[3]); // constructor
 
-		KDL::JntArray getJointAngles();
-		KDL::Frame getEEPose();
+		double* getJointAngles();
+		double* getEEPose();
 		void moveByJointAngles(double jointAngles[3], double duration);
 
 		KinematicsModel _km;// kinematics model
 		Trajectory _tjt;    // trajectory model
 
-		KDL::JntArray _initJA;
+		double _initJA[NUM_OF_JOINTS];
 		double _currentJA[NUM_OF_JOINTS];
 
 		double** _actions;

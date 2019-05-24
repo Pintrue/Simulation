@@ -20,8 +20,7 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 
 		Sim getSim();
 		void setSim(Sim sim);
-		void setJointAngle(KDL::JntArray ja);
-		// KDL::JntArray _ja;
+		void setJointAngle(double ja[NUM_OF_JOINTS]);
 
 	public slots:
 	    void setXRotation(int angle);
@@ -60,7 +59,8 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 	private:
 		QString _angleInput;
 		// double _jointAngles[NUM_OF_JOINTS];
-		KDL::JntArray _ja;
+		// KDL::JntArray _ja;
+		double _ja[NUM_OF_JOINTS];
 		bool _trajOn;
 		bool _hasObj;
 		QTimer* _timer;

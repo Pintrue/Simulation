@@ -4,6 +4,8 @@
 #include <GLUT/glut.h>
 #include "../utils/Utils.hpp"
 #include <iostream>
+#include <iterator>
+#include <math.h>
 
 
 #define FLR_MIN_X -20.0
@@ -16,7 +18,6 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 using namespace std;
-using namespace KDL;
 
 
 Drawable::Drawable() {
@@ -220,24 +221,25 @@ Model::~Model() {
 }
 
 
-void Model::init(const KinematicsModel& km) {
-	Frame frame;
-
+void Model::init() {
 	_joints.push_back(new Jnt());
 	_joints.push_back(new BaseJoint(4.2, 2.4));
 	_joints.push_back(new ArmJoint(0.5, 2.1));
 	_joints.push_back(new ForearmJoint(0.5, 2.1));
 	_joints.push_back(new EndEffector(2.1));
 
-	unsigned int numSegmnts = km._kdlChain.getNrOfSegments();
+	double initAngle[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
+	double allPoss[POSS_NUMBER][POSE_FRAME_DIM];
 
-	for (unsigned int i = 0; i < numSegmnts; ++i) {
-		frame = frame * km._kdlChain.getSegment(i).pose(0.0);
+	KinematicsModel km;
 
-		double pose[POSE_DIM];
-		convFrameToPose(frame, pose);
-
-		_joints[i]->setPose(pose);
+	if (km.getAllPoss(initAngle, allPoss)) {
+		for (int i = 0; i < POSS_NUMBER; ++i) {
+			_joints[i + 1]->setPose(allPoss[i]);
+		}
+	} else {
+		cout << "Given angles are out of bound at Model::init() " 
+				<< "in file Drawable.cpp" << endl;
 	}
 }
 
@@ -253,32 +255,17 @@ void Model::finish() {
 }
 
 
-void Model::update(const KinematicsModel& km, const KDL::JntArray& jnts) {
-	Frame frame;
-	unsigned int numSegmnts = km._kdlChain.getNrOfSegments();
+void Model::update(double jnts[NUM_OF_JOINTS]) {
+	double allPoss[POSS_NUMBER][POSE_FRAME_DIM];
 
-	int iter = 0;
-	if (km._kdlChain.getSegment(0).getJoint().getType() != Joint::None) {
-		frame = km._kdlChain.getSegment(0).pose(jnts(iter));
-		++iter;
-	} else {
-		frame = km._kdlChain.getSegment(0).pose(0.0);
-	}
-
-	double pose[POSE_DIM];
-	convFrameToPose(frame, pose);
-	_joints[0]->setPose(pose);
-
-	for (unsigned int i = 1; i < numSegmnts; ++i) {
-		if (km._kdlChain.getSegment(i).getJoint().getType() != Joint::None) {
-			frame = frame * km._kdlChain.getSegment(i).pose(jnts(iter));
-			++iter;
-		} else {
-			frame = frame * km._kdlChain.getSegment(i).pose(0.0);
+	KinematicsModel km;
+	if (km.getAllPoss(jnts, allPoss)) {
+		for (int i = 0; i < POSS_NUMBER; ++i) {
+			_joints[i + 1]->setPose(allPoss[i]);
 		}
-		convFrameToPose(frame, pose);
-
-		_joints[i]->setPose(pose);
+	} else {
+		cout << "Given angles are out of bound at Model::update() " 
+				<< "in file Drawable.cpp" << endl;
 	}
 }
 

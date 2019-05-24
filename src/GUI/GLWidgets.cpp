@@ -21,7 +21,6 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 
 	_timer = new QTimer(this);
 	_timer->setInterval(500);
-	// connect(_timer, SIGNAL(timeout()), this, SLOT(trajNextTimeStep()));
 
 
 	// initialize the kinematics modules
@@ -32,8 +31,8 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 	_glg = GLGraphics(_sim._km);
 
 	_angleInput = "0.0, 0.0, 0.0";
-	_ja = KDL::JntArray(NUM_OF_JOINTS);
 	_actionsIter = 0;
+	_trajOn = false;
 	_hasObj = false;
 }
 
@@ -91,8 +90,10 @@ void GLWidgets::setSim(Sim sim) {
 }
 
 
-void GLWidgets::setJointAngle(KDL::JntArray ja) {
-	_ja = ja;
+void GLWidgets::setJointAngle(double ja[NUM_OF_JOINTS]) {
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		_ja[i] = ja[i];
+	}
 }
 
 
@@ -154,11 +155,9 @@ void GLWidgets::execAction() {
 	double checkJA[NUM_OF_JOINTS];
 	if (isValidJAFormat(_angleInput, checkJA)) {
 		for (int i = 0; i < NUM_OF_JOINTS; ++i)
-			_ja(i) = checkJA[i];
-		// copy(begin(checkJA), end(checkJA), begin(_jointAngles));
+			_ja[i] = checkJA[i];
 
 		if (_trajOn) {
-		// TODO: implement trajectory actions
 			trajAction();
 			return;
 		} else {
@@ -171,12 +170,8 @@ void GLWidgets::execAction() {
 
 
 void GLWidgets::plainAction() {
-	// KDL::Frame eeFrame;
 	double pose[POSE_DIM];
-	// if (_sim._km.getPoseByJnts(_ja, eeFrame)) {
 	if (_sim._km.getPoseByJnts(_ja, pose)) {
-		// double pose[POSE_DIM];
-		// convFrameToPose(eeFrame, pose);
 		QString eePos = QString("[%1, %2, %3]")
              .arg(QString::number(pose[0], 'f', 2),
 			 		QString::number(pose[1], 'f', 2),
@@ -246,19 +241,25 @@ void GLWidgets::trajAction() {
 
 
 void GLWidgets::trajNextTimeStep() {
-	KDL::JntArray nextJA = KDL::JntArray(NUM_OF_JOINTS);
+	double nextJA[NUM_OF_JOINTS];
 	if (!_sim._tjt.nextTimeStep(_sim._tjt.timeNow() + 1, nextJA)) {
 		_timer->stop();
 	}
 
-	_ja = nextJA;
+	// _ja = nextJA;
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		_ja[i] = nextJA[i];
+	}
 	plainAction();
 }
 
 
 void GLWidgets::moveByActionPath() {
 	// move to the initial JA set by resetState() in C_api
-	_ja = _sim._initJA;
+	// _ja = _sim._initJA;
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		_ja[i] = _sim._initJA[i];
+	}
 	plainAction();
 
 	connect(_timer, SIGNAL(timeout()), this, SLOT(actPathNextTimeStep()));
@@ -275,13 +276,10 @@ void GLWidgets::actPathNextTimeStep() {
 	double result[FULL_STATE_NUM_COLS];
 	if (regulateJntAngles(_ja, _sim._actions[_actionsIter], result)) {
 		for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-			_ja(i) += _sim._actions[_actionsIter][i];
+			_ja[i] += _sim._actions[_actionsIter][i];
 		}
 
 		if (ACTION_DIM == 4) {
-			// if (_sim._actions[_actionsIter][3] == 1) {
-				
-			// }
 			++_actionsIter;
 			plainActionObj();
 		} else {
@@ -332,7 +330,7 @@ void GLWidgets::paintGL() {
 	// glScalef(_zoom, _zoom, 1.0f);
 
 	// render all components in the env
-	_glg._model.update(_sim._km, _sim._km._jointAngles);
+	_glg._model.update(_sim._km._jointAngles);
 	_glg.render();
 
 	glFinish();

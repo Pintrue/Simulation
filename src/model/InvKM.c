@@ -49,7 +49,7 @@ int getJntsByEEPos(const double eePos[POSE_FRAME_DIM], double jntArray[JNT_NUMBE
 	double angle[3] = {0, 0, 0};
 	double jntPoss[2][3];
 	getJntPosByAngle(angle, jntPoss, 1);
-	finish();
+	finishFwdKM();
 
 	double shoulderSideX = sqrt(pow(jntPoss[0][0], 2) + pow(jntPoss[0][2], 2));
 	double shoulderY = jntPoss[0][1];

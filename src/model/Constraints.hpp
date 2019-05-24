@@ -18,7 +18,7 @@
 bool areInValidRanges(double jntAngles[NUM_OF_JOINTS],
 						double result[NUM_OF_JOINTS]);
 
-bool regulateJntAngles(const KDL::JntArray& jntAngles,
+bool regulateJntAngles(double jntAngles[NUM_OF_JOINTS],
 						const double delta[ACTION_DIM],
 						double result[FULL_STATE_NUM_COLS]);
 

@@ -8,7 +8,7 @@ GLGraphics::GLGraphics() {
 
 
 GLGraphics::GLGraphics(const KinematicsModel& km) {
-	_model.init(km);
+	_model.init();
 	_goal = Goal(1.5);
 	_obj = Obj(2.5, 1.0);
 }
