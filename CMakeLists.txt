@@ -82,7 +82,7 @@ else()
 		set(QT_USE_QTGUI TRUE)
 		set(QT_USE_QTOPENGL TRUE)
 		
-		add_compile_definitions(RENDER=1)
+		# add_compile_definitions(RENDER=1)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -Werror -pedantic -O3")
 		set(SIM_FILES
 			${SRC_DIR}/C_api.cpp
@@ -91,7 +91,7 @@ else()
 
 		)
 	endif()
-	add_compile_definitions(C_AS_LIB=1)
+	# add_compile_definitions(C_AS_LIB=1)
 	add_executable(simulation
 					${SIM_FILES}
                 	${C}/main.c

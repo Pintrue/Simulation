@@ -1,6 +1,7 @@
 #include "C_api.hpp"
 #include "utils/Utils.hpp"
 #include "robot_reinforcement_learning/C/utils.h"
+#include "robot_reinforcement_learning/C/macros.h"
 #include "model/Constraints.hpp"
 
 #ifdef RENDER
