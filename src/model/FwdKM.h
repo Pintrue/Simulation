@@ -17,7 +17,7 @@ extern "C" {
 #define JNT0_L -M_PI/2
 #define JNT0_U M_PI/2
 #define JNT1_L 0.0
-#define JNT1_U 120.0/180.0*M_PI
+#define JNT1_U 130.0/180.0*M_PI
 #define JNT2_L -M_PI/2
 #define JNT2_U 0.0
 

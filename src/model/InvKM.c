@@ -8,9 +8,9 @@ static threeDOFsInv* arm;
 
 int initInvKM() {
 	/* DESCRIPTION of the arm */
-	double linkLength[3] = {5.9908, 10.7575, 18.7299};
-	double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
-	double baseHeight = 4.20;
+	double linkLength[3] = {sqrt(3.5*3.5+3.9*3.9), sqrt(1.7*1.7+10.5*10.5), sqrt(3.5*3.5+16.5*16.5)};
+	double initJntAngles[3] = {0.0, atan2(1.7, 10.50), atan2(3.5, 16.5)};
+	double baseHeight = 2.9;
 
 
 	arm = (threeDOFsInv*) malloc(sizeof(threeDOFsInv));
@@ -22,7 +22,7 @@ int initInvKM() {
 	arm->baseHeight = baseHeight;
 
 	arm->initA1 = initJntAngles[0];
-	arm->initA2 = 0.58337;
+	arm->initA2 = atan2(3.5, 3.9);
 	arm->initA3 = initJntAngles[1];
 	arm->initA4 = initJntAngles[2];
 
@@ -67,6 +67,7 @@ int getJntsByEEPos(const double eePos[POSE_FRAME_DIM], double jntArray[JNT_NUMBE
 	double d2 = M_PI - dShoulderEEAngle - loC3 - arm->initA3;
 	double d3 = arm->initA3 + arm->initA4 - loC4;
 
+	printf("Joint angles from Inverse: %f %f %f\n", d1, d2, d3);
 	if (d1 > JNT0_U || d1 < JNT0_L ||
 		d2 > JNT1_U || d2 < JNT1_L ||
 		d3 > JNT2_U || d3 < JNT2_L) {
