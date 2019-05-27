@@ -11,9 +11,13 @@ static threeDOFsFwd* arm;
 
 int initFwdKM() {
 	/* DESCRIPTION of the arm */
-	double linkLength[3] = {5.9908, 10.7575, 18.7299};
-	double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
-	double baseHeight = 4.20;
+	// double linkLength[3] = {5.9908, 10.7575, 18.7299};
+	// double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
+	// double baseHeight = 4.20;
+
+	double linkLength[3] = {sqrt(3.5*3.5+3.9*3.9), sqrt(1.7*1.7+10.5*10.5), sqrt(3.5*3.5+16.5*16.5)};
+	double initJntAngles[3] = {0.0, atan2(1.7, 10.50), atan2(3.5, 16.5)};
+	double baseHeight = 2.9;
 
 
 	arm = (threeDOFsFwd*) malloc(sizeof(threeDOFsFwd));
@@ -25,7 +29,8 @@ int initFwdKM() {
 	arm->baseHeight = baseHeight;
 
 	arm->a1 = initJntAngles[0];
-	arm->a2 = 0.58337;
+	// arm->a2 = 0.58337;
+	arm->a2 = atan2(3.5, 3.9);
 	arm->a3 = initJntAngles[1];
 	arm->a4 = initJntAngles[2];
 
