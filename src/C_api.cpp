@@ -649,7 +649,7 @@ int main() {
 	// // steps[2] = new_matrix(1, ACTION_DIM);
 	// // steps[2]->data[1] = 0.5;
 	// // steps[2]->data[3] = 1;
-	return _main();
+	
 	// steps[0] = new_matrix(1, ACTION_DIM);
 	// steps[0]->data[0] = -0.04867;
 	// steps[0]->data[1] =  1.57;
@@ -690,7 +690,6 @@ int main() {
 
 	// 	break;
 	// }
-	// _main();
 
 	// double ori[3] = {0.0, 0.0, 0.0};
 	// KinematicsModel fwdKM = KinematicsModel();
@@ -763,11 +762,13 @@ int main() {
 	// free_matrix(ret);
 
 	// while (1) {
-	// 	matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_SIM_NORM.model", 1, (char*)"DDPG_NORM_SIM_NORM.norm");
+	// 	matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_SIM_NORM.model", 1, (char*)"DDPG_NORM_SIM_NORM.norm", REACHING_TASK_FLAG);
 	// 	for (int i = 0; i < 50; ++i) {
 	// 		print_matrix(denormalize_action(mat[i]), 1);
 	// 	}
 	// 	renderSteps(mat, 50);
 	// }
-	// return 0;
+
+	_main();
+	return 0;
 }
