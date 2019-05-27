@@ -116,8 +116,8 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 		dest[1] = 0;
 		dest[2] = rand_uniform(12.5, 22.5);
 
-		cout << "This is the target position" << endl;
-		print_matrix(destPos, 1);
+		// cout << "This is the target position" << endl;
+		// print_matrix(destPos, 1);
 
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + REACHING_DEST_POS_OFFSET] = dest[i];
@@ -187,8 +187,8 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	obj[0] = rand_uniform(-10.5, 10.5);
 	obj[1] = OBJ_HEIGHT;
 	obj[2] = rand_uniform(12.5, 20.5);
-	cout << "This is the object position" << endl;
-	print_matrix(objPos, 1);
+	// cout << "This is the object position" << endl;
+	// print_matrix(objPos, 1);
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + PNP_FST_OBJ_POS_OFFSET] = obj[i];
@@ -213,8 +213,8 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 		dest[1] = 0;
 		dest[2] = rand_uniform(12.5, 20.5);
 
-		cout << "This is the target position" << endl;
-		print_matrix(destPos, 1);
+		// cout << "This is the target position" << endl;
+		// print_matrix(destPos, 1);
 
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + PNP_DEST_POS_OFFSET] = dest[i];
