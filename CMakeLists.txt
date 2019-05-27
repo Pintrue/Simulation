@@ -108,6 +108,7 @@ else()
 					${C}/test_agent.c
 					${C}/rl_ddpg_her_demo.c
 					${C}/rl_ddpg_her_sim.c
+					${C}/rl_ddpg_her_demo_sim.c
 	)
 					#${SRC_DIR}/model/FwdKM.c
 					#${SRC_DIR}/model/InvKM.c
