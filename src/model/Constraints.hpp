@@ -8,7 +8,7 @@
 #define JA0_L -M_PI/2
 #define JA0_U M_PI/2
 #define JA1_L 0.0
-#define JA1_U 120.0/180.0*M_PI
+#define JA1_U 130.0/180.0*M_PI
 #define JA2_L -M_PI/2
 #define JA2_U 0.0
 #define GROUND_INN_RADIUS 13.5

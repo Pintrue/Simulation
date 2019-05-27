@@ -20,7 +20,7 @@
 #define JA0_L -M_PI/2
 #define JA0_U M_PI/2
 #define JA1_L 0.0
-#define JA1_U 120.0/180.0*M_PI
+#define JA1_U 130.0/180.0*M_PI
 #define JA2_L -M_PI/2
 #define JA2_U 0.0
 
@@ -186,7 +186,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 
 	obj[0] = rand_uniform(-10.5, 10.5);
 	obj[1] = OBJ_HEIGHT;
-	obj[2] = rand_uniform(12.5, 20.5);
+	obj[2] = rand_uniform(12.5, 19.5);
 	// cout << "This is the object position" << endl;
 	// print_matrix(objPos, 1);
 
@@ -211,7 +211,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 
 		dest[0] = rand_uniform(-10.5, 10.5);
 		dest[1] = 0;
-		dest[2] = rand_uniform(12.5, 20.5);
+		dest[2] = rand_uniform(12.5, 19.5);
 
 		// cout << "This is the target position" << endl;
 		// print_matrix(destPos, 1);
