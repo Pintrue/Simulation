@@ -128,7 +128,7 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	double d4 = arm->l2 * sin(arm->a3);
 	double d5 = arm->l3 * sin(arm->a4);
 
-	double y = d2 + d3 + d4 + d5;
+	double y = d2 + d3 + d4 + d5 - MAGNET_EE_HEIGHT_OFFSET;
 
 	/**
 	 * Calculate x and z from a top view, where x has the following eqaution
@@ -146,7 +146,7 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	double d7 = arm->l2 * cos(arm->a3);
 	double d8 = arm->l1 * cos(arm->a2);
 
-	double d1 = d6 - d7 + d8 + MAGNET_EE_OFFSET;
+	double d1 = d6 - d7 + d8;
 
 	double z = d1 * cos(arm->a1);
 	double x = d1 * sin(arm->a1);
