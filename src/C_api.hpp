@@ -7,8 +7,8 @@
 #define OBJ_NEAR_DEST_RANGE 3.0
 #define OBJ_HEIGHT 0.5
 
-// #define REACHING
-#define PICK_N_PLACE // testing now, DELETE LATER!!!!
+#define REACHING
+// #define PICK_N_PLACE // testing now, DELETE LATER!!!!
 
 #ifdef REACHING
 	#define FULL_STATE_NUM_COLS 14
