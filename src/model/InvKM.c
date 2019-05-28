@@ -56,7 +56,7 @@ int getJntsByEEPos(const double eePos[POSE_FRAME_DIM], double jntArray[JNT_NUMBE
 	double eeSideX = sqrt(pow(eePos[0], 2) + pow(eePos[2], 2));
 
 	double dShoulderEEX = eeSideX - shoulderSideX;
-	double dShoulderEEY = eePos[1] - shoulderY;
+	double dShoulderEEY = eePos[1] + MAGNET_EE_HEIGHT_OFFSET - shoulderY;
 	double dShoulderEEAngle = atan2(dShoulderEEY, dShoulderEEX);
 
 	double l4 = sqrt(pow(dShoulderEEX , 2) + pow(dShoulderEEY, 2));
@@ -90,11 +90,12 @@ int finishInvKM() {
 // int main() {
 // 	initInvKM();
 
-// 	double eePos[POSE_FRAME_DIM] = {-3.563496e+00, 5.000000e-01, 1.765392e+01};
-// 	// double eePos[POSE_FRAME_DIM] = {-2.360000, 11.800000, 13.460000};
+// 	double eePosInv[POSE_FRAME_DIM] = {3.760000, 21.640000, 6.880000};
+// // 	double eePos[POSE_FRAME_DIM] = {-3.563496e+00, 5.000000e-01, 1.765392e+01};
+// // 	// double eePos[POSE_FRAME_DIM] = {-2.360000, 11.800000, 13.460000};
 // 	double jntArray[JNT_NUMBER];
 
-// 	if (getJntsByEEPos(eePos, jntArray) >= 0) {
+// 	if (getJntsByEEPos(eePosInv, jntArray) >= 0) {
 // 		printf("[ ");
 // 		for (int i = 0; i < 3; ++i) {
 // 			printf("%f ", jntArray[i]);
@@ -104,8 +105,8 @@ int finishInvKM() {
 // 		printf("EE Pos not in eligible range.\n");
 // 	}
 
-// 	// initFwdKM();
-// 	// double angle[3] = {0, 0, 0};
+// 	initFwdKM();
+// 	double angle[3] = {0.5, 0.6, -1.20};
 // 	// double allPoss[2][3];
 // 	// getJntPosByAngle(angle, allPoss, 2);
 // 	// for (int i = 0; i < 2; ++i) {
@@ -115,4 +116,11 @@ int finishInvKM() {
 // 	// 	}
 // 	// 	printf("]\n");
 // 	// }
+// 	double eePos[6];
+// 	getEEPoseByJnts(angle, eePos);
+// 	printf("[ ");
+// 	for (int i = 0; i < 3; ++i) {
+// 		printf("%f ", eePos[i]);
+// 	}
+// 	printf("]\n");
 // }
