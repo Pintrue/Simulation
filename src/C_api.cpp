@@ -761,13 +761,13 @@ int main() {
 	// free_matrix(test);
 	// free_matrix(ret);
 
-	// while (1) {
-	// 	matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_SIM_NORM.model", 1, (char*)"DDPG_NORM_SIM_NORM.norm", REACHING_TASK_FLAG);
-	// 	for (int i = 0; i < 50; ++i) {
-	// 		print_matrix(denormalize_action(mat[i]), 1);
-	// 	}
-	// 	renderSteps(mat, 50);
-	// }
+	while (1) {
+		matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_SIM_NORM.model", 1, (char*)"DDPG_NORM_SIM_NORM.norm", REACHING_TASK_FLAG);
+		// for (int i = 0; i < 50; ++i) {
+		// 	print_matrix(denormalize_action(mat[i]), 1);
+		// }
+		renderSteps(mat, 50);
+	}
 
 	_main();
 	return 0;
