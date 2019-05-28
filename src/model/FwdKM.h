@@ -21,6 +21,8 @@ extern "C" {
 #define JNT2_L -M_PI/2
 #define JNT2_U 0.0
 
+#define MAGNET_EE_OFFSET 2.1
+
 #define JNT_ANGLES_OUT_OF_BOUND -100
 
 // enum _Axis {
@@ -46,6 +48,8 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[4][POSE_FRAME_DIM]);
 
 int finishFwdKM();
+
+threeDOFsFwd* getCache();
 
 #ifdef __cplusplus
 }

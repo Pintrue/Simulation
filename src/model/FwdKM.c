@@ -146,7 +146,7 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	double d7 = arm->l2 * cos(arm->a3);
 	double d8 = arm->l1 * cos(arm->a2);
 
-	double d1 = d6 - d7 + d8;
+	double d1 = d6 - d7 + d8 + MAGNET_EE_OFFSET;
 
 	double z = d1 * cos(arm->a1);
 	double x = d1 * sin(arm->a1);
@@ -203,6 +203,11 @@ int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[POSS_NUMB
 int finishFwdKM() {
 	free(arm);
 	return 0;
+}
+
+
+threeDOFsFwd* getCache() {
+	return arm;
 }
 
 
