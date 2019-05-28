@@ -8,6 +8,8 @@
 #include "../model/Constraints.hpp"
 #include "UIUtils.hpp"
 #include "../utils/Utils.hpp"
+#include <iostream>
+#include <math.h>
 
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
@@ -193,15 +195,16 @@ bool ifHadObj(const double eePos[6], const double objPos[6]) {
 		double delta = eePos[i] - objPos[i];
 		diff += delta * delta;
 	}
-
-	return sqrt(diff) <= OBJ_ATTACHED_RANGE;
+	bool res = sqrt(diff) <= OBJ_ATTACHED_RANGE;
+	return res;
+	// return sqrt(diff) <= OBJ_ATTACHED_RANGE;
 }
 
 
 void GLWidgets::plainActionObj() {
 	double pose[POSE_DIM];
 	if (_sim._km.getPoseByJnts(_ja, pose)) {
-		if (_sim._actions[_actionsIter - 1][3] == 1) {
+		if (roundf(_sim._actions[_actionsIter - 1][3]) == 1) {
 			if (_hasObj) {
 				_glg._obj.setPose(pose);
 			} else if (ifHadObj(pose, _sim._obj)) {
