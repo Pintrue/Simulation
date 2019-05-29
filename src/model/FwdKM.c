@@ -169,7 +169,10 @@ int getMagnetPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRA
 	}
 
 	eePos[1] -= MAGNET_EE_HEIGHT_OFFSET + (WRIST_LENGTH_OFFSET - WRIST_LENGTH_OFFSET * cos(M_PI / 2 + getCache()->a4));
-
+	
+	double magnetExtend = -sin(arm->a4 + M_PI/2) * WRIST_LENGTH_OFFSET + MAGNET_EE_LENGTH_OFFSET;
+	eePos[0] += magnetExtend * sin(arm->a1);
+	eePos[2] += magnetExtend * cos(arm->a1);
 	return 0;
 }
 
