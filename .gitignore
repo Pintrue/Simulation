@@ -41,7 +41,7 @@
 CMakeCache.txt
 CmakeFiles/
 Makefile
-build/
+build*
 cmake-build-debug/
 cmake_install.cmake
 simulation
@@ -49,3 +49,5 @@ simulation
 simulation_autogen/
 .qmake*
 *.cbp
+inv
+fwd

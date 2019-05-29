@@ -21,7 +21,8 @@ extern "C" {
 #define JNT2_L -M_PI/2
 #define JNT2_U 0.0
 
-#define MAGNET_EE_HEIGHT_OFFSET 4.3
+#define MAGNET_EE_HEIGHT_OFFSET 1.5
+#define WRIST_ROTATE_HEIGHT_OFFSET 2.8
 
 #define JNT_ANGLES_OUT_OF_BOUND -100
 
@@ -44,6 +45,8 @@ int getJntPosByAngle(const double jntArray[JNT_NUMBER],
 						double allPoss[JNT_NUMBER][CART_COORD_DIM], int numOfPoss);
 
 int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
+
+int getMagnetPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
 
 int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[4][POSE_FRAME_DIM]);
 

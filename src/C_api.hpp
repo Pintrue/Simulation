@@ -2,7 +2,7 @@
 #define C_API_HPP
 
 #define CART_DIM 3
-#define TIP_REACHED_RANGE 5.0
+#define TIP_REACHED_RANGE 1.0
 #define OBJ_ATTACHED_RANGE 1.0
 #define OBJ_NEAR_DEST_RANGE 3.0
 #define OBJ_HEIGHT 0.5
