@@ -87,7 +87,7 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 	/* USED to make use of kdl, get rid of it now*/
 
 	initFwdKM();
-	getEEPoseByJnts(sim._currentJA, eePos);
+	getMagnetPoseByJnts(sim._currentJA, eePos);
 
 
 	for (int i = 0; i < CART_DIM; ++i) {
@@ -165,7 +165,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	/* USED to make use of kdl, get rid of it now*/
 
 	initFwdKM();
-	getEEPoseByJnts(sim._currentJA, eePos);
+	getMagnetPoseByJnts(sim._currentJA, eePos);
 
 
 	for (int i = 0; i < CART_DIM; ++i) {
@@ -352,7 +352,7 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 	double eePos[6];
 
 	initFwdKM();
-	getEEPoseByJnts(sim._currentJA, eePos);
+	getMagnetPoseByJnts(sim._currentJA, eePos);
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + REACHING_FST_EE_POS_OFFSET] = eePos[i];
@@ -411,14 +411,15 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 	double eePos[6];
 
 	initFwdKM();
-	getEEPoseByJnts(sim._currentJA, eePos);
+	getMagnetPoseByJnts(sim._currentJA, eePos);
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + PNP_EE_POS_OFFSET] = eePos[i];
 	}
 
 	/* setting the end-effector magnet current */
-	data[PNP_EE_STATE_OFFSET] = action->data[3];
+	data[PNP_EE_STATE_OFFSET] = round(action->data[3]);
+	// TODO: is it double here?? Round??
 	
 	/* setting if has the object */
 	if (sim._hasObj && data[PNP_EE_STATE_OFFSET] == 1) {

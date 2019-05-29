@@ -128,7 +128,7 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	double d4 = arm->l2 * sin(arm->a3);
 	double d5 = arm->l3 * sin(arm->a4);
 
-	double y = d2 + d3 + d4 + d5 - MAGNET_EE_HEIGHT_OFFSET;
+	double y = d2 + d3 + d4 + d5;// - (MAGNET_EE_HEIGHT_OFFSET + );
 
 	/**
 	 * Calculate x and z from a top view, where x has the following eqaution
@@ -155,6 +155,20 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	eePos[3] = jntArray[1] + jntArray[2];
 	eePos[4] = jntArray[0];
 	eePos[5] = 0;
+
+	return 0;
+}
+
+
+int getMagnetPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]) {
+	int check = getEEPoseByJnts(jntArray, eePos);
+
+	if (check < 0) {
+		printf("Joint angle sent to getMagnetPoseByJnts() is out of bound.\n");
+		return JNT_ANGLES_OUT_OF_BOUND;
+	}
+
+	eePos[1] -= MAGNET_EE_HEIGHT_OFFSET + WRIST_ROTATE_HEIGHT_OFFSET * cos(arm->a4);
 
 	return 0;
 }

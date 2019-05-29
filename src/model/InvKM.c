@@ -56,7 +56,7 @@ int getJntsByEEPos(const double eePos[POSE_FRAME_DIM], double jntArray[JNT_NUMBE
 	double eeSideX = sqrt(pow(eePos[0], 2) + pow(eePos[2], 2));
 
 	double dShoulderEEX = eeSideX - shoulderSideX;
-	double dShoulderEEY = eePos[1] + MAGNET_EE_HEIGHT_OFFSET - shoulderY;
+	double dShoulderEEY = eePos[1] + MAGNET_EE_HEIGHT_OFFSET + WRIST_ROTATE_HEIGHT_OFFSET * cos(getCache()->a4) - shoulderY;
 	double dShoulderEEAngle = atan2(dShoulderEEY, dShoulderEEX);
 
 	double l4 = sqrt(pow(dShoulderEEX , 2) + pow(dShoulderEEY, 2));
