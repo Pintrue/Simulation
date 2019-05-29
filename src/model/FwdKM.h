@@ -21,8 +21,9 @@ extern "C" {
 #define JNT2_L -M_PI/2
 #define JNT2_U 0.0
 
+#define MAGNET_EE_LENGTH_OFFSET 2.0
 #define MAGNET_EE_HEIGHT_OFFSET 1.5
-#define WRIST_LENGTH_OFFSET 2.0
+#define WRIST_LENGTH_OFFSET 1.5
 
 #define JNT_ANGLES_OUT_OF_BOUND -100
 
