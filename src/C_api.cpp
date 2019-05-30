@@ -446,6 +446,7 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 			data[i + PNP_FST_OBJ_POS_OFFSET] = sim._obj[i];
 		}
 		if (ifHadObj(data)) {
+			cout << "enter ifhad" << endl;
 			data[PNP_HAS_OBJ_OFFSET] = 1;
 			for (int i = 0; i < CART_DIM; ++i) {
 				sim._obj[i] = data[i + PNP_EE_POS_OFFSET];
@@ -762,13 +763,13 @@ int main() {
 	// free_matrix(test);
 	// free_matrix(ret);
 
-	while (1) {
-		matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_PICKNPLACE_NORM_SIM.model", 1, (char*)"DDPG_NORM_PICKNPLACE_NORM_SIM.norm", PICK_N_PLACE_TASK_FLAG);
-		// for (int i = 0; i < 50; ++i) {
-		// 	print_matrix(denormalize_action(mat[i]), 1);
-		// }
-		renderSteps(mat, 50);
-	}
+	// while (1) {
+	// 	matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_PICKNPLACE_NORM_SIM.model", 1, (char*)"DDPG_NORM_PICKNPLACE_NORM_SIM.norm", PICK_N_PLACE_TASK_FLAG);
+	// 	// for (int i = 0; i < 50; ++i) {
+	// 	// 	print_matrix(denormalize_action(mat[i]), 1);
+	// 	// }
+	// 	renderSteps(mat, 50);
+	// }
 
 	_main();
 }
