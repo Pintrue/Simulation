@@ -204,10 +204,13 @@ bool ifHadObj(const double eePos[6], const double objPos[6]) {
 void GLWidgets::plainActionObj() {
 	double pose[POSE_DIM];
 	if (_sim._km.getPoseByJnts(_ja, pose)) {
+		initFwdKM();
+		double magnetPose[POSE_FRAME_DIM];
+		getMagnetPoseByJnts(_ja, magnetPose);
 		if (roundf(_sim._actions[_actionsIter - 1][3]) == 1) {
 			if (_hasObj) {
 				_glg._obj.setPose(pose);
-			} else if (ifHadObj(pose, _sim._obj)) {
+			} else if (ifHadObj(magnetPose, _sim._obj)) {
 				_glg._obj.setPose(pose);
 				_hasObj = true;
 			}
