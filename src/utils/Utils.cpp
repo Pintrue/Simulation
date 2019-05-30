@@ -2,6 +2,7 @@
 #include "Utils.hpp"
 #include <iostream>
 #include <iomanip>
+#include <math.h>
 
 using namespace std;
 
@@ -67,3 +68,10 @@ void printPose(const double eePos[POSE_DIM]) {
 // 	}
 // 	cout << "]" << endl;
 // }
+
+bool withinCylinder(double center[CART_COORD_DIM], int radius,
+					double obj[CART_COORD_DIM]) {
+	double distToCenter = sqrt(pow(center[0] - obj[0], 2)
+								+ pow(center[2] - obj[2], 2));
+	return distToCenter <= (double) radius;
+}

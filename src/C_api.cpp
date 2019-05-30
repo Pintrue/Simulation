@@ -184,10 +184,10 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	matrix_t* objPos = new_matrix(1, CART_DIM);
 	double* obj = objPos->data;
 
-	// obj[0] = rand_uniform(-10.5, 10.5);
-	// obj[1] = OBJ_HEIGHT;
-	// obj[2] = rand_uniform(12.5, 19.5);
-	obj[0] = 5.0; obj[1] = 0.0; obj[2] = 20.0;
+	obj[0] = rand_uniform(-10.5, 10.5);
+	obj[1] = OBJ_HEIGHT;
+	obj[2] = rand_uniform(12.5, 19.5);
+	
 	// cout << "This is the object position" << endl;
 	// print_matrix(objPos, 1);
 
@@ -378,14 +378,6 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 	setReachingRewardBit(data);
 	free_matrix(denormed_matrix);
 	return fullState;
-}
-
-
-bool withinCylinder(double center[CART_COORD_DIM], int radius,
-					double obj[CART_COORD_DIM]) {
-	double distToCenter = sqrt(pow(center[0] - obj[0], 2)
-								+ pow(center[2] - obj[2], 2));
-	return distToCenter <= (double) radius;
 }
 
 
