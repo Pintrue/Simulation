@@ -30,7 +30,7 @@ int initInvKM() {
 }
 
 
-int getJntsByEEPos(const double eePos[POSE_FRAME_DIM], double jntArray[JNT_NUMBER]) {
+int getJntsByMagnetPos(const double eePos[POSE_FRAME_DIM], double jntArray[JNT_NUMBER]) {
 	double d1 = atan2(eePos[0], eePos[2]);
 	// printf("d1 is equal to %f\n", d1);
 
@@ -53,21 +53,22 @@ int getJntsByEEPos(const double eePos[POSE_FRAME_DIM], double jntArray[JNT_NUMBE
 
 	double shoulderSideX = sqrt(pow(jntPoss[0][0], 2) + pow(jntPoss[0][2], 2));
 	double shoulderY = jntPoss[0][1];
-	double eeSideX = sqrt(pow(eePos[0], 2) + pow(eePos[2], 2));
+	double wristSideX = sqrt(pow(eePos[0], 2) + pow(eePos[2], 2)) - MAGNET_EE_LENGTH_OFFSET;
+	double wristSideY = eePos[1] + WRIST_LENGTH_OFFSET + MAGNET_EE_HEIGHT_OFFSET;
 
-	double dShoulderEEX = eeSideX - shoulderSideX;
-	double dShoulderEEY = eePos[1] + MAGNET_EE_HEIGHT_OFFSET + (WRIST_LENGTH_OFFSET - WRIST_LENGTH_OFFSET * cos(M_PI / 2 + getCache()->a4)) - shoulderY;
-	double dShoulderEEAngle = atan2(dShoulderEEY, dShoulderEEX);
+	double dShoulderWristX = wristSideX - shoulderSideX;
+	double dShoulderWristY = wristSideY - shoulderY;
+	double dShoulderWristAngle = atan2(dShoulderWristY, dShoulderWristX);
 
-	double l4 = sqrt(pow(dShoulderEEX , 2) + pow(dShoulderEEY, 2));
+	double l4 = sqrt(pow(dShoulderWristX , 2) + pow(dShoulderWristY, 2));
 	/* use law of cosine to solve the triangle formed by shoulder, forearm joints and EE */
-	double loC3 = acos((pow(arm->l2, 2) + pow(l4, 2) - pow(arm->l3, 2)) / (2 * arm->l2 * l4));
-	double loC4 = acos((pow(arm->l2, 2) + pow(arm->l3, 2) - pow(l4, 2)) / (2 * arm->l2 * arm->l3));
+	double loC3 = acos((pow(arm->l2, 2) + pow(l4, 2) - pow(arm->l3 - WRIST_LENGTH_OFFSET, 2)) / (2 * arm->l2 * l4));
+	double loC4 = acos((pow(arm->l2, 2) + pow(arm->l3 - WRIST_LENGTH_OFFSET, 2) - pow(l4, 2)) / (2 * arm->l2 * (arm->l3 - WRIST_LENGTH_OFFSET)));
 
-	double d2 = M_PI - dShoulderEEAngle - loC3 - arm->initA3;
+	double d2 = M_PI - dShoulderWristAngle - loC3 - arm->initA3;
 	double d3 = arm->initA3 + arm->initA4 - loC4;
 
-	printf("Joint angles from Inverse: %f %f %f\n", d1, d2, d3);
+	// printf("Joint angles from Inverse: %f %f %f\n", d1, d2, d3);
 	if (d1 > JNT0_U || d1 < JNT0_L ||
 		d2 > JNT1_U || d2 < JNT1_L ||
 		d3 > JNT2_U || d3 < JNT2_L) {
@@ -90,12 +91,12 @@ int finishInvKM() {
 // int main() {
 // 	initInvKM();
 
-// 	double eePosInv[POSE_FRAME_DIM] = {3.760000, 21.640000, 6.880000};
+// 	double eePosInv[POSE_FRAME_DIM] = { 12.715955, 10.716277, 8.163503 };
 // // 	double eePos[POSE_FRAME_DIM] = {-3.563496e+00, 5.000000e-01, 1.765392e+01};
 // // 	// double eePos[POSE_FRAME_DIM] = {-2.360000, 11.800000, 13.460000};
 // 	double jntArray[JNT_NUMBER];
 
-// 	if (getJntsByEEPos(eePosInv, jntArray) >= 0) {
+// 	if (getJntsByMagnetPos(eePosInv, jntArray) >= 0) {
 // 		printf("[ ");
 // 		for (int i = 0; i < 3; ++i) {
 // 			printf("%f ", jntArray[i]);
@@ -106,7 +107,8 @@ int finishInvKM() {
 // 	}
 
 // 	initFwdKM();
-// 	double angle[3] = {0.5, 0.6, -1.20};
+// 	// double angle[3] = {0.5, 0.6, -1.20};
+// 	double angle[3] = {1.0, 0.8, -0.5};
 // 	// double allPoss[2][3];
 // 	// getJntPosByAngle(angle, allPoss, 2);
 // 	// for (int i = 0; i < 2; ++i) {
@@ -117,7 +119,7 @@ int finishInvKM() {
 // 	// 	printf("]\n");
 // 	// }
 // 	double eePos[6];
-// 	getEEPoseByJnts(angle, eePos);
+// 	getMagnetPoseByJnts(angle, eePos);
 // 	printf("[ ");
 // 	for (int i = 0; i < 3; ++i) {
 // 		printf("%f ", eePos[i]);
