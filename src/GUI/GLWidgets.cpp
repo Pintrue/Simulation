@@ -214,6 +214,20 @@ void GLWidgets::plainActionObj() {
 				_glg._obj.setPose(pose);
 				_hasObj = true;
 			}
+			double objCoord[CART_COORD_DIM];
+			for (int i = 0; i < CART_COORD_DIM; ++i) {
+				objCoord[i] = _glg._obj._pose[i];
+			}
+			if (!withinCylinder(_sim._initObj, OBJ_LIFT_LOWER_CYLINDER_RADIUS, objCoord)
+				&& !withinCylinder(_sim._target, OBJ_LIFT_LOWER_CYLINDER_RADIUS, objCoord)
+				&& objCoord[1] < OBJ_AFLOAT_LEAST_HEIGHT) {
+				/* 
+					Drop to the ground if lower than a certain height when 
+					not within the legal picking and placing cylinders
+				*/
+				_glg._obj._pose[1] = OBJ_HEIGHT;
+				_hasObj = false;
+	}
 		} else {
 			double objPos[6];
 			objPos[0] = _glg._obj._pose[0];
