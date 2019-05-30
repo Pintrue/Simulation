@@ -25,7 +25,7 @@ int initInvKM();
 int getAllPoseByJnts(const double jntArray[JNT_NUMBER],
 						double allPoss[JNT_NUMBER][POSE_FRAME_DIM]);
 
-int getJntsByEEPos(const double eePos[POSE_FRAME_DIM],
+int getJntsByMagnetPos(const double eePos[POSE_FRAME_DIM],
 						double jntArray[JNT_NUMBER]);
 
 int finishInvKM();

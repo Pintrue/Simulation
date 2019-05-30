@@ -507,7 +507,7 @@ matrix_t* inverse_km(matrix_t* eePos) {
 
 	double jntArray[NUM_OF_JOINTS];
 
-	int res = getJntsByEEPos(pose, jntArray);
+	int res = getJntsByMagnetPos(pose, jntArray);
 	finishInvKM();
 
 	if (res < 0) {
