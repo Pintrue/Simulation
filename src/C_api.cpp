@@ -184,9 +184,10 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	matrix_t* objPos = new_matrix(1, CART_DIM);
 	double* obj = objPos->data;
 
-	obj[0] = rand_uniform(-10.5, 10.5);
-	obj[1] = OBJ_HEIGHT;
-	obj[2] = rand_uniform(12.5, 19.5);
+	// obj[0] = rand_uniform(-10.5, 10.5);
+	// obj[1] = OBJ_HEIGHT;
+	// obj[2] = rand_uniform(12.5, 19.5);
+	obj[0] = 5.0; obj[1] = 0.0; obj[2] = 20.0;
 	// cout << "This is the object position" << endl;
 	// print_matrix(objPos, 1);
 
@@ -223,9 +224,15 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 		}
 		free_matrix(destPos);
 	} else {
-		data[0 + PNP_DEST_POS_OFFSET] = 0;
-		data[1 + PNP_DEST_POS_OFFSET] = 0;
-		data[2 + PNP_DEST_POS_OFFSET] = 17.33;
+		// data[0 + PNP_DEST_POS_OFFSET] = 0;
+		// data[1 + PNP_DEST_POS_OFFSET] = 0;
+		// data[2 + PNP_DEST_POS_OFFSET] = 17.33;
+		data[0 + PNP_DEST_POS_OFFSET] = -7.495477e+00;
+		data[1 + PNP_DEST_POS_OFFSET] = 0.000000e+00;
+		data[2 + PNP_DEST_POS_OFFSET] = 1.870172e+01;
+		for (int i = 0; i < CART_DIM; ++i) {
+			sim._target[i] = data[i + PNP_DEST_POS_OFFSET];
+		}
 	}
 
 	data[PNP_TERMINAL_BIT_OFFSET] = 0;	// terminal flag
@@ -296,7 +303,7 @@ void setReachingRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
 
 
 void setPnPRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
-	fullState[PNP_REWARD_BIT_OFFSET] = ifObjNearDest(fullState) ? 0 : -1;
+	fullState[PNP_REWARD_BIT_OFFSET] = (ifObjNearDest(fullState) && fullState[PNP_EE_STATE_OFFSET] == 0) ? 0 : -1;
 }
 
 
@@ -374,6 +381,14 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 }
 
 
+bool withinCylinder(double center[CART_COORD_DIM], int radius,
+					double obj[CART_COORD_DIM]) {
+	double distToCenter = sqrt(pow(center[0] - obj[0], 2)
+								+ pow(center[2] - obj[2], 2));
+	return distToCenter <= (double) radius;
+}
+
+
 matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 	matrix_t* jaAction = new_matrix(1, 3);
 	jaAction->data[0] = action->data[0];
@@ -446,7 +461,6 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 			data[i + PNP_FST_OBJ_POS_OFFSET] = sim._obj[i];
 		}
 		if (ifHadObj(data)) {
-			cout << "enter ifhad" << endl;
 			data[PNP_HAS_OBJ_OFFSET] = 1;
 			for (int i = 0; i < CART_DIM; ++i) {
 				sim._obj[i] = data[i + PNP_EE_POS_OFFSET];
@@ -454,9 +468,21 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 			sim._hasObj = true;
 			data[PNP_HAS_OBJ_OFFSET] = 1;
 		} else {
-
+			data[PNP_HAS_OBJ_OFFSET] = 0;
 		}
 		sim._eeState = true;
+	}
+
+	if (!withinCylinder(sim._initObj, OBJ_LIFT_LOWER_CYLINDER_RADIUS, sim._obj)
+		&& !withinCylinder(sim._target, OBJ_LIFT_LOWER_CYLINDER_RADIUS, sim._obj)
+		&& sim._obj[1] < OBJ_AFLOAT_LEAST_HEIGHT) {
+		/* 
+			Drop to the ground if lower than a certain height when 
+			not within the legal picking and placing cylinders
+		*/
+		sim._obj[1] = OBJ_HEIGHT;
+		data[PNP_HAS_OBJ_OFFSET] = 0;
+		sim._hasObj = false;
 	}
 
 	/* set the position of the object*/
@@ -763,13 +789,13 @@ int main() {
 	// free_matrix(test);
 	// free_matrix(ret);
 
-	// while (1) {
-	// 	matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_PICKNPLACE_NORM_SIM.model", 1, (char*)"DDPG_NORM_PICKNPLACE_NORM_SIM.norm", PICK_N_PLACE_TASK_FLAG);
-	// 	// for (int i = 0; i < 50; ++i) {
-	// 	// 	print_matrix(denormalize_action(mat[i]), 1);
-	// 	// }
-	// 	renderSteps(mat, 50);
-	// }
+	while (1) {
+		matrix_t** mat = collect_trace((char*)"DDPG_ACTOR_PICKNPLACE_NORM_SIM.model", 1, (char*)"DDPG_NORM_PICKNPLACE_NORM_SIM.norm", PICK_N_PLACE_TASK_FLAG);
+		// for (int i = 0; i < 50; ++i) {
+		// 	print_matrix(denormalize_action(mat[i]), 1);
+		// }
+		renderSteps(mat, 50);
+	}
 
 	_main();
 }
