@@ -205,6 +205,10 @@ void GLWidgets::plainActionObj() {
 	double pose[POSE_DIM];
 	if (_sim._km.getPoseByJnts(_ja, pose)) {
 		initFwdKM();
+		double objCoord[CART_COORD_DIM];
+		for (int i = 0; i < CART_COORD_DIM; ++i) {
+			objCoord[i] = _glg._obj._pose[i];
+		}
 		double magnetPose[POSE_FRAME_DIM];
 		getMagnetPoseByJnts(_ja, magnetPose);
 		if (roundf(_sim._actions[_actionsIter - 1][3]) == 1) {
@@ -214,13 +218,15 @@ void GLWidgets::plainActionObj() {
 				_glg._obj.setPose(pose);
 				_hasObj = true;
 			}
-			double objCoord[CART_COORD_DIM];
+			double magnetCoord[CART_COORD_DIM];
 			for (int i = 0; i < CART_COORD_DIM; ++i) {
-				objCoord[i] = _glg._obj._pose[i];
+				magnetCoord[i] = magnetPose[i];
 			}
-			if (!withinCylinder(_sim._initObj, OBJ_LIFT_LOWER_CYLINDER_RADIUS, objCoord)
-				&& !withinCylinder(_sim._target, OBJ_LIFT_LOWER_CYLINDER_RADIUS, objCoord)
-				&& objCoord[1] < OBJ_AFLOAT_LEAST_HEIGHT) {
+			if ((!withinCylinder(_sim._initObj, OBJ_LIFT_LOWER_CYLINDER_RADIUS, magnetCoord))
+				&& (!withinCylinder(_sim._target, OBJ_LIFT_LOWER_CYLINDER_RADIUS, magnetCoord))
+				&& magnetCoord[1] < OBJ_AFLOAT_LEAST_HEIGHT) {
+				cout << "render falling" << endl;
+				cout << magnetCoord[1] << " is too low" << endl;
 				/* 
 					Drop to the ground if lower than a certain height when 
 					not within the legal picking and placing cylinders
