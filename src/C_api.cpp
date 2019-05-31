@@ -347,14 +347,9 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 	
 	/* calculate end-effector pose */
 
-	// JntArray toJA = JntArray(NUM_OF_JOINTS);
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		// toJA(i) = data[i];
 		sim._currentJA[i] = data[i];
 	}
-
-	// Frame eeFrame;
-	// sim._km.getPoseByJnts(toJA, eeFrame);
 
 	double eePos[6];
 
@@ -403,6 +398,7 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 	double* delta = denormed_matrix->data;
 
 	double ja[NUM_OF_JOINTS];
+
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		ja[i] = sim._currentJA[i];
 	}
@@ -426,7 +422,6 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 
 	/* setting the end-effector magnet current */
 	data[PNP_EE_STATE_OFFSET] = round(action->data[3]);
-	// TODO: is it double here?? Round??
 	
 	/* setting if has the object */
 	if (sim._hasObj && data[PNP_EE_STATE_OFFSET] == 1) {
@@ -449,7 +444,6 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 		 * in the last time step, by checking if the EE with magnet current
 		 * on is in certain range to the object.
 		 **/
-		cout << "Presetting the obj position" << endl;
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + PNP_FST_OBJ_POS_OFFSET] = sim._obj[i];
 		}
@@ -461,6 +455,7 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 			sim._hasObj = true;
 			data[PNP_HAS_OBJ_OFFSET] = 1;
 		} else {
+			/* Nothing needs to be done */
 		}
 		sim._eeState = true;
 	}
@@ -480,7 +475,7 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 			Drop to the ground if lower than a certain height when 
 			not within the legal picking and placing cylinders
 		*/
-		cout << "Not within the cylinders" << endl;
+		// cout << "Not within the cylinders" << endl;
 		sim._obj[1] = OBJ_HEIGHT;
 		data[PNP_HAS_OBJ_OFFSET] = 0;
 		sim._hasObj = false;
@@ -552,16 +547,20 @@ matrix_t* inverse_km(matrix_t* eePos) {
 
 #ifdef RENDER
 void renderSteps(matrix_t** actions, int numOfActions) {
-	sim._actions = (double**) calloc(numOfActions, sizeof(double*));
+	// sim._actions = (double**) calloc(numOfActions, sizeof(double*));
+	sim._actions = (matrix_t**) calloc(numOfActions, sizeof(matrix_t*));
 	sim._numOfActions = numOfActions;
 	for (int i = 0; i < numOfActions; ++i) {
-		matrix_t* denormedAction = denormalize_action(actions[i]);
-		sim._actions[i] = denormedAction->data;
+		// matrix_t* denormedAction = denormalize_action(actions[i]);
+		// sim._actions[i] = denormedAction->data;
+		// sim._actions[i] = denormedAction;
+		/* denormed in step */
+		sim._actions[i] = actions[i];
 	}
 
 	if (taskFlag == PICK_N_PLACE_TASK_FLAG) {
 		for (int i = 0; i < numOfActions; ++i) {
-			sim._actions[i][3] = actions[i]->data[3];
+			(sim._actions[i])->data[3] = actions[i]->data[3];
 		}
 	}
 
@@ -573,8 +572,19 @@ void renderSteps(matrix_t** actions, int numOfActions) {
 	QApplication app(argc, argv);
 	QtMainWindow mainWindow;
 	window = new QtWindow(&mainWindow);
-	// cout << "At renderSteps()" << endl;
+
+	/* Resetting the configuration of the simulation. */
+	for (int i = 0; i < CART_DIM; ++i) {
+		sim._obj[i] = sim._initObj[i];
+	}
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		sim._currentJA[i] = sim._initJA[i];
+	}
+	sim._eeState = false;
+	sim._hasObj = false;
+
 	window->getGLWidgets()->setSim(sim);
+
 	window->resize(window->sizeHint());
 	int desktopArea = QApplication::desktop()->width() * QApplication::desktop()->height();
     int widgetArea = window->width() * window->height();

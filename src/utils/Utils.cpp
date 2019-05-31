@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <math.h>
+#include "../model/FwdKM.h"
 
 using namespace std;
 
@@ -74,4 +75,11 @@ bool withinCylinder(double center[CART_COORD_DIM], int radius,
 	double distToCenter = sqrt(pow(center[0] - obj[0], 2)
 								+ pow(center[2] - obj[2], 2));
 	return distToCenter <= (double) radius;
+}
+
+
+bool illegalJntBoundary(const double* jntArray) {
+	return (jntArray[0] > JNT0_U || jntArray[0] < JNT0_L ||
+			jntArray[1] > JNT1_U || jntArray[1] < JNT1_L ||
+			jntArray[2] > JNT2_U || jntArray[2] < JNT2_L);
 }
