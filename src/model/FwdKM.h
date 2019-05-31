@@ -10,6 +10,8 @@ extern "C" {
 #define POSE_FRAME_DIM 6
 #define POSS_NUMBER 4
 
+#define RAND_M_TO_N(m, n) (m + (rand() / (RAND_MAX / (n - m))))
+
 #ifndef M_PI
 	#define M_PI 3.14159265359
 #endif

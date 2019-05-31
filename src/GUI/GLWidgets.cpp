@@ -201,6 +201,31 @@ bool ifHadObj(const double eePos[6], const double objPos[6]) {
 }
 
 
+void GLWidgets::trajAction() {
+	/**
+	 * prepare the trajectory from the current angle (1st param.)
+	 * to the intended angle (2nd param.)
+	 **/
+	connect(_timer, SIGNAL(timeout()), this, SLOT(trajNextTimeStep()));
+	_sim._tjt.prepare(_sim._km._jointAngles, _ja, 10.0);
+	_timer->start();
+}
+
+
+void GLWidgets::trajNextTimeStep() {
+	double nextJA[NUM_OF_JOINTS];
+	if (!_sim._tjt.nextTimeStep(_sim._tjt.timeNow() + 1, nextJA)) {
+		_timer->stop();
+	}
+
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		_ja[i] = nextJA[i];
+	}
+	plainAction();
+}
+
+
+#ifdef RENDER
 void GLWidgets::plainActionObj() {
 	if (illegalJntBoundary(_ja)) {
 		QMessageBox::information(0, tr("Stop"),
@@ -243,30 +268,6 @@ void GLWidgets::plainActionObj() {
 
 
 	update();
-}
-
-
-void GLWidgets::trajAction() {
-	/**
-	 * prepare the trajectory from the current angle (1st param.)
-	 * to the intended angle (2nd param.)
-	 **/
-	connect(_timer, SIGNAL(timeout()), this, SLOT(trajNextTimeStep()));
-	_sim._tjt.prepare(_sim._km._jointAngles, _ja, 10.0);
-	_timer->start();
-}
-
-
-void GLWidgets::trajNextTimeStep() {
-	double nextJA[NUM_OF_JOINTS];
-	if (!_sim._tjt.nextTimeStep(_sim._tjt.timeNow() + 1, nextJA)) {
-		_timer->stop();
-	}
-
-	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-		_ja[i] = nextJA[i];
-	}
-	plainAction();
 }
 
 
@@ -322,6 +323,7 @@ void GLWidgets::actPathNextTimeStep() {
 		_timer->stop();
 	}
 }
+#endif
 
 
 void GLWidgets::cleanup() {

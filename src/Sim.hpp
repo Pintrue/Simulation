@@ -7,6 +7,7 @@
 #include "robot_reinforcement_learning/C/main.h"
 #include "robot_reinforcement_learning/C/matrix_op.h"
 #include "C_api.hpp"
+#include "robot_reinforcement_learning/C/macros.h"
 
 class Sim {
 	public:
@@ -23,8 +24,9 @@ class Sim {
 		double _initJA[NUM_OF_JOINTS];
 		double _currentJA[NUM_OF_JOINTS];
 
-		// double** _actions;
+		#ifdef RENDER
 		matrix_t** _actions;	// denormalized actions from rl algo
+		#endif
 		int _numOfActions;
 
 		double _target[CART_DIM];

@@ -16,6 +16,7 @@
 #include <math.h>
 #include "model/FwdKM.h"
 #include "model/InvKM.h"
+#include <benchmark/benchmark.h>
 
 #define JA0_L -M_PI/2
 #define JA0_U M_PI/2

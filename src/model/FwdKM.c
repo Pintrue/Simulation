@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 #define TO_DECIMAL_PLACE(v, n) (roundf(v * pow(10, n)) / pow(10, n))
+
 
 int illegalJntBoundary(const double jntArray[JNT_NUMBER]);
 
@@ -229,7 +231,37 @@ threeDOFsFwd* getCache() {
 }
 
 
-// int main() {
+int __main() {
+	/* 
+		timing the number of evaluation 
+	*/
+	double timeSpent = 0.0;
+
+	int count = 0;
+	double ja[3];
+	double eePos[3];
+	clock_t begin, end;
+
+	while (timeSpent < 1.0) {
+		ja[0] = RAND_M_TO_N(JNT0_L, JNT0_U);
+		ja[1] = RAND_M_TO_N(JNT1_L, JNT1_U);
+		ja[2] = RAND_M_TO_N(JNT2_L, JNT2_U);
+
+		initFwdKM();
+
+		begin = clock();
+		getEEPoseByJnts(ja, eePos);
+		end = clock();
+		timeSpent += (double) (end - begin) / CLOCKS_PER_SEC;
+
+		count += 1;
+	}
+
+	printf("time spent is %.5f\n", timeSpent);
+	printf("number of evaluation during this time is %d\n", count);
+	/* 
+		end timing 
+	*/
 
 // 	// double delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
 // 	double delta[3] = {0.5, 0.0, -0.7};
@@ -266,5 +298,5 @@ threeDOFsFwd* getCache() {
 // 	// 	printf("]\n");
 // 	// }
 
-// 	// return 0;
-// }
+	return 0;
+}
