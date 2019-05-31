@@ -23,7 +23,8 @@ class Sim {
 		double _initJA[NUM_OF_JOINTS];
 		double _currentJA[NUM_OF_JOINTS];
 
-		double** _actions;
+		// double** _actions;
+		matrix_t** _actions;	// denormalized actions from rl algo
 		int _numOfActions;
 
 		double _target[CART_DIM];

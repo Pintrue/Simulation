@@ -52,6 +52,10 @@ extern "C" double rand_uniform(double low, double high);
 // state: angles, target/coord, ee/coord, if succeed = 1*10 double
 extern "C" matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim);
 
+matrix_t* denormalize_action(matrix_t* action);
+
+matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim);
+
 // three angles to move about, NOT the angles to be moved to
 // action::1*3 double
 extern "C" matrix_t* step(matrix_t* action, int state_dim, int act_dim);

@@ -8,6 +8,7 @@
 #include "../model/Constraints.hpp"
 #include "UIUtils.hpp"
 #include "../utils/Utils.hpp"
+#include "../C_api.hpp"
 #include <iostream>
 #include <math.h>
 
@@ -35,7 +36,7 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 	_angleInput = "0.0, 0.0, 0.0";
 	_actionsIter = 0;
 	_trajOn = false;
-	_hasObj = false;
+	// _hasObj = false;
 }
 
 
@@ -79,13 +80,12 @@ Sim GLWidgets::getSim() {
 void GLWidgets::setSim(Sim sim) {
 	_sim = sim;
 
-	// set the target cartesian position
+	/* Set the target cartesian position. */
 	double destPos[6];
 	double objPos[6];
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < CART_DIM; ++i) {
 		destPos[i] = _sim._target[i];
 		objPos[i] = _sim._initObj[i];
-		_sim._obj[i] = _sim._initObj[i];
 	}
 	_glg._goal.setPose(destPos);
 	_glg._obj.setPose(objPos);
@@ -202,54 +202,45 @@ bool ifHadObj(const double eePos[6], const double objPos[6]) {
 
 
 void GLWidgets::plainActionObj() {
-	double pose[POSE_DIM];
-	if (_sim._km.getPoseByJnts(_ja, pose)) {
-		initFwdKM();
-		double objCoord[CART_COORD_DIM];
-		for (int i = 0; i < CART_COORD_DIM; ++i) {
-			objCoord[i] = _glg._obj._pose[i];
-		}
-		double magnetPose[POSE_FRAME_DIM];
-		getMagnetPoseByJnts(_ja, magnetPose);
-		if (roundf(_sim._actions[_actionsIter - 1][3]) == 1) {
-			if (_hasObj) {
-				_glg._obj.setPose(pose);
-			} else if (ifHadObj(magnetPose, _sim._obj)) {
-				_glg._obj.setPose(pose);
-				_hasObj = true;
-			}
-			double magnetCoord[CART_COORD_DIM];
-			for (int i = 0; i < CART_COORD_DIM; ++i) {
-				magnetCoord[i] = magnetPose[i];
-			}
-			if ((!withinCylinder(_sim._initObj, OBJ_LIFT_LOWER_CYLINDER_RADIUS, magnetCoord))
-				&& (!withinCylinder(_sim._target, OBJ_LIFT_LOWER_CYLINDER_RADIUS, magnetCoord))
-				&& magnetCoord[1] < OBJ_AFLOAT_LEAST_HEIGHT) {
-				cout << "render falling" << endl;
-				cout << magnetCoord[1] << " is too low" << endl;
-				/* 
-					Drop to the ground if lower than a certain height when 
-					not within the legal picking and placing cylinders
-				*/
-				_glg._obj._pose[1] = OBJ_HEIGHT;
-				_hasObj = false;
-	}
-		} else {
-			double objPos[6];
-			objPos[0] = _glg._obj._pose[0];
-			objPos[1] = OBJ_HEIGHT;
-			objPos[2] = _glg._obj._pose[2];
-			_glg._obj.setPose(objPos);
-		}
-		QString eePos = QString("[%1, %2, %3]")
-             .arg(QString::number(pose[0], 'f', 2),
-			 		QString::number(pose[1], 'f', 2),
-					QString::number(pose[2], 'f', 2));
-		emit updateEEPos(eePos);
-	} else {
-		QMessageBox::information(0, tr("Stop"), tr("No solution - try again."));
+	if (illegalJntBoundary(_ja)) {
+		QMessageBox::information(0, tr("Stop"),
+			tr("Illegal input joint angles - try again."));
 		_timer->stop();
+		return;
 	}
+
+	matrix_t* obs =
+		step(_sim._actions[_actionsIter - 1], FULL_STATE_NUM_COLS, ACTION_DIM);
+	
+	double objPose[POSE_DIM];
+	double eePose[POSE_DIM];
+	
+	for (int i = 0; i < CART_DIM; ++i) {
+		objPose[i] = obs->data[i + PNP_FST_OBJ_POS_OFFSET];
+		eePose[i] = obs->data[i + PNP_EE_POS_OFFSET];
+	}
+
+	_hasObj = (obs->data[PNP_HAS_OBJ_OFFSET] == 1);
+
+	_glg._obj.setPose(objPose);
+
+	QString eePos = QString("[%1, %2, %3]")
+         .arg(QString::number(eePose[0], 'f', 2),
+		 		QString::number(eePose[1], 'f', 2),
+				QString::number(eePose[2], 'f', 2));
+	emit updateEEPos(eePos);
+
+	// QString eePos = QString("[%1, %2, %3]")
+    //      .arg(QString::number(pose[0], 'f', 2),
+	// 	 		QString::number(pose[1], 'f', 2),
+	// 			QString::number(pose[2], 'f', 2));
+	// emit updateEEPos(eePos);
+	
+	// } else {
+	// 	QMessageBox::information(0, tr("Stop"), tr("No solution - try again."));
+	// 	_timer->stop();
+	// }
+
 
 	update();
 }
@@ -272,7 +263,6 @@ void GLWidgets::trajNextTimeStep() {
 		_timer->stop();
 	}
 
-	// _ja = nextJA;
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		_ja[i] = nextJA[i];
 	}
@@ -281,7 +271,7 @@ void GLWidgets::trajNextTimeStep() {
 
 
 void GLWidgets::moveByActionPath() {
-	// move to the initial JA set by resetState() in C_api
+	/* move to the initial JA set by resetState() in C_api */
 	// _ja = _sim._initJA;
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		_ja[i] = _sim._initJA[i];
@@ -300,9 +290,22 @@ void GLWidgets::actPathNextTimeStep() {
 	}
 
 	double result[FULL_STATE_NUM_COLS];
-	if (regulateJntAngles(_ja, _sim._actions[_actionsIter], result)) {
+	matrix_t* jaAction = new_matrix(1, 3);
+	jaAction->data[0] = _sim._actions[_actionsIter]->data[0];
+	jaAction->data[1] = _sim._actions[_actionsIter]->data[1];
+	jaAction->data[2] = _sim._actions[_actionsIter]->data[2];
+
+	matrix_t* denormed_ja_matrix = denormalize_action(jaAction);
+	matrix_t* denormed_matrix = new_matrix(1, 4);
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		denormed_matrix->data[i] = denormed_ja_matrix->data[i];
+	}
+	free_matrix(jaAction);
+	free_matrix(denormed_ja_matrix);
+	denormed_matrix->data[3] = _sim._actions[_actionsIter]->data[3];
+	if (regulateJntAngles(_ja, denormed_matrix->data, result)) {
 		for (int i = 0; i < NUM_OF_JOINTS; ++i) {
-			_ja[i] += _sim._actions[_actionsIter][i];
+			_ja[i] += denormed_matrix->data[i];
 		}
 
 		if (ACTION_DIM == 4) {
@@ -312,8 +315,9 @@ void GLWidgets::actPathNextTimeStep() {
 			++_actionsIter;
 			plainAction();
 		}
-
+		free_matrix(denormed_matrix);
 	} else {
+		free_matrix(denormed_matrix);
 		QMessageBox::information(0, tr("Stop"), tr("Path moved out of bounds."));
 		_timer->stop();
 	}
@@ -356,7 +360,7 @@ void GLWidgets::paintGL() {
 	// glScalef(_zoom, _zoom, 1.0f);
 
 	// render all components in the env
-	_glg._model.update(_sim._km._jointAngles);
+	_glg._model.update(_ja);
 	_glg.render();
 
 	glFinish();

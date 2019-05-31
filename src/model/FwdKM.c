@@ -5,6 +5,7 @@
 
 #define TO_DECIMAL_PLACE(v, n) (roundf(v * pow(10, n)) / pow(10, n))
 
+int illegalJntBoundary(const double jntArray[JNT_NUMBER]);
 
 static threeDOFsFwd* arm;
 
@@ -110,7 +111,7 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 		
 		return JNT_ANGLES_OUT_OF_BOUND;
 	}
-
+	
 	arm->a1 += jntArray[0];
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];

@@ -13,6 +13,9 @@ set(SRC_DIR "src")
 set(C "src/robot_reinforcement_learning/C")
 set(GRA "src/GUI")
 
+SET(CMAKE_C_COMPILER $ENV{MPICC})
+SET(CMAKE_CXX_COMPILER $ENV{MPICXX})
+
 set(QT_OPENGL_FILES
 	${GRA}/Drawable.cpp
 	${GRA}/GLGraphics.cpp
@@ -109,6 +112,8 @@ else()
 					${C}/rl_ddpg_her_demo.c
 					${C}/rl_ddpg_her_sim.c
 					${C}/rl_ddpg_her_demo_sim.c
+					${C}/multi_agents/mpi_utils.c
+					${C}/multi_agents/rl_ddpg_her_mpi.c
 	)
 					#${SRC_DIR}/model/FwdKM.c
 					#${SRC_DIR}/model/InvKM.c
