@@ -118,7 +118,7 @@ else()
 					#${SRC_DIR}/model/FwdKM.c
 					#${SRC_DIR}/model/InvKM.c
 	if (LINUX STREQUAL "OFF")
-		target_link_libraries(simulation Qt5::Widgets "-framework OpenGL" $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl)
+		target_link_libraries(simulation Qt5::Widgets "-framework OpenGL" $ENV{MKLROOT}/lib/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/libmkl_sequential.a $ENV{MKLROOT}/lib/libmkl_core.a -lpthread -lm -ldl -lbenchmark)
 	else()
 		target_link_libraries(simulation $ENV{MKLROOT}/lib/intel64/libmkl_intel_ilp64.a $ENV{MKLROOT}/lib/intel64/libmkl_sequential.a $ENV{MKLROOT}/lib/intel64/libmkl_core.a -lpthread -lm -ldl)
 	endif()

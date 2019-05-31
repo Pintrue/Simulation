@@ -7,6 +7,7 @@
 #include "../Sim.hpp"
 #include "../model/KinematicsModel.hpp"
 #include "GLGraphics.hpp"
+#include "../robot_reinforcement_learning/C/macros.h"
 
 
 class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
@@ -32,11 +33,13 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 		void enableTraj(bool on);
 		void execAction();
 		void plainAction();
-		void plainActionObj();
 		void trajAction();
 		void trajNextTimeStep();
+		#ifdef RENDER
+		void plainActionObj();
 		void moveByActionPath();
 		void actPathNextTimeStep();
+		#endif
 
 	    void cleanup();
 
@@ -58,8 +61,6 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 
 	private:
 		QString _angleInput;
-		// double _jointAngles[NUM_OF_JOINTS];
-		// KDL::JntArray _ja;
 		double _ja[NUM_OF_JOINTS];
 		bool _trajOn;
 		bool _hasObj;
@@ -67,7 +68,6 @@ class GLWidgets : public QOpenGLWidget, protected QOpenGLFunctions {
 
 		float _cam[3];
     	int _mRotX, _mRotY, _mRotZ, _scale;
-    	// QPoint _lastEEPos;
 
 		QPoint _mLastPos;
 
