@@ -449,6 +449,7 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 		 * in the last time step, by checking if the EE with magnet current
 		 * on is in certain range to the object.
 		 **/
+		cout << "Presetting the obj position" << endl;
 		for (int i = 0; i < CART_DIM; ++i) {
 			data[i + PNP_FST_OBJ_POS_OFFSET] = sim._obj[i];
 		}
@@ -460,18 +461,26 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 			sim._hasObj = true;
 			data[PNP_HAS_OBJ_OFFSET] = 1;
 		} else {
-			data[PNP_HAS_OBJ_OFFSET] = 0;
 		}
 		sim._eeState = true;
 	}
 
-	if (!withinCylinder(sim._initObj, OBJ_LIFT_LOWER_CYLINDER_RADIUS, sim._obj)
-		&& !withinCylinder(sim._target, OBJ_LIFT_LOWER_CYLINDER_RADIUS, sim._obj)
-		&& sim._obj[1] < OBJ_AFLOAT_LEAST_HEIGHT) {
+	// cout << "obj was at " << sim._initObj[0] << ", " << sim._initObj[1] << ", " << sim._initObj[2] << endl;
+	// cout << "obj now at " << sim._obj[0] << ", " << sim._obj[1] << ", " << sim._obj[2] << endl;
+
+	double toPos[CART_COORD_DIM];
+	for (int i = 0; i < CART_COORD_DIM; ++i) {
+		toPos[i] = eePos[i];
+	}
+
+	if ((!withinCylinder(sim._initObj, OBJ_LIFT_LOWER_CYLINDER_RADIUS, toPos))
+		&& (!withinCylinder(sim._target, OBJ_LIFT_LOWER_CYLINDER_RADIUS, toPos))
+		&& toPos[1] < OBJ_AFLOAT_LEAST_HEIGHT) {
 		/* 
 			Drop to the ground if lower than a certain height when 
 			not within the legal picking and placing cylinders
 		*/
+		cout << "Not within the cylinders" << endl;
 		sim._obj[1] = OBJ_HEIGHT;
 		data[PNP_HAS_OBJ_OFFSET] = 0;
 		sim._hasObj = false;
