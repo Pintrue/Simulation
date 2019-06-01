@@ -44,6 +44,12 @@ typedef struct _threeDOFsFwd {
 
 int initFwdKM();
 
+void initTrigTable();
+double sineTaylorSeriesApprox(double radians);
+double sinePrecomp(double radians);
+double cosinePrecomp(double radians);
+int getEEPoseByJntsPrecomp(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
+
 int getJntPosByAngle(const double jntArray[JNT_NUMBER],
 						double allPoss[JNT_NUMBER][CART_COORD_DIM], int numOfPoss);
 
