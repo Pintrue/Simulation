@@ -11,6 +11,17 @@ int illegalJntBoundary(const double jntArray[JNT_NUMBER]);
 
 static threeDOFsFwd* arm;
 
+double sineTable[1000] = {0};
+double cosineTable[1000] = {0};
+
+
+void initTrigTable() {
+	for (int i = 0; i < 1000; ++i) {
+		sineTable[i] = sin(M_PI * (i + 1) * 0.001);
+		cosineTable[i] = cos(M_PI * (i + 1) * 0.001);
+	}
+}
+
 
 int initFwdKM() {
 	/* DESCRIPTION of the arm */
@@ -36,6 +47,108 @@ int initFwdKM() {
 	arm->a2 = atan2(3.5, 3.9);
 	arm->a3 = initJntAngles[1];
 	arm->a4 = initJntAngles[2];
+
+	return 0;
+}
+
+
+double sineTaylorSeriesApprox(double radians) {
+	return radians - pow(radians, 3) / 6.0 + pow(radians, 5) / 120.0 - pow(radians, 7) / 5040.0;
+}
+
+
+double sinePrecomp(double radians) {
+	if (radians == 0) {
+		return 0.0;
+	} 
+	
+	int sign = 1;
+	if (radians < 0) {
+		sign = -1;
+	}
+
+	double mod = fmod(fabs(radians), (2.0 * M_PI));
+	int thousandthsOfPi = mod / M_PI * 1000;
+	if (mod < M_PI) {
+		return sign * sineTable[thousandthsOfPi];
+	} else if (mod > M_PI) {
+		thousandthsOfPi -= 1000;
+		sign *= -1;
+		return sign * sineTable[thousandthsOfPi];
+	} else {
+		return 0;
+	}
+}
+
+double cosinePrecomp(double radians) {
+	if (radians == 0) {
+		return 0.0;
+	}
+
+	double mod = fmod(fabs(radians), (2.0 * M_PI));
+	int thousandthsOfPi = mod / M_PI * 1000;
+	if (mod < M_PI) {
+		return cosineTable[thousandthsOfPi];
+	} else if (mod > M_PI) {
+		thousandthsOfPi = 2000 - thousandthsOfPi;
+		return cosineTable[thousandthsOfPi];
+	} else {
+		return -1.0;
+	}
+}
+
+
+int getEEPoseByJntsPrecomp(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]) {
+	/**
+	 * Calculate y from a side view, where y has the following eqaution
+	 * 
+	 * 					y = d2 + d3 + d4 + d5
+	 **/
+
+
+	if (jntArray[0] > JNT0_U || jntArray[0] < JNT0_L ||
+		jntArray[1] > JNT1_U || jntArray[1] < JNT1_L ||
+		jntArray[2] > JNT2_U || jntArray[2] < JNT2_L) {
+		
+		return JNT_ANGLES_OUT_OF_BOUND;
+	}
+	
+	arm->a1 += jntArray[0];
+	arm->a3 += jntArray[1];
+	arm->a4 -= jntArray[2] + jntArray[1];
+
+	double d2 = arm->baseHeight;
+	double d3 = arm->l1 * sinePrecomp(arm->a2);
+	double d4 = arm->l2 * sinePrecomp(arm->a3);
+	double d5 = arm->l3 * sinePrecomp(arm->a4);
+
+	double y = d2 + d3 + d4 + d5;// - (MAGNET_EE_HEIGHT_OFFSET + );
+
+	/**
+	 * Calculate x and z from a top view, where x has the following eqaution
+	 * 
+	 * 					z = d1 * cos(a1)
+	 * and where z has the following equation
+	 * 
+	 * 					x = d1 * sin(a1)
+	 * and d1 has the following equation
+	 * 
+	 * 					d1 = d6 - d7 + d8
+	 **/
+
+	double d6 = arm->l3 * cosinePrecomp(arm->a4);
+	double d7 = arm->l2 * cosinePrecomp(arm->a3);
+	double d8 = arm->l1 * cosinePrecomp(arm->a2);
+
+	double d1 = d6 - d7 + d8;
+
+	double z = d1 * cosinePrecomp(arm->a1);
+	double x = d1 * sinePrecomp(arm->a1);
+
+	eePos[0] = TO_DECIMAL_PLACE(x, 2); eePos[1] = TO_DECIMAL_PLACE(y, 2); eePos[2] = TO_DECIMAL_PLACE(z, 2);
+	eePos[3] = jntArray[1] + jntArray[2];
+	eePos[4] = jntArray[0];
+	eePos[5] = 0;
 
 	return 0;
 }
@@ -117,14 +230,6 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	arm->a1 += jntArray[0];
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];
-
-	// double a1 = arm->a1 + jntArray[0];
-	// double a3 = arm->a3 + jntArray[1];
-	// double a4 = arm->a4 - jntArray[2] - jntArray[1];
-
-	// arm->a1 = a1;
-	// arm->a3 = a3;
-	// arm->a4 = a4;
 
 	double d2 = arm->baseHeight;
 	double d3 = arm->l1 * sin(arm->a2);
@@ -235,6 +340,7 @@ int __main() {
 	/* 
 		timing the number of evaluation 
 	*/
+/*
 	double timeSpent = 0.0;
 
 	int count = 0;
@@ -259,15 +365,28 @@ int __main() {
 
 	printf("time spent is %.5f\n", timeSpent);
 	printf("number of evaluation during this time is %d\n", count);
+*/
 	/* 
 		end timing 
 	*/
 
+	// initTrigTable();
+	// // for (int i = 0; i < 20; ++i) {
+	// // 	printf("= %f\n", sineTable[i]);
+	// // }
+	// // printf("= %f\n", sineTable[999]);
+	// double rad = 0;
+	// while (1) {
+	// 	scanf("%lf", &rad);
+	// 	double res = cosinePrecomp(rad);
+	// 	printf("= %f\n", res);
+	// }
+
 // 	// double delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
-// 	double delta[3] = {0.5, 0.0, -0.7};
+	double delta[3] = {0.5, 0.0, -0.7};
 
 // 	double allPoss[4][6];
-// 	double eePos[POSE_FRAME_DIM];
+	double eePos[POSE_FRAME_DIM];
 
 // 	initFwdKM();
 // 	int res = getAllPossByJnts(delta, allPoss);
@@ -286,17 +405,30 @@ int __main() {
 // 	finishFwdKM();
 
 
-// 	// initFwdKM();
-// 	// int res = getEEPoseByJnts(delta, eePos);
-// 	// if (res < 0) {
-// 	// 	printf("Angle out of bound.\n");
-// 	// } else {
-// 	// 	printf("[ ");
-// 	// 	for (int i = 0; i < 6; ++i) {
-// 	// 		printf("%f ", eePos[i]);
-// 	// 	}
-// 	// 	printf("]\n");
-// 	// }
+	initFwdKM();
+	int res = getEEPoseByJnts(delta, eePos);
+	if (res < 0) {
+		printf("Angle out of bound.\n");
+	} else {
+		printf("[ ");
+		for (int i = 0; i < 6; ++i) {
+			printf("%f ", eePos[i]);
+		}
+		printf("]\n");
+	}
+
+	initFwdKM();
+	initTrigTable();
+	res = getEEPoseByJntsPrecomp(delta, eePos);
+	if (res < 0) {
+		printf("Angle out of bound.\n");
+	} else {
+		printf("[ ");
+		for (int i = 0; i < 6; ++i) {
+			printf("%f ", eePos[i]);
+		}
+		printf("]\n");
+	}
 
 	return 0;
 }

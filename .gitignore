@@ -51,3 +51,4 @@ simulation_autogen/
 *.cbp
 inv
 fwd
+bm
