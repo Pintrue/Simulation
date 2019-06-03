@@ -60,12 +60,13 @@ static void BM_CosinePrecomp(benchmark::State& state) {
 }
 
 
-// BENCHMARK(BM_Sine);
-// BENCHMARK(BM_SinePrecomp);
+BENCHMARK(BM_Sine);
+BENCHMARK(BM_SinePrecomp);
 // BENCHMARK(BM_Cosine);
 // BENCHMARK(BM_CosinePrecomp);
 
-BENCHMARK(BM_KM);
-BENCHMARK(BM_KMPC);
+// BENCHMARK(BM_KM);
+// BENCHMARK(BM_KMPC);
+BENCHMARK(BM_SineTaylorApprox);
 
 BENCHMARK_MAIN();
