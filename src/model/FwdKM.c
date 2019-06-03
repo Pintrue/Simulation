@@ -53,7 +53,11 @@ int initFwdKM() {
 
 
 double sineTaylorSeriesApprox(double radians) {
-	return radians - pow(radians, 3) / 6.0 + pow(radians, 5) / 120.0 - pow(radians, 7) / 5040.0;
+	double degTwo = radians * radians * radians;
+	double degThree = degTwo * radians;
+	double degFive = degThree * degTwo;
+	double degSeven = degFive * degTwo;
+	return radians - degThree / 6.0 + degFive / 120.0 - degSeven / 5040.0;
 }
 
 
