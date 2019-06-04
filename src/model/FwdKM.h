@@ -1,6 +1,8 @@
 #ifndef FWDKM_H
 #define FWDKM_H
 
+#include <stdlib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -46,8 +48,10 @@ int initFwdKM();
 
 void initTrigTable();
 double sineTaylorSeriesApprox(double radians);
+double cosineTaylorSeriesApprox(double radians);
 double sinePrecomp(double radians);
 double cosinePrecomp(double radians);
+int cosineInt(u_int8_t x);
 int getEEPoseByJntsPrecomp(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
 
 int getJntPosByAngle(const double jntArray[JNT_NUMBER],
