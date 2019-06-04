@@ -46,6 +46,12 @@ static void BM_SineTaylorApprox(benchmark::State& state) {
 }
 
 
+static void BM_CosineTaylorApprox(benchmark::State& state) {
+	for (auto _ : state)
+		cosineTaylorSeriesApprox(RAND_M_TO_N(-1, 1));
+}
+
+
 static void BM_SinePrecomp(benchmark::State& state) {
 	initTrigTable();
 	for (auto _ : state)
@@ -60,13 +66,28 @@ static void BM_CosinePrecomp(benchmark::State& state) {
 }
 
 
+static void BM_CosineInt(benchmark::State& state) {
+	for (auto _ : state)
+		cosineInt(RAND_M_TO_N(74, 255));
+}
+
+
+static void BM_SineInt(benchmark::State& state) {
+	for (auto _ : state)
+		cosineInt(RAND_M_TO_N(74, 255) - 74);
+}
+
+BENCHMARK(BM_Cosine);
+BENCHMARK(BM_CosinePrecomp);
+BENCHMARK(BM_CosineInt);
+BENCHMARK(BM_CosineTaylorApprox);
+
 BENCHMARK(BM_Sine);
 BENCHMARK(BM_SinePrecomp);
-// BENCHMARK(BM_Cosine);
-// BENCHMARK(BM_CosinePrecomp);
+BENCHMARK(BM_SineTaylorApprox);
+BENCHMARK(BM_SineInt);
 
 // BENCHMARK(BM_KM);
 // BENCHMARK(BM_KMPC);
-BENCHMARK(BM_SineTaylorApprox);
 
 BENCHMARK_MAIN();

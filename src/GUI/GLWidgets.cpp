@@ -29,6 +29,9 @@ GLWidgets::GLWidgets(QWidget* parent) : QOpenGLWidget(parent) {
 	// initialize the kinematics modules
 	double ori[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
 	_sim = Sim(ori);
+	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
+		_ja[i] = 0.0;
+	}
 
 	// initialize the graphical modules
 	_glg = GLGraphics(_sim._km);
