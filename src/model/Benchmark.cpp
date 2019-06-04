@@ -68,13 +68,13 @@ static void BM_CosinePrecomp(benchmark::State& state) {
 
 static void BM_CosineInt(benchmark::State& state) {
 	for (auto _ : state)
-		cosineInt(RAND_M_TO_N(74, 255));
+		cosineInt(RAND_M_TO_N(67, 255));
 }
 
 
 static void BM_SineInt(benchmark::State& state) {
 	for (auto _ : state)
-		cosineInt(RAND_M_TO_N(74, 255) - 74);
+		cosineInt(RAND_M_TO_N(67, 255) - 67);
 }
 
 BENCHMARK(BM_Cosine);
@@ -84,8 +84,8 @@ BENCHMARK(BM_CosineTaylorApprox);
 
 BENCHMARK(BM_Sine);
 BENCHMARK(BM_SinePrecomp);
-BENCHMARK(BM_SineTaylorApprox);
 BENCHMARK(BM_SineInt);
+BENCHMARK(BM_SineTaylorApprox);
 
 // BENCHMARK(BM_KM);
 // BENCHMARK(BM_KMPC);
