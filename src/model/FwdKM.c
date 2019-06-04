@@ -11,7 +11,7 @@
 #define RAD_SCALE_MAX 255
 #define RAD_SCALE_RANGE (RAD_SCALE_MAX - RAD_SCALE_MIN)
 #define TRIG_SCALE_MIN 0
-#define TRIG_SCALE_MAX 511
+#define TRIG_SCALE_MAX 1023
 #define TRIG_SCALE_RANGE (TRIG_SCALE_MAX - TRIG_SCALE_MIN)
 
 
@@ -35,16 +35,16 @@ double cosineTable[1000] = {0};
 // 							1991,1991,1991,1991,1991,1991
 // 						};
 char gradTable[64] = {
-						3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
-						-2,-2,-2,-2,-2,-2,-2,-2,-2,			
-						-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,
-						-5,-5,-5,-5,-5,-5,-5,-5
+						3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3, //16
+						9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9, //37
+						-5,-5,-5,-5,-5,-5,-5,-5,-5, //46
+						-11,-11,-11,-11,-11,-11,-11,-11,-11,-11,-11,-11,-11,-11,-11,-11,-11
 					};
 short intercptTable[64] = {
-						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						780,780,780,780,780,780,780,780,780,			
-						1312,1312,1312,1312,1312,1312,1312,1312,1312,1312,
-						1364,1364,1364,1364,1364,1364,1364,1364
+						60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60, //16
+						-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315,-315, //37
+						1790,1790,1790,1790,1790,1790,1790,1790,1790, //46
+						2922,2922,2922,2922,2922,2922,2922,2922,2922,2922,2922,2922,2922,2922,2922,2922,2922
 					};
 
 
@@ -99,7 +99,6 @@ double cosineTaylorSeriesApprox(double radians) {
 	return 1.0 - degTwo / 2.0 + degFour / 24.0;
 }
 
-
 double sinePrecomp(double radians) {
 	if (radians == 0) {
 		return 0.0;
@@ -149,8 +148,8 @@ void printBinFormat(u_int8_t x) {
 }
 
 /* Pre-cond:
-	74 <= x < 255 for cosine,
-	0 <= x < 181 for sine.
+	67 <= x < 255 for cosine,
+	0 <= x < 189 for sine.
 */
 int cosineInt(u_int8_t x) {
 	uint8_t idx = (x & COSINE_INT_SELECT_MASK) >> COSINE_INT_MASK_OFFSET;
@@ -462,7 +461,7 @@ threeDOFsFwd* getCache() {
 }
 
 
-int ___main() {
+int __main() {
 	/* 
 		timing the number of evaluation 
 	*/
@@ -567,16 +566,17 @@ int ___main() {
 	// 	for (int j = 0; j < 3; ++j) {
 	// 		printf("For x-range %lf\n", xRange[i]);
 	// 		printf("For y-range %lf\n", yRange[j]);
-	// 		aX = (-90.0 + 180.0) / 310.0 * xRange[i];
-	// 		bX = (0 + 180.0) / 310.0 * xRange[i];
-	// 		cX = (40.0 + 180.0) / 310.0 * xRange[i];
-	// 		dX = (90.0 + 180.0) / 310.0 * xRange[i];
-	// 		eX = (130.0 + 180.0) / 310.0 * xRange[i];
-	// 		aY = (0 + 1.0) / 2.0 * yRange[j];
-	// 		bY = (1.0 + 1.0) / 2.0 * yRange[j];
-	// 		cY = (cos(40.0/180.0*M_PI) + 1.0) / 2.0 * yRange[j];
-	// 		dY = aY;
-	// 		eY = (cos(130.0/180.0*M_PI) + 1.0) / 2.0 * yRange[j];
+	// 		aX = (-210.0 + 210.0) / 350.0 * xRange[i];
+	// 		bX = (-118.0 + 210.0) / 350.0 * xRange[i];
+	// 		cX = (0.0 + 210.0) / 350.0 * xRange[i];
+	// 		dX = (50.0 + 210.0) / 350.0 * xRange[i];
+	// 		eX = (140.0 + 210.0) / 350.0 * xRange[i];
+	// 		aY = (cos(-208.0/180.0*M_PI) + 1.0) / 2.0 * yRange[j];
+	// 		bY = (cos(-118.0/180.0*M_PI) + 1.0) / 2.0 * yRange[j];
+	// 		cY = (cos(0.0/180.0*M_PI) + 1.0) / 2.0 * yRange[j];
+	// 		dY = (cos(50.0/180.0*M_PI) + 1.0) / 2.0 * yRange[j];
+	// 		eY = (cos(140.0/180.0*M_PI) + 1.0) / 2.0 * yRange[j];
+
 
 	// 		printf("\tA = (%lf, %lf)\n", aX, aY);
 	// 		printf("\tB = (%lf, %lf)\n", bX, bY);
@@ -590,13 +590,14 @@ int ___main() {
 	// 		printf("\tmAB = %lf and bAB = %lf\n", m1, b1);
 	// 		m2 = (cY - bY) / (cX - bX);
 	// 		b2 = bY - m2 * bX;
-	// 		printf("\tmAB = %lf and bAB = %lf\n", m2, b2);
+	// 		printf("\tmBC = %lf and bBC = %lf\n", m2, b2);
 	// 		m3 = (dY - cY) / (dX - cX);
 	// 		b3 = cY - m3 * cX;
-	// 		printf("\tmAB = %lf and bAB = %lf\n", m3, b3);
+	// 		printf("\tmCD = %lf and bCD = %lf\n", m3, b3);
 	// 		m4 = (eY - dY) / (eX - dX);
 	// 		b4 = dY - m4 * dX;
-	// 		printf("\tmAB = %lf and bAB = %lf\n", m4, b4);
+	// 		printf("\tmCD = %lf and bCD = %lf\n", m4, b4);
+
 
 	// 		double diff = 0;
 	// 		double coefs[8] = {m1, m2, m3, m4, b1, b2, b3, b4};
@@ -607,15 +608,15 @@ int ___main() {
 	// 	}
 	// }
 
-	// while (1) {
-	// 	int encoding = 0;
-	// 	scanf("%d", &encoding);
-	// 	int res = cosineInt(encoding);
-	// 	printf("Result is %d\n\n", res);
+	while (1) {
+		int encoding = 0;
+		scanf("%d", &encoding);
+		int res = cosineInt(encoding);
+		printf("Result is %d\n\n", res);
 
-	// 	// double rad = 0;
-	// 	// scanf("%lf", &rad);
-	// 	// printf("Result is %lf\n\n", cosineTaylorSeriesApprox(rad));
-	// }
-	// return 0;
+		// double rad = 0;
+		// scanf("%lf", &rad);
+		// printf("Result is %lf\n\n", cosineTaylorSeriesApprox(rad));
+	}
+	return 0;
 }
