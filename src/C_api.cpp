@@ -88,7 +88,8 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 	/* USED to make use of kdl, get rid of it now*/
 
 	initFwdKM();
-	getMagnetPoseByJnts(sim._currentJA, eePos);
+	// getMagnetPoseByJnts(sim._currentJA, eePos);
+	getEEPoseByJnts(sim._currentJA, eePos);
 
 
 	for (int i = 0; i < CART_DIM; ++i) {
@@ -355,7 +356,8 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 	double eePos[6];
 
 	initFwdKM();
-	getMagnetPoseByJnts(sim._currentJA, eePos);
+	// getMagnetPoseByJnts(sim._currentJA, eePos);
+	getEEPoseByJnts(sim._currentJA, eePos);
 
 	for (int i = 0; i < CART_DIM; ++i) {
 		data[i + REACHING_FST_EE_POS_OFFSET] = eePos[i];
