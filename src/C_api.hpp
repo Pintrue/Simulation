@@ -48,7 +48,7 @@
 
 extern "C" int initEnv(int act_dim, int task_flag);
 
-extern "C" double rand_uniform(double low, double high);
+extern "C" float rand_uniform(float low, float high);
 // state: angles, target/coord, ee/coord, if succeed = 1*10 double
 extern "C" matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim);
 

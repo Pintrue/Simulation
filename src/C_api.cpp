@@ -60,7 +60,7 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 	/* Nothing needs to be done rn.*/
 	// cout << "Reaching full state dim: " << FULL_STATE_NUM_COLS << endl;
 	matrix_t* ret = new_matrix(1, FULL_STATE_NUM_COLS);
-	double* data = ret->data;
+	float* data = ret->data;
 
 	sim._numOfSteps = 0;	// reset number of steps executed
 	
@@ -78,7 +78,7 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 	/* setting the current position of the end-effector */
 
 	// TESTING VARIABLE, delete later.
-	double eePos[6];
+	float eePos[6];
 	
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		sim._initJA[i] = data[i];
@@ -112,7 +112,7 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 	// setting the target position for the end-effector
 	if (destPos == 1) {
 		matrix_t* destPos = new_matrix(1, CART_DIM);
-		double* dest = destPos->data;
+		float* dest = destPos->data;
 
 		dest[0] = rand_uniform(-10.5, 10.5);
 		dest[1] = 0;
@@ -141,7 +141,7 @@ matrix_t* resetStateReaching(int randAngle, int destPos, int state_dim, int act_
 matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) {
 	// cout << "PnP full state dim: " << FULL_STATE_NUM_COLS << endl;
 	matrix_t* ret = new_matrix(1, FULL_STATE_NUM_COLS);
-	double* data = ret->data;
+	float* data = ret->data;
 
 	sim._numOfSteps = 0;	// reset number of steps executed
 	
@@ -157,7 +157,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	}
 
 	/* setting the current position of the end-effector */
-	double eePos[6];
+	float eePos[6];
 	
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		sim._initJA[i] = data[i];
@@ -184,7 +184,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 
 	/* setting the object position for the PICK */
 	matrix_t* objPos = new_matrix(1, CART_DIM);
-	double* obj = objPos->data;
+	float* obj = objPos->data;
 
 	obj[0] = rand_uniform(-10.5, 10.5);
 	obj[1] = OBJ_HEIGHT;
@@ -210,7 +210,7 @@ matrix_t* resetStatePnP(int randAngle, int destPos, int state_dim, int act_dim) 
 	/* setting the target position for the PLACE */
 	if (destPos == 1) {
 		matrix_t* destPos = new_matrix(1, CART_DIM);
-		double* dest = destPos->data;
+		float* dest = destPos->data;
 
 		dest[0] = rand_uniform(-10.5, 10.5);
 		dest[1] = 0;
@@ -264,11 +264,11 @@ matrix_t* resetState(int randAngle, int destPos, int state_dim, int act_dim) {
 }
 
 
-int ifInReach(double fullState[FULL_STATE_NUM_COLS]) {
-	double diff = 0;
+int ifInReach(float fullState[FULL_STATE_NUM_COLS]) {
+	float diff = 0;
 
 	for (int i = 3; i < 6; ++i) {
-		double delta = fullState[i + REACHING_FST_EE_POS_OFFSET] - fullState[i];
+		float delta = fullState[i + REACHING_FST_EE_POS_OFFSET] - fullState[i];
 		diff += delta * delta;
 	}
 
@@ -276,11 +276,11 @@ int ifInReach(double fullState[FULL_STATE_NUM_COLS]) {
 }
 
 
-int ifHadObj(double fullState[FULL_STATE_NUM_COLS]) {
-	double diff = 0;
+int ifHadObj(float fullState[FULL_STATE_NUM_COLS]) {
+	float diff = 0;
 
 	for (int i = 0; i < CART_DIM; ++i) {
-		double delta = fullState[i + PNP_EE_POS_OFFSET] - fullState[i + PNP_FST_OBJ_POS_OFFSET];
+		float delta = fullState[i + PNP_EE_POS_OFFSET] - fullState[i + PNP_FST_OBJ_POS_OFFSET];
 		diff += delta * delta;
 	}
 
@@ -288,34 +288,34 @@ int ifHadObj(double fullState[FULL_STATE_NUM_COLS]) {
 }
 
 
-int ifObjNearDest(double fullState[FULL_STATE_NUM_COLS]) {
-	double diff = 0;
+int ifObjNearDest(float fullState[FULL_STATE_NUM_COLS]) {
+	float diff = 0;
 
 	for (int i = 0; i < CART_DIM; ++i) {
-		double delta = fullState[i + PNP_FST_OBJ_POS_OFFSET] - fullState[i + PNP_DEST_POS_OFFSET];
+		float delta = fullState[i + PNP_FST_OBJ_POS_OFFSET] - fullState[i + PNP_DEST_POS_OFFSET];
 		diff += delta * delta;
 	}
 
 	return sqrt(diff) <= OBJ_NEAR_DEST_RANGE;
 }
 
-void setReachingRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
+void setReachingRewardBit(float fullState[FULL_STATE_NUM_COLS]) {
 	fullState[REACHING_REWARD_BIT_OFFSET] = ifInReach(fullState) ? 0 : -1;
 }
 
 
-void setPnPRewardBit(double fullState[FULL_STATE_NUM_COLS]) {
+void setPnPRewardBit(float fullState[FULL_STATE_NUM_COLS]) {
 	fullState[PNP_REWARD_BIT_OFFSET] = (ifObjNearDest(fullState) && fullState[PNP_EE_STATE_OFFSET] == 0) ? 0 : -1;
 }
 
 
 matrix_t* denormalize_action(matrix_t* action) {
 	matrix_t* ret = new_matrix(action->rows, action->cols);
-	// double upper = 0.0872664626;
-	// double lower = -0.0872664626;
-	double d1 = (double)(action->data[0] + 1) / (double)2 * (ACTION_BOUND_UPPER - ACTION_BOUND_LOWER) + ACTION_BOUND_LOWER;
-	double d2 = (double)(action->data[1] + 1) / (double)2 * (ACTION_BOUND_UPPER - ACTION_BOUND_LOWER) + ACTION_BOUND_LOWER;
-	double d3 = (double)(action->data[2] + 1) / (double)2 * (ACTION_BOUND_UPPER - ACTION_BOUND_LOWER) + ACTION_BOUND_LOWER;
+	// float upper = 0.0872664626;
+	// float lower = -0.0872664626;
+	float d1 = (float)(action->data[0] + 1) / (float)2 * (ACTION_BOUND_UPPER - ACTION_BOUND_LOWER) + ACTION_BOUND_LOWER;
+	float d2 = (float)(action->data[1] + 1) / (float)2 * (ACTION_BOUND_UPPER - ACTION_BOUND_LOWER) + ACTION_BOUND_LOWER;
+	float d3 = (float)(action->data[2] + 1) / (float)2 * (ACTION_BOUND_UPPER - ACTION_BOUND_LOWER) + ACTION_BOUND_LOWER;
 	ret->data[0] = d1;
 	ret->data[1] = d2;
 	ret->data[2] = d3;
@@ -325,9 +325,9 @@ matrix_t* denormalize_action(matrix_t* action) {
 
 matrix_t* normalize_action(matrix_t* action) {
 	matrix_t* ret = new_matrix(action->rows, action->cols);
-	ret->data[0] = (double) (action->data[0] - JA0_L) / (JA0_U - JA0_L) * 2 - 1;
-	ret->data[1] = (double) (action->data[1] - JA1_L) / (JA1_U - JA1_L) * 2 - 1;
-	ret->data[2] = (double) (action->data[2] - JA2_L) / (JA2_U - JA2_L) * 2 - 1;
+	ret->data[0] = (float) (action->data[0] - JA0_L) / (JA0_U - JA0_L) * 2 - 1;
+	ret->data[1] = (float) (action->data[1] - JA1_L) / (JA1_U - JA1_L) * 2 - 1;
+	ret->data[2] = (float) (action->data[2] - JA2_L) / (JA2_U - JA2_L) * 2 - 1;
 	return ret;
 }
 
@@ -337,9 +337,9 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 	sim._numOfSteps += 1;	// increment the number of steps executed
 
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
-	double* data = fullState->data;
-	double* delta = denormed_matrix->data;
-	double ja[NUM_OF_JOINTS];
+	float* data = fullState->data;
+	float* delta = denormed_matrix->data;
+	float ja[NUM_OF_JOINTS];
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		ja[i] = sim._currentJA[i];
 	}
@@ -353,7 +353,7 @@ matrix_t* stepReaching(matrix_t* action, int state_dim, int act_dim) {
 		sim._currentJA[i] = data[i];
 	}
 
-	double eePos[6];
+	float eePos[6];
 
 	initFwdKM();
 	// getMagnetPoseByJnts(sim._currentJA, eePos);
@@ -397,10 +397,10 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 	sim._numOfSteps += 1;	// increment the number of steps executed
 
 	matrix_t* fullState = new_matrix(1, FULL_STATE_NUM_COLS);
-	double* data = fullState->data;
-	double* delta = denormed_matrix->data;
+	float* data = fullState->data;
+	float* delta = denormed_matrix->data;
 
-	double ja[NUM_OF_JOINTS];
+	float ja[NUM_OF_JOINTS];
 
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		ja[i] = sim._currentJA[i];
@@ -414,7 +414,7 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 		sim._currentJA[i] = data[i];
 	}
 
-	double eePos[6];
+	float eePos[6];
 
 	initFwdKM();
 	getMagnetPoseByJnts(sim._currentJA, eePos);
@@ -466,23 +466,12 @@ matrix_t* stepPnP(matrix_t* action, int state_dim, int act_dim) {
 	// cout << "obj was at " << sim._initObj[0] << ", " << sim._initObj[1] << ", " << sim._initObj[2] << endl;
 	// cout << "obj now at " << sim._obj[0] << ", " << sim._obj[1] << ", " << sim._obj[2] << endl;
 
-	double toPos[CART_COORD_DIM];
+	float toPos[CART_COORD_DIM];
 	for (int i = 0; i < CART_COORD_DIM; ++i) {
 		toPos[i] = eePos[i];
 	}
 
-	if ((!withinCylinder(sim._initObj, OBJ_LIFT_LOWER_CYLINDER_RADIUS, toPos))
-		&& (!withinCylinder(sim._target, OBJ_LIFT_LOWER_CYLINDER_RADIUS, toPos))
-		&& toPos[1] < OBJ_AFLOAT_LEAST_HEIGHT) {
-		/* 
-			Drop to the ground if lower than a certain height when 
-			not within the legal picking and placing cylinders
-		*/
-		// cout << "Not within the cylinders" << endl;
-		sim._obj[1] = OBJ_HEIGHT;
-		data[PNP_HAS_OBJ_OFFSET] = 0;
-		sim._hasObj = false;
-	}
+
 
 	/* set the position of the object*/
 	for (int i = 0; i < CART_DIM; ++i) {
@@ -526,12 +515,12 @@ matrix_t* step(matrix_t* action, int state_dim, int act_dim) {
 matrix_t* inverse_km(matrix_t* eePos) {
 	initInvKM();
 
-	double pose[POSE_DIM];
+	float pose[POSE_DIM];
 	for (int i = 0; i < CART_DIM; ++i) {
 		pose[i] = eePos->data[i];
 	}
 
-	double jntArray[NUM_OF_JOINTS];
+	float jntArray[NUM_OF_JOINTS];
 
 	int res = getJntsByMagnetPos(pose, jntArray);
 	finishInvKM();
@@ -550,7 +539,7 @@ matrix_t* inverse_km(matrix_t* eePos) {
 
 #ifdef RENDER
 void renderSteps(matrix_t** actions, int numOfActions) {
-	// sim._actions = (double**) calloc(numOfActions, sizeof(double*));
+	// sim._actions = (float**) calloc(numOfActions, sizeof(float*));
 	sim._actions = (matrix_t**) calloc(numOfActions, sizeof(matrix_t*));
 	sim._numOfActions = numOfActions;
 	for (int i = 0; i < numOfActions; ++i) {
@@ -614,8 +603,8 @@ void closeEnv(int state_dim, int act_dim) {
 
 matrix_t* reachingRandomAction(int state_dim, int act_dim) {
 	matrix_t* ret = new_matrix(1, act_dim);
-	double* data = ret->data;
-	double toJA[NUM_OF_JOINTS];
+	float* data = ret->data;
+	float toJA[NUM_OF_JOINTS];
 	toJA[0] = rand_uniform(JA0_L, JA0_U);
 	toJA[1] = rand_uniform(JA1_L, JA1_U);
 	toJA[2] = rand_uniform(JA2_L, JA2_U);
@@ -634,7 +623,7 @@ matrix_t* reachingRandomAction(int state_dim, int act_dim) {
 
 matrix_t* pnpRandomAction(int state_dim, int act_dim) {
 	matrix_t* ret = new_matrix(1, act_dim);
-	double* data = ret->data;
+	float* data = ret->data;
 
 	matrix_t* jaActions = reachingRandomAction(0, act_dim - 1);
 	for (int i = 0; i < act_dim - 1; ++i) {
@@ -672,7 +661,7 @@ int main() {
 	// 	cout << "Initialize all states" << endl;
 	// 	matrix_t* full = resetState(0, 1, 0, 0);
 		
-	// 	double* data = full->data;
+	// 	float* data = full->data;
 	// 	for (int i = 0; i < full->rows; ++i) {
 	// 		for (int j = 0; j < full->cols; ++j) {
 	// 			cout << *(data + i * full->cols + j) << " ";
@@ -719,7 +708,7 @@ int main() {
 		// delta->data[1] = 0;
 		// delta->data[2] = 0;
 		// matrix_t* newFull = step(delta, 0, 0);
-		// double* newData = newFull->data;
+		// float* newData = newFull->data;
 		// for (int i = 0; i < newFull->rows; ++i) {
 		// 	for (int j = 0; j < newFull->cols; ++j) {
 		// 		cout << *(newData + i * newFull->cols + j) << " ";
@@ -727,13 +716,13 @@ int main() {
 		// }
 
 	// 	// cout << endl;
-	// 	// double test[10] = {0,0,0,1,2,3,1,2.5,3,0};
+	// 	// float test[10] = {0,0,0,1,2,3,1,2.5,3,0};
 	// 	// cout << ifInReach(test) << endl;
 
 	// 	break;
 	// }
 
-	// double ori[3] = {0.0, 0.0, 0.0};
+	// float ori[3] = {0.0, 0.0, 0.0};
 	// KinematicsModel fwdKM = KinematicsModel();
 	// fwdKM.init(ori);
 
@@ -751,7 +740,7 @@ int main() {
 
 	// // printJntArray(toJA);
 	// // // Frame eeFrame;
-	// double eePos[6];
+	// float eePos[6];
 	// fwdKM.getPoseByJnts(toJA, eePos);
 	// // // printFrame(eeFrame);
 	// printPose(eePos);
@@ -780,7 +769,7 @@ int main() {
 	// KinematicsModel invKM1 = KinematicsModel();
 	// invKM1.init(ori);
 	// invKM1._jointAngles(0) = 0.5236;
-	// double eePos1[6];
+	// float eePos1[6];
 	// eePos1[0] = eePos[0];
 	// eePos1[1] = eePos[1];
 	// eePos1[2] = eePos[2];

@@ -87,8 +87,6 @@ else()
 		set(SIM_FILES
 			${SRC_DIR}/C_api.cpp
 			${KM_FILES}
-			${QT_OPENGL_FILES}
-
 		)
 	endif()
 	# add_compile_definitions(C_AS_LIB=1)

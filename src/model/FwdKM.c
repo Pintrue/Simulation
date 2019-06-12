@@ -15,12 +15,12 @@
 #define TRIG_SCALE_RANGE (TRIG_SCALE_MAX - TRIG_SCALE_MIN)
 
 
-int illegalJntBoundary(const double jntArray[JNT_NUMBER]);
+int illegalJntBoundary(const float jntArray[JNT_NUMBER]);
 
 static threeDOFsFwd* arm;
 
-double sineTable[1000] = {0};
-double cosineTable[1000] = {0};
+float sineTable[1000] = {0};
+float cosineTable[1000] = {0};
 // char gradTable[32] = {
 // 						5,5,5,5,5,5,5,5,5,5,5,5,5,
 // 						-3,-3,-3,-3,-3,-3,
@@ -58,13 +58,13 @@ void initTrigTable() {
 
 int initFwdKM() {
 	/* DESCRIPTION of the arm */
-	// double linkLength[3] = {5.9908, 10.7575, 18.7299};
-	// double initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
-	// double baseHeight = 4.20;
+	// float linkLength[3] = {5.9908, 10.7575, 18.7299};
+	// float initJntAngles[3] = {0.0, atan2(2.0, 10.57), atan2(3.5, 18.4)};
+	// float baseHeight = 4.20;
 
-	double linkLength[3] = {sqrt(3.5*3.5+3.9*3.9), sqrt(1.7*1.7+10.5*10.5), sqrt(3.5*3.5+16.5*16.5)};
-	double initJntAngles[3] = {0.0, atan2(1.7, 10.50), atan2(3.5, 16.5)};
-	double baseHeight = 2.9;
+	float linkLength[3] = {sqrt(3.5*3.5+3.9*3.9), sqrt(1.7*1.7+10.5*10.5), sqrt(3.5*3.5+16.5*16.5)};
+	float initJntAngles[3] = {0.0, atan2(1.7, 10.50), atan2(3.5, 16.5)};
+	float baseHeight = 2.9;
 
 
 	arm = (threeDOFsFwd*) malloc(sizeof(threeDOFsFwd));
@@ -85,21 +85,21 @@ int initFwdKM() {
 }
 
 
-double sineTaylorSeriesApprox(double radians) {
-	double degTwo = radians * radians;
-	double degThree = degTwo * radians;
-	double degFive = degThree * degTwo;
-	double degSeven = degFive * degTwo;
+float sineTaylorSeriesApprox(float radians) {
+	float degTwo = radians * radians;
+	float degThree = degTwo * radians;
+	float degFive = degThree * degTwo;
+	float degSeven = degFive * degTwo;
 	return radians - degThree / 6.0 + degFive / 120.0 - degSeven / 5040.0;
 }
 
-double cosineTaylorSeriesApprox(double radians) {
-	double degTwo = radians * radians;
-	double degFour = degTwo * degTwo;
+float cosineTaylorSeriesApprox(float radians) {
+	float degTwo = radians * radians;
+	float degFour = degTwo * degTwo;
 	return 1.0 - degTwo / 2.0 + degFour / 24.0;
 }
 
-double sinePrecomp(double radians) {
+float sinePrecomp(float radians) {
 	if (radians == 0) {
 		return 0.0;
 	} 
@@ -109,7 +109,7 @@ double sinePrecomp(double radians) {
 		sign = -1;
 	}
 
-	double mod = fmod(fabs(radians), (2.0 * M_PI));
+	float mod = fmod(fabs(radians), (2.0 * M_PI));
 	int thousandthsOfPi = mod / M_PI * 1000;
 	if (mod < M_PI) {
 		return sign * sineTable[thousandthsOfPi];
@@ -122,12 +122,12 @@ double sinePrecomp(double radians) {
 	}
 }
 
-double cosinePrecomp(double radians) {
+float cosinePrecomp(float radians) {
 	if (radians == 0) {
 		return 0.0;
 	}
 
-	double mod = fmod(fabs(radians), (2.0 * M_PI));
+	float mod = fmod(fabs(radians), (2.0 * M_PI));
 	int thousandthsOfPi = mod / M_PI * 1000;
 	if (mod < M_PI) {
 		return cosineTable[thousandthsOfPi];
@@ -163,11 +163,11 @@ int cosineInt(u_int8_t x) {
 	return a * x + b;
 }
 
-// int convertRadToInt(double rad) {
+// int convertRadToInt(float rad) {
 	
 // }
 
-int getEEPoseByJntsInt(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]) {
+int getEEPoseByJntsInt(const float jntArray[JNT_NUMBER], float eePos[POSE_FRAME_DIM]) {
 	/**
 	 * Calculate y from a side view, where y has the following eqaution
 	 * 
@@ -186,12 +186,12 @@ int getEEPoseByJntsInt(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAM
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];
 
-	double d2 = arm->baseHeight;
-	double d3 = arm->l1 * sinePrecomp(arm->a2);
-	double d4 = arm->l2 * sinePrecomp(arm->a3);
-	double d5 = arm->l3 * sinePrecomp(arm->a4);
+	float d2 = arm->baseHeight;
+	float d3 = arm->l1 * sinePrecomp(arm->a2);
+	float d4 = arm->l2 * sinePrecomp(arm->a3);
+	float d5 = arm->l3 * sinePrecomp(arm->a4);
 
-	double y = d2 + d3 + d4 + d5;// - (MAGNET_EE_HEIGHT_OFFSET + );
+	float y = d2 + d3 + d4 + d5;// - (MAGNET_EE_HEIGHT_OFFSET + );
 
 	/**
 	 * Calculate x and z from a top view, where x has the following eqaution
@@ -205,14 +205,14 @@ int getEEPoseByJntsInt(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAM
 	 * 					d1 = d6 - d7 + d8
 	 **/
 
-	double d6 = arm->l3 * cosinePrecomp(arm->a4);
-	double d7 = arm->l2 * cosinePrecomp(arm->a3);
-	double d8 = arm->l1 * cosinePrecomp(arm->a2);
+	float d6 = arm->l3 * cosinePrecomp(arm->a4);
+	float d7 = arm->l2 * cosinePrecomp(arm->a3);
+	float d8 = arm->l1 * cosinePrecomp(arm->a2);
 
-	double d1 = d6 - d7 + d8;
+	float d1 = d6 - d7 + d8;
 
-	double z = d1 * cosinePrecomp(arm->a1);
-	double x = d1 * sinePrecomp(arm->a1);
+	float z = d1 * cosinePrecomp(arm->a1);
+	float x = d1 * sinePrecomp(arm->a1);
 
 	eePos[0] = TO_DECIMAL_PLACE(x, 2); eePos[1] = TO_DECIMAL_PLACE(y, 2); eePos[2] = TO_DECIMAL_PLACE(z, 2);
 	eePos[3] = jntArray[1] + jntArray[2];
@@ -223,7 +223,7 @@ int getEEPoseByJntsInt(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAM
 }
 
 
-int getEEPoseByJntsPrecomp(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]) {
+int getEEPoseByJntsPrecomp(const float jntArray[JNT_NUMBER], float eePos[POSE_FRAME_DIM]) {
 	/**
 	 * Calculate y from a side view, where y has the following eqaution
 	 * 
@@ -242,12 +242,12 @@ int getEEPoseByJntsPrecomp(const double jntArray[JNT_NUMBER], double eePos[POSE_
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];
 
-	double d2 = arm->baseHeight;
-	double d3 = arm->l1 * sinePrecomp(arm->a2);
-	double d4 = arm->l2 * sinePrecomp(arm->a3);
-	double d5 = arm->l3 * sinePrecomp(arm->a4);
+	float d2 = arm->baseHeight;
+	float d3 = arm->l1 * sinePrecomp(arm->a2);
+	float d4 = arm->l2 * sinePrecomp(arm->a3);
+	float d5 = arm->l3 * sinePrecomp(arm->a4);
 
-	double y = d2 + d3 + d4 + d5;// - (MAGNET_EE_HEIGHT_OFFSET + );
+	float y = d2 + d3 + d4 + d5;// - (MAGNET_EE_HEIGHT_OFFSET + );
 
 	/**
 	 * Calculate x and z from a top view, where x has the following eqaution
@@ -261,14 +261,14 @@ int getEEPoseByJntsPrecomp(const double jntArray[JNT_NUMBER], double eePos[POSE_
 	 * 					d1 = d6 - d7 + d8
 	 **/
 
-	double d6 = arm->l3 * cosinePrecomp(arm->a4);
-	double d7 = arm->l2 * cosinePrecomp(arm->a3);
-	double d8 = arm->l1 * cosinePrecomp(arm->a2);
+	float d6 = arm->l3 * cosinePrecomp(arm->a4);
+	float d7 = arm->l2 * cosinePrecomp(arm->a3);
+	float d8 = arm->l1 * cosinePrecomp(arm->a2);
 
-	double d1 = d6 - d7 + d8;
+	float d1 = d6 - d7 + d8;
 
-	double z = d1 * cosinePrecomp(arm->a1);
-	double x = d1 * sinePrecomp(arm->a1);
+	float z = d1 * cosinePrecomp(arm->a1);
+	float x = d1 * sinePrecomp(arm->a1);
 
 	eePos[0] = TO_DECIMAL_PLACE(x, 2); eePos[1] = TO_DECIMAL_PLACE(y, 2); eePos[2] = TO_DECIMAL_PLACE(z, 2);
 	eePos[3] = jntArray[1] + jntArray[2];
@@ -284,8 +284,8 @@ int getEEPoseByJntsPrecomp(const double jntArray[JNT_NUMBER], double eePos[POSE_
  * 
  * otherwise, just the shoulder joint coordinate.
  */
-int getJntPosByAngle(const double jntArray[JNT_NUMBER],
-						double allPoss[2][CART_COORD_DIM], int numOfPoss) {
+int getJntPosByAngle(const float jntArray[JNT_NUMBER],
+						float allPoss[2][CART_COORD_DIM], int numOfPoss) {
 	if (jntArray[0] > JNT0_U || jntArray[0] < JNT0_L ||
 		jntArray[1] > JNT1_U || jntArray[1] < JNT1_L ||
 		jntArray[2] > JNT2_U || jntArray[2] < JNT2_L) {
@@ -297,17 +297,17 @@ int getJntPosByAngle(const double jntArray[JNT_NUMBER],
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];
 
-	double shoulderCoord[CART_COORD_DIM], forearmCoord[CART_COORD_DIM];
+	float shoulderCoord[CART_COORD_DIM], forearmCoord[CART_COORD_DIM];
 
 	/* calculate the coordinate of shoulder arm joint */
 
 	/* side-view */
-	double shoulderSideX = arm->l1 * cos(arm->a2); // 2D x-position
-	double shoulderY = arm->l1 * sin(arm->a2) + arm->baseHeight;	// 2D y-position
+	float shoulderSideX = arm->l1 * cos(arm->a2); // 2D x-position
+	float shoulderY = arm->l1 * sin(arm->a2) + arm->baseHeight;	// 2D y-position
 
 	/* top-view */
-	double shoulderX = shoulderSideX * sin(arm->a1);
-	double shoulderZ = shoulderSideX * cos(arm->a1);
+	float shoulderX = shoulderSideX * sin(arm->a1);
+	float shoulderZ = shoulderSideX * cos(arm->a1);
 
 	shoulderCoord[0] = shoulderX; shoulderCoord[1] = shoulderY; shoulderCoord[2] = shoulderZ;
 	for (int i = 0; i < CART_COORD_DIM; ++i) {
@@ -320,12 +320,12 @@ int getJntPosByAngle(const double jntArray[JNT_NUMBER],
 		/* calculate the coordinate of forearm joint */
 	
 		/* side-view */
-		double forearmSideX = arm->l2 * cos(arm->a3) - shoulderSideX;
-		double forearmY = arm->l2 * sin(arm->a3) + shoulderY;
+		float forearmSideX = arm->l2 * cos(arm->a3) - shoulderSideX;
+		float forearmY = arm->l2 * sin(arm->a3) + shoulderY;
 
 		/* top-view */
-		double forearmX = forearmSideX * -sin(arm->a1);//sin(M_PI + arm->a1);
-		double forearmZ = forearmSideX * -cos(arm->a1);//cos(M_PI + arm->a1);
+		float forearmX = forearmSideX * -sin(arm->a1);//sin(M_PI + arm->a1);
+		float forearmZ = forearmSideX * -cos(arm->a1);//cos(M_PI + arm->a1);
 
 		forearmCoord[0] = forearmX; forearmCoord[1] = forearmY; forearmCoord[2] = forearmZ;
 		for (int i = 0; i < CART_COORD_DIM; ++i) {
@@ -337,7 +337,7 @@ int getJntPosByAngle(const double jntArray[JNT_NUMBER],
 }
 
 
-int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]) {
+int getEEPoseByJnts(const float jntArray[JNT_NUMBER], float eePos[POSE_FRAME_DIM]) {
 	/**
 	 * Calculate y from a side view, where y has the following eqaution
 	 * 
@@ -356,12 +356,12 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	arm->a3 += jntArray[1];
 	arm->a4 -= jntArray[2] + jntArray[1];
 
-	double d2 = arm->baseHeight;
-	double d3 = arm->l1 * sin(arm->a2);
-	double d4 = arm->l2 * sin(arm->a3);
-	double d5 = arm->l3 * sin(arm->a4);
+	float d2 = arm->baseHeight;
+	float d3 = arm->l1 * sin(arm->a2);
+	float d4 = arm->l2 * sin(arm->a3);
+	float d5 = arm->l3 * sin(arm->a4);
 
-	double y = d2 + d3 + d4 + d5;// - (MAGNET_EE_HEIGHT_OFFSET + );
+	float y = d2 + d3 + d4 + d5;// - (MAGNET_EE_HEIGHT_OFFSET + );
 
 	/**
 	 * Calculate x and z from a top view, where x has the following eqaution
@@ -375,14 +375,14 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 	 * 					d1 = d6 - d7 + d8
 	 **/
 
-	double d6 = arm->l3 * cos(arm->a4);
-	double d7 = arm->l2 * cos(arm->a3);
-	double d8 = arm->l1 * cos(arm->a2);
+	float d6 = arm->l3 * cos(arm->a4);
+	float d7 = arm->l2 * cos(arm->a3);
+	float d8 = arm->l1 * cos(arm->a2);
 
-	double d1 = d6 - d7 + d8;
+	float d1 = d6 - d7 + d8;
 
-	double z = d1 * cos(arm->a1);
-	double x = d1 * sin(arm->a1);
+	float z = d1 * cos(arm->a1);
+	float x = d1 * sin(arm->a1);
 
 	eePos[0] = TO_DECIMAL_PLACE(x, 2); eePos[1] = TO_DECIMAL_PLACE(y, 2); eePos[2] = TO_DECIMAL_PLACE(z, 2);
 	eePos[3] = jntArray[1] + jntArray[2];
@@ -393,7 +393,7 @@ int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_D
 }
 
 
-int getMagnetPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]) {
+int getMagnetPoseByJnts(const float jntArray[JNT_NUMBER], float eePos[POSE_FRAME_DIM]) {
 	int check = getEEPoseByJnts(jntArray, eePos);
 
 	if (check < 0) {
@@ -403,21 +403,21 @@ int getMagnetPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRA
 
 	eePos[1] -= MAGNET_EE_HEIGHT_OFFSET + (WRIST_LENGTH_OFFSET - WRIST_LENGTH_OFFSET * -sin(arm->a4));
 	
-	double magnetExtend = -cos(arm->a4) * WRIST_LENGTH_OFFSET + MAGNET_EE_LENGTH_OFFSET;
+	float magnetExtend = -cos(arm->a4) * WRIST_LENGTH_OFFSET + MAGNET_EE_LENGTH_OFFSET;
 	eePos[0] += magnetExtend * sin(arm->a1);
 	eePos[2] += magnetExtend * cos(arm->a1);
 	return 0;
 }
 
 
-int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[POSS_NUMBER][POSE_FRAME_DIM]) {
+int getAllPossByJnts(const float jntArray[JNT_NUMBER], float allPoss[POSS_NUMBER][POSE_FRAME_DIM]) {
 	/* set the pose for neck joint */
 	allPoss[0][0] = 0; allPoss[0][1] = arm->baseHeight; allPoss[0][2] = 0;
 	allPoss[0][3] = 0; allPoss[0][4] = jntArray[0]; allPoss[0][5] = 0;
 
 	int check;
 	initFwdKM();
-	double poss[2][CART_COORD_DIM];
+	float poss[2][CART_COORD_DIM];
 	check = getJntPosByAngle(jntArray, poss, 2);
 	if (check < 0) {
 		printf("Joint angle sent to getAllPossByJnts() is out of bound.\n");
@@ -434,7 +434,7 @@ int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[POSS_NUMB
 	allPoss[2][3] = jntArray[1];
 
 	initFwdKM();
-	double eePos[POSE_FRAME_DIM];
+	float eePos[POSE_FRAME_DIM];
 	check = getEEPoseByJnts(jntArray, eePos);
 	if (check < 0) {
 		// shouldnt get here
@@ -466,11 +466,11 @@ int __main() {
 		timing the number of evaluation 
 	*/
 /*
-	double timeSpent = 0.0;
+	float timeSpent = 0.0;
 
 	int count = 0;
-	double ja[3];
-	double eePos[3];
+	float ja[3];
+	float eePos[3];
 	clock_t begin, end;
 
 	while (timeSpent < 1.0) {
@@ -483,7 +483,7 @@ int __main() {
 		begin = clock();
 		getEEPoseByJnts(ja, eePos);
 		end = clock();
-		timeSpent += (double) (end - begin) / CLOCKS_PER_SEC;
+		timeSpent += (float) (end - begin) / CLOCKS_PER_SEC;
 
 		count += 1;
 	}
@@ -500,15 +500,15 @@ int __main() {
 	// // 	printf("= %f\n", sineTable[i]);
 	// // }
 	// // printf("= %f\n", sineTable[999]);
-	// double rad = 0;
+	// float rad = 0;
 	// while (1) {
 	// 	scanf("%lf", &rad);
-	// 	double res = cosinePrecomp(rad);
+	// 	float res = cosinePrecomp(rad);
 	// 	printf("= %f\n", res);
 	// }
 
-	// // double delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
-	// // double allPoss[4][6];
+	// // float delta[3] = {-1.732664e-01 ,1.745329e-01 ,-1.282639e-02};
+	// // float allPoss[4][6];
 
 // 	initFwdKM();
 // 	int res = getAllPossByJnts(delta, allPoss);
@@ -526,8 +526,8 @@ int __main() {
 // 	}
 // 	finishFwdKM();
 
-	// double delta[3] = {0.5, 0.0, -0.7};
-	// double eePos[POSE_FRAME_DIM];
+	// float delta[3] = {0.5, 0.0, -0.7};
+	// float eePos[POSE_FRAME_DIM];
 
 	// initFwdKM();
 	// int res = getMagnetPoseByJnts(delta, eePos);
@@ -555,12 +555,12 @@ int __main() {
 	// }
 
 
-	// double xRange[3] = {255.0, 511.0, 1023.0};
-	// double yRange[3] = {255.0, 511.0, 1023.0};
-	// double aX, bX, cX, dX, eX;
-	// double aY, bY, cY, dY, eY;
-	// double m1, m2, m3, m4;
-	// double b1, b2, b3, b4;
+	// float xRange[3] = {255.0, 511.0, 1023.0};
+	// float yRange[3] = {255.0, 511.0, 1023.0};
+	// float aX, bX, cX, dX, eX;
+	// float aY, bY, cY, dY, eY;
+	// float m1, m2, m3, m4;
+	// float b1, b2, b3, b4;
 
 	// for (int i = 0; i < 3; ++i) {
 	// 	for (int j = 0; j < 3; ++j) {
@@ -599,8 +599,8 @@ int __main() {
 	// 		printf("\tmCD = %lf and bCD = %lf\n", m4, b4);
 
 
-	// 		double diff = 0;
-	// 		double coefs[8] = {m1, m2, m3, m4, b1, b2, b3, b4};
+	// 		float diff = 0;
+	// 		float coefs[8] = {m1, m2, m3, m4, b1, b2, b3, b4};
 	// 		for (int i = 0; i < 8; ++i) {
 	// 			diff += (coefs[i] - roundf(coefs[i])) * (coefs[i] - roundf(coefs[i]));
 	// 		}
@@ -614,7 +614,7 @@ int __main() {
 		int res = cosineInt(encoding);
 		printf("Result is %d\n\n", res);
 
-		// double rad = 0;
+		// float rad = 0;
 		// scanf("%lf", &rad);
 		// printf("Result is %lf\n\n", cosineTaylorSeriesApprox(rad));
 	}

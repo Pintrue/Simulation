@@ -23,7 +23,7 @@ Sim::Sim() {
 }
 
 
-Sim::Sim(double ori[NUM_OF_JOINTS]) {
+Sim::Sim(float ori[NUM_OF_JOINTS]) {
 	// initialize kinematics and trajectory models
 	_tjt.init(NUM_OF_JOINTS);
 	
@@ -38,12 +38,12 @@ Sim::Sim(double ori[NUM_OF_JOINTS]) {
 }
 
 
-double* Sim::getJointAngles() {
+float* Sim::getJointAngles() {
 	return _km._jointAngles;
 }
 
 
-double* Sim::getEEPose() {
+float* Sim::getEEPose() {
 	return _km._cartPose;
 }
 
@@ -54,9 +54,9 @@ double* Sim::getEEPose() {
 *   Duration of the trajectory is specified by dura-
 *   tion.
 */
-void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) {
+void Sim::moveByJointAngles(float jointAngles[NUM_OF_JOINTS], float duration) {
 	// JntArray toJA = JntArray(NUM_OF_JOINTS);
-	double toJA[NUM_OF_JOINTS];
+	float toJA[NUM_OF_JOINTS];
 	for (int i = 0; i < NUM_OF_JOINTS; ++i) {
 		toJA[i] = jointAngles[i];
 	}
@@ -64,7 +64,7 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 	// plan the trajectory - calculate the coeficients
 	_tjt.prepare(_km._jointAngles, toJA, duration);
 	// JntArray interJA = JntArray(NUM_OF_JOINTS);
-	double interJA[NUM_OF_JOINTS];
+	float interJA[NUM_OF_JOINTS];
 	cout << "t = " << _tjt.timeNow() << endl << endl;
 
 	// keep looping if still in progress
@@ -79,7 +79,7 @@ void Sim::moveByJointAngles(double jointAngles[NUM_OF_JOINTS], double duration) 
 
 // int main() {
 // 	// // origin where the robot is based
-// 	double pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
+// 	float pos[NUM_OF_JOINTS] = {0.0, 0.0, 0.0};
 	
 // 	Sim sim(pos);
 

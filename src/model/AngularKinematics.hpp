@@ -4,18 +4,18 @@
 class AngularKinematics {
 	public:
 		struct TemporalData {
-			double angle;
-			double velocity;
+			float angle;
+			float velocity;
 		};
-		void init(TemporalData start, TemporalData end, double t);
-		void angleAtTime(double t, double* angle);
+		void init(TemporalData start, TemporalData end, float t);
+		void angleAtTime(float t, float* angle);
 
 	private:
 		struct Terms {
-			double c0;
-			double c1;
-			double c2;
-			double c3;
+			float c0;
+			float c1;
+			float c2;
+			float c3;
 		};
 		struct Terms _cache; 
 };

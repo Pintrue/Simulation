@@ -9,16 +9,16 @@ class Trajectory {
 	public:
 		Trajectory();
 		void init(int numJoints);
-		void prepare(double start[NUM_OF_JOINTS], double end[NUM_OF_JOINTS], double duration);
-		bool nextTimeStep(double tNow, double next[NUM_OF_JOINTS]);
+		void prepare(float start[NUM_OF_JOINTS], float end[NUM_OF_JOINTS], float duration);
+		bool nextTimeStep(float tNow, float next[NUM_OF_JOINTS]);
 		void finish();
-		double timeNow();
+		float timeNow();
 
 	private:
 		int _numJoints;
 		typedef std::vector<AngularKinematics*> Joints;
 		Joints _joints;
-		double _tNow, _tEnd;
+		float _tNow, _tEnd;
 };
 
 #endif

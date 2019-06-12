@@ -11,7 +11,7 @@ using namespace std;
 // void printFrame(const KDL::Frame& eeFrame) {// Print the frame
 // 	for (int i = 0; i < 4; i++){
 // 		for (int j = 0; j < 4; j++) {
-// 			double v = eeFrame(i, j);
+// 			float v = eeFrame(i, j);
 // 			if (v < 0.0001 && v > -0.001) {
 // 				v = 0.0;
 // 			}
@@ -22,9 +22,9 @@ using namespace std;
 // }
 
 
-void printPose(const double eePos[POSE_DIM]) {
+void printPose(const float eePos[POSE_DIM]) {
 	for (int i = 0; i < 3; ++i) {
-		double v = eePos[i];
+		float v = eePos[i];
 		if (v < 0.0001 && v > -0.001) {
 			v = 0.0;
 		}
@@ -32,7 +32,7 @@ void printPose(const double eePos[POSE_DIM]) {
 	}
 	cout << endl;
 	for (int i = 3; i < 6; ++i) {
-		double v = eePos[i];
+		float v = eePos[i];
 		if (v < 0.0001 && v > -0.001) {
 			v = 0.0;
 		}
@@ -42,7 +42,7 @@ void printPose(const double eePos[POSE_DIM]) {
 }
 
 
-// void convFrameToPose(const KDL::Frame& frame, double pose[POSE_DIM]) {
+// void convFrameToPose(const KDL::Frame& frame, float pose[POSE_DIM]) {
 // 	/**
 // 	 * Pose is consist of cartesian coordinate and
 // 	 * orientation in the form of Euler angle, e.g.
@@ -55,7 +55,7 @@ void printPose(const double eePos[POSE_DIM]) {
 // 		pose[i] = frame.p(i);
 // 	}
 
-// 	double z, y, x;	// Euler angles Z, Y, X
+// 	float z, y, x;	// Euler angles Z, Y, X
 // 	frame.M.GetEulerZYX(z, y, x);
 // 	pose[3] = x; pose[4] = y; pose[5] = z;
 // }
@@ -70,15 +70,15 @@ void printPose(const double eePos[POSE_DIM]) {
 // 	cout << "]" << endl;
 // }
 
-bool withinCylinder(double center[CART_COORD_DIM], int radius,
-					double obj[CART_COORD_DIM]) {
-	double distToCenter = sqrt(pow(center[0] - obj[0], 2)
+bool withinCylinder(float center[CART_COORD_DIM], int radius,
+					float obj[CART_COORD_DIM]) {
+	float distToCenter = sqrt(pow(center[0] - obj[0], 2)
 								+ pow(center[2] - obj[2], 2));
-	return distToCenter <= (double) radius;
+	return distToCenter <= (float) radius;
 }
 
 
-bool illegalJntBoundary(const double* jntArray) {
+bool illegalJntBoundary(const float* jntArray) {
 	return (jntArray[0] > JNT0_U || jntArray[0] < JNT0_L ||
 			jntArray[1] > JNT1_U || jntArray[1] < JNT1_L ||
 			jntArray[2] > JNT2_U || jntArray[2] < JNT2_L);

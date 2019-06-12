@@ -15,8 +15,8 @@ KinematicsModel::KinematicsModel() {}
 *	(also known as the tip of delivery part) in Car-
 *	tesian coordinate form.
 */
-bool KinematicsModel::getPoseByJnts(const double jnts[NUM_OF_JOINTS],
-										double pose[POSE_FRAME_DIM]) {
+bool KinematicsModel::getPoseByJnts(const float jnts[NUM_OF_JOINTS],
+										float pose[POSE_FRAME_DIM]) {
 	initFwdKM();
 	if (getEEPoseByJnts(jnts, pose) >= 0) {
 		for (int i = 0; i < NUM_OF_JOINTS; ++i) {
@@ -37,7 +37,7 @@ bool KinematicsModel::getPoseByJnts(const double jnts[NUM_OF_JOINTS],
 }
 
 
-bool KinematicsModel::getAllPoss(const double jnts[NUM_OF_JOINTS], double allPoss[POSS_NUMBER][POSE_FRAME_DIM]) {
+bool KinematicsModel::getAllPoss(const float jnts[NUM_OF_JOINTS], float allPoss[POSS_NUMBER][POSE_FRAME_DIM]) {
 	initFwdKM();
 	if (getAllPossByJnts(jnts, allPoss) >= 0) {
 		finishFwdKM();
@@ -51,7 +51,7 @@ bool KinematicsModel::getAllPoss(const double jnts[NUM_OF_JOINTS], double allPos
 }
 
 
-// bool KinematicsModel::getJntsByPose(const double pose[6],
+// bool KinematicsModel::getJntsByPose(const float pose[6],
 // 										JntArray& jnts) {
 // 	ChainIkSolverPos_LMA iKSolver =
 // 		ChainIkSolverPos_LMA(_kdlChain);

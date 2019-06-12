@@ -6,15 +6,15 @@
 
 // void printFrame(const KDL::Frame& eeFrame);
 
-void printPose(const double pose[6]);
+void printPose(const float pose[6]);
 
-// void convFrameToPose(const KDL::Frame& frame, double pose[6]);
+// void convFrameToPose(const KDL::Frame& frame, float pose[6]);
 
 // void printJntArray(const KDL::JntArray& ja);
 
-bool withinCylinder(double center[CART_COORD_DIM], int radius,
-					double obj[CART_COORD_DIM]);
+bool withinCylinder(float center[CART_COORD_DIM], int radius,
+					float obj[CART_COORD_DIM]);
 
-bool illegalJntBoundary(const double* jntArray);
+bool illegalJntBoundary(const float* jntArray);
 
 #endif

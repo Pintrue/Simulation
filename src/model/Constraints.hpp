@@ -15,14 +15,14 @@
 #define GROUND_OUT_RADIUS 27.0
 
 
-bool areInValidRanges(double jntAngles[NUM_OF_JOINTS],
-						double result[NUM_OF_JOINTS]);
+bool areInValidRanges(float jntAngles[NUM_OF_JOINTS],
+						float result[NUM_OF_JOINTS]);
 
-bool regulateJntAngles(double jntAngles[NUM_OF_JOINTS],
-						const double delta[ACTION_DIM],
-						double result[FULL_STATE_NUM_COLS]);
+bool regulateJntAngles(float jntAngles[NUM_OF_JOINTS],
+						const float delta[ACTION_DIM],
+						float result[FULL_STATE_NUM_COLS]);
 
-bool inGroundLvlWorkspace(double pos[CART_DIM]);
+bool inGroundLvlWorkspace(float pos[CART_DIM]);
 
 
 #endif

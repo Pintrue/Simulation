@@ -38,30 +38,30 @@ extern "C" {
 // 	zAxis = 3
 // } Axis;
 typedef struct _threeDOFsFwd {
-	double l1, l2, l3;	// lengths of the three links
-	double baseHeight;
-	double a1, a2, a3, a4;	// four angles between links, where a2 is fixed
+	float l1, l2, l3;	// lengths of the three links
+	float baseHeight;
+	float a1, a2, a3, a4;	// four angles between links, where a2 is fixed
 } threeDOFsFwd;
 
 
 int initFwdKM();
 
 void initTrigTable();
-double sineTaylorSeriesApprox(double radians);
-double cosineTaylorSeriesApprox(double radians);
-double sinePrecomp(double radians);
-double cosinePrecomp(double radians);
+float sineTaylorSeriesApprox(float radians);
+float cosineTaylorSeriesApprox(float radians);
+float sinePrecomp(float radians);
+float cosinePrecomp(float radians);
 int cosineInt(u_int8_t x);
-int getEEPoseByJntsPrecomp(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
+int getEEPoseByJntsPrecomp(const float jntArray[JNT_NUMBER], float eePos[POSE_FRAME_DIM]);
 
-int getJntPosByAngle(const double jntArray[JNT_NUMBER],
-						double allPoss[JNT_NUMBER][CART_COORD_DIM], int numOfPoss);
+int getJntPosByAngle(const float jntArray[JNT_NUMBER],
+						float allPoss[JNT_NUMBER][CART_COORD_DIM], int numOfPoss);
 
-int getEEPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
+int getEEPoseByJnts(const float jntArray[JNT_NUMBER], float eePos[POSE_FRAME_DIM]);
 
-int getMagnetPoseByJnts(const double jntArray[JNT_NUMBER], double eePos[POSE_FRAME_DIM]);
+int getMagnetPoseByJnts(const float jntArray[JNT_NUMBER], float eePos[POSE_FRAME_DIM]);
 
-int getAllPossByJnts(const double jntArray[JNT_NUMBER], double allPoss[4][POSE_FRAME_DIM]);
+int getAllPossByJnts(const float jntArray[JNT_NUMBER], float allPoss[4][POSE_FRAME_DIM]);
 
 int finishFwdKM();
 
