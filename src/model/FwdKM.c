@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define TO_DECIMAL_PLACE(v, n) (roundf(v * pow(10, n)) / pow(10, n))
-#define COSINE_INT_SELECT_MASK 0b11111100
+#define COSINE_INT_SELECT_MASK 0xFC
 #define COSINE_INT_MASK_OFFSET 2
 #define RAD_SCALE_MIN 0
 #define RAD_SCALE_MAX 255

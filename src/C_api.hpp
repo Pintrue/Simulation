@@ -9,8 +9,8 @@
 #define OBJ_LIFT_LOWER_CYLINDER_RADIUS 3.0
 #define OBJ_AFLOAT_LEAST_HEIGHT (OBJ_LIFT_LOWER_CYLINDER_RADIUS * 2.0 / 3.0) - 0.05
 
-// #define REACHING
-#define PICK_N_PLACE // testing now, DELETE LATER!!!!
+#define REACHING
+// #define PICK_N_PLACE // testing now, DELETE LATER!!!!
 
 #ifdef REACHING
 	#define FULL_STATE_NUM_COLS 14
