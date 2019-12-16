@@ -1,3 +1,6 @@
+Preview:
+![PreviewImageOfTheSimulation](https://github.com/Pintrue/Simulation/blob/master/rendersteps.png)
+
 To compile this code, please first go to the root directory, then follow the instructions below:
 
 	$ mkdir build
